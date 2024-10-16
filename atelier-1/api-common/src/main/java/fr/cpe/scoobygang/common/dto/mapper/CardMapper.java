@@ -21,7 +21,6 @@ public interface CardMapper {
     CardRequest cardToCardRequest(Card card);
 
     @Mapping(source = "owner", target = "userId", qualifiedByName = "ownerToUserId")
-    @Mapping(source = "store", target = "storeId", qualifiedByName = "storeToStoreId")
     CardResponse cardToCardResponse(Card card);
 
     List<CardResponse> cardsToCardResponses(List<Card> cards);
@@ -35,13 +34,5 @@ public interface CardMapper {
             return 0;
         }
         return owner.getId();
-    }
-
-    @Named("storeToStoreId")
-    public static int storeToStoreId(Store store) {
-        if (store == null) {
-            return 0;
-        }
-        return store.getId();
     }
 }
