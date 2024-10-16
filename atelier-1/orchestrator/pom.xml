@@ -98,6 +98,45 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.squareup.okio/okio -->
+        <dependency>
+            <groupId>com.squareup.okio</groupId>
+            <artifactId>okio</artifactId>
+            <version>3.9.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.gsonfire/gson-fire -->
+        <dependency>
+            <groupId>io.gsonfire</groupId>
+            <artifactId>gson-fire</artifactId>
+            <version>1.9.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+        <!-- OkHttp logging interceptor dependency -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>logging-interceptor</artifactId>
+            <version>4.12.0</version> <!-- Utilisez la dernière version disponible -->
+        </dependency>
+
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
@@ -115,6 +154,7 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>7.9.0</version>
                 <executions>
+                    <!-- Exécution pour générer le serveur -->
                     <execution>
                         <goals>
                             <goal>generate</goal>
@@ -125,6 +165,22 @@
                             <apiPackage>com.baeldung.openapi.api</apiPackage>
                             <modelPackage>com.baeldung.openapi.model</modelPackage>
                             <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+                        </configuration>
+                    </execution>
+                    <!-- Exécution pour générer le client -->
+                    <execution>
+                        <id>generate-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/../common/src/main/resources/orchestrator-swagger.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <apiPackage>com.baeldung.openapi.client.api</apiPackage>
+                            <modelPackage>com.baeldung.openapi.client.model</modelPackage>
+                            <configOptions>
+                                <sourceFolder>src/gen/java/main</sourceFolder>
+                            </configOptions>
                         </configuration>
                     </execution>
                 </executions>
