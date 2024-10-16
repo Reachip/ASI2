@@ -1,14 +1,15 @@
 import React from 'react';
-import { Container } from 'semantic-ui-react';
+import { Container, Typography } from '@mui/material';
 import Header from '../components/Header';
 
 const HomePage = () => {
   return (
     <>
-      <Header title="Home" subtitle="Welcome to the homepage" icon="home" />
+      <Header title="Home Page" subtitle="Welcome to our app" icon="home" />
       <Container>
-        <h2>Home Page Content</h2>
-        <p>This is the homepage of our app.</p>
+        <Typography variant="body1">
+          This is the homepage of our app.
+        </Typography>
       </Container>
     </>
   );

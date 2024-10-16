@@ -1,29 +1,68 @@
-import React from 'react';
-import { Container, Menu, Header as SuiHeader } from 'semantic-ui-react';
-import NavItem from './NavItem';
-import UserInfo from './UserInfo';
-import { Icon } from 'semantic-ui-react';
+import React, { useState } from 'react';
+import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Container } from '@mui/material';
+import { Home as HomeIcon, AccountCircle as AccountCircleIcon } from '@mui/icons-material'; // Import fusionné
+import { Link } from 'react-router-dom';
 
 const Header = ({ title, subtitle, icon }) => {
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
     return (
-        <Menu>
+        <AppBar position="static">
             <Container>
-                <Menu.Item position="left">
-                    <SuiHeader as='h2' style={{ margin: 0 }}>
-                        {icon && <Icon name={icon} />}
+                <Toolbar>
+                    {icon && (
+                        <IconButton edge="start" color="inherit" aria-label="icon">
+                            <HomeIcon />
+                        </IconButton>
+                    )}
+                    <Typography variant="h6" style={{ flexGrow: 1 }}>
                         {title}
-                        <SuiHeader.Subheader>{subtitle}</SuiHeader.Subheader>
-                    </SuiHeader>
-                </Menu.Item>
-                <NavItem name="Home" path="/" />
-                <NavItem name="Buy" path="/buy" />
-                <NavItem name="Sell" path="/sell" />
-                <NavItem name="User Form" path="/create-user" />
-                <Menu.Item position="right">
-                    <UserInfo />
-                </Menu.Item>
+                        <Typography variant="subtitle1">{subtitle}</Typography>
+                    </Typography>
+
+                    <Button color="inherit" component={Link} to="/">Home</Button>
+                    <Button color="inherit" component={Link} to="/buy">Buy</Button>
+                    <Button color="inherit" component={Link} to="/sell">Sell</Button>
+                    <Button color="inherit" component={Link} to="/create-user">User Form</Button>
+
+                    <IconButton
+                        edge="end"
+                        color="inherit"
+                        onClick={handleMenuOpen}
+                        aria-controls="user-menu"
+                        aria-haspopup="true"
+                    >
+                        <AccountCircleIcon />
+                    </IconButton>
+
+                    <Menu
+                        id="user-menu"
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleMenuClose}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                    >
+                        <MenuItem onClick={handleMenuClose}>My Account</MenuItem>
+                        <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+                    </Menu>
+                </Toolbar>
             </Container>
-        </Menu>
+        </AppBar>
     );
 };
 
