@@ -82,6 +82,18 @@ paths:
 
 components:
   schemas:
+    Picture:
+      type: object
+      properties:
+        base64:
+          type: string
+
+    Description:
+      type: object
+      properties:
+        label:
+          type: string
+
     Transaction:
       type: object
       properties:
@@ -99,4 +111,4 @@ components:
         transaction:
           $ref: '#/components/schemas/Transaction'
         image:
-          type: string
+          $ref: '#/components/schemas/Picture'
