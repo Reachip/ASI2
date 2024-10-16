@@ -28,10 +28,11 @@ const Header = ({ title, subtitle, icon }) => {
                         <Typography variant="subtitle1">{subtitle}</Typography>
                     </Typography>
 
-                    <Button color="inherit" component={Link} to="/">Home</Button>
+                    <Button color="inherit" variant="outlined" component={Link} to="/">Home</Button>
                     <Button color="inherit" component={Link} to="/buy">Buy</Button>
                     <Button color="inherit" component={Link} to="/sell">Sell</Button>
-                    <Button color="inherit" component={Link} to="/create-user">User Form</Button>
+                    <Button color="inherit" component={Link} to="/create">Create</Button>
+                    <Button color="inherit" component={Link} to="/user-form">User Form</Button>
 
                     <IconButton
                         edge="end"

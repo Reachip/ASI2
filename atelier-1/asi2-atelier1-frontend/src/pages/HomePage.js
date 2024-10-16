@@ -13,7 +13,7 @@ const HomePage = () => {
       <Container>
         <Box display="flex" justifyContent="space-evenly" alignItems="center" my={4}>
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
             startIcon={<AttachMoney />}
             onClick={() => navigate('/sell')}
@@ -21,7 +21,7 @@ const HomePage = () => {
             Sell
           </Button>
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
             startIcon={<ShoppingCart />}
             onClick={() => navigate('/buy')}
@@ -29,10 +29,10 @@ const HomePage = () => {
             Buy
           </Button>
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
             startIcon={<Science />}
-            onClick={() => navigate('/create-user')}
+            onClick={() => navigate('/user-form')}
           >
             Create
           </Button>

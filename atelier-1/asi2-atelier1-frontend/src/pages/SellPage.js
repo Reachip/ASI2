@@ -11,7 +11,7 @@ const SellPage = () => {
 
   return (
     <>
-      <Header title="Sell Cards" subtitle="List your cards for sale" icon="sell" />
+      <Header title="Sell Cards" subtitle="Sell your cards to get money" icon="sell" />
       <Container>
         <Table>
           <TableHead>
