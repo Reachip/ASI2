@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, Button, Box } from '@mui/material';
+import { Container, Button, Box } from '@mui/material';
 import { AttachMoney, ShoppingCart, Science } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
