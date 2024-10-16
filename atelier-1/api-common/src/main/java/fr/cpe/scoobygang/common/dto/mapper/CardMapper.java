@@ -36,4 +36,12 @@ public interface CardMapper {
         }
         return owner.getId();
     }
+
+    @Named("storeToStoreId")
+    public static int storeToStoreId(Store store) {
+        if (store == null) {
+            return 0;
+        }
+        return store.getId();
+    }
 }

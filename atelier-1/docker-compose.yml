@@ -23,10 +23,10 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - atelier1
+      - atelier3
 
 networks:
-  atelier1:
+  atelier3:
     external: true
 
 volumes:

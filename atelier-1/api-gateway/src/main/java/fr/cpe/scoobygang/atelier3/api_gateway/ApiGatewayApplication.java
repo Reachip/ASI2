@@ -25,13 +25,7 @@ public class ApiGatewayApplication {
 	public RouteLocator routeLocator(RouteLocatorBuilder builder) {
 		return builder
 				.routes()
-				.route("transaction-route", r -> r.path("/transaction/**").uri("lb://api-transaction-microservice"))
-				.route("user-route", r -> r.path("/user/**").uri("lb://api-user-microservice"))
 				.route("card-route", r -> r.path("/card/**").uri("lb://api-card-microservice"))
-				.route("rooms-route", r -> r.path("/rooms/**").uri("lb://api-room-microservice/rooms"))
-				.route("room-route", r -> r.path("/room/**").uri("lb://api-room-microservice"))
-				.route("store-route", r -> r.path("/store/**").uri("lb://api-store-microservice"))
-				.route("orchestrator-route", r -> r.path("/orchestrator/**").uri("lb://api-orchestrator-microservice"))
 				.build();
 	}
 
