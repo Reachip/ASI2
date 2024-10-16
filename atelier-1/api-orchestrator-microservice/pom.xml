@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>fr.cpe.scoobygang.atelier3</groupId>
-	<artifactId>api-generation-text-microservice</artifactId>
+	<artifactId>api-orchestrator-microservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>api-generation-text-microservice</name>
+	<name>api-orchestrator-microservice</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<sonar.organization>asi-microservice-cpe</sonar.organization>
