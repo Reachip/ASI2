@@ -33,10 +33,6 @@ public class Card {
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private User owner;
 
-    @ManyToOne
-    @JoinColumn(name = "storeId", referencedColumnName = "id")
-    private Store store;
-
     public static Card toCard(JSONObject jsonObject) throws JSONException {
         Card card = new Card();
 
