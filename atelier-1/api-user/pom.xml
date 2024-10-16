@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>fr.cpe.scoobygang.atelier3</groupId>
-	<artifactId>api-card-microservice</artifactId>
+	<artifactId>api-user</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>api-card-microservice</name>
 	<description>Demo project for Spring Boot</description>
