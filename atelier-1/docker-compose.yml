@@ -1,0 +1,67 @@
+version: '3'
+services:
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: atelier1
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - shared-net
+
+  activemq:
+    image: symptoma/activemq:5.18.3
+    container_name: activemq
+    environment:
+      ACTIVEMQ_DISALLOW_WEBCONSOLE: "false"
+      ACTIVEMQ_USERNAME: myuser
+      ACTIVEMQ_PASSWORD: mypwd
+      ACTIVEMQ_WEBADMIN_USERNAME: myuserweb
+      ACTIVEMQ_WEBADMIN_PASSWORD: mypwd
+    ports:
+      - "61616:61616"  # Port pour JMS
+      - "61613:61613"  # Port pour STOMP
+      - "8161:8161"    # Port pour la console web ActiveMQ
+    volumes:
+      - activemq_data:/var/lib/activemq
+    restart: always
+    networks:
+      - shared-net
+
+  img-gen-ln:
+    image: registry.gitlab.com/js-asi2/asi2-resources/img-gene-neural-love-api:v1.0
+    container_name: img-gen-ln
+    environment:
+      external.iaimgapi.token: 'v1.412288fb8705ffccfde6dd6c3d88a4cfe2cecf830e09d4e52241cfca2f3128c7'
+    ports:
+      - "8080:8080"
+    restart: always
+    networks:
+      - shared-net
+
+  ollama-local:
+    image: ollama/ollama
+    container_name: ollama-local
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+    restart: always
+    networks:
+      - shared-net
+
+volumes:
+  ollama:
+  postgres_data:
+  activemq_data:
+
+networks:
+  shared-net:
+    driver: bridge
