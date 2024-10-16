@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import { Container, TextField, Checkbox, Button, FormControlLabel } from '@mui/material';
 import Header from '../components/Header';
 
-const CreateUserPage = () => {
+const CreatePage = () => {
   const [formData, setFormData] = useState({
-    firstname: '',
-    lastname: '',
-    password: '',
-    repassword: '',
+    imagePrompt: '',
+    descriptionPrompt: '',
     acceptedTerms: false,
   });
 
@@ -21,44 +19,26 @@ const CreateUserPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('User created:', formData);
+    console.log('Card created:', formData);
   };
 
   return (
     <>
-      <Header title="Create User" subtitle="Register a new account" icon="person_add" />
+      <Header title="Create User" subtitle="Generate a card" icon="person_add" />
       <Container>
         <form onSubmit={handleSubmit}>
           <TextField
-            label="First Name"
-            name="firstname"
-            value={formData.firstname}
+            label="Image Prompt"
+            name="image_prompt"
+            value={formData.imagePrompt}
             onChange={handleChange}
             fullWidth
             margin="normal"
           />
           <TextField
-            label="Last Name"
-            name="lastname"
-            value={formData.lastname}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Re-enter Password"
-            name="repassword"
-            type="password"
-            value={formData.repassword}
+            label="Description Prompt"
+            name="description_prompt"
+            value={formData.descriptionPrompt}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -68,7 +48,7 @@ const CreateUserPage = () => {
             label="I accept the terms and conditions"
           />
           <Button type="submit" variant="contained" color="primary">
-            Create User
+            Generate
           </Button>
         </form>
       </Container>
@@ -76,4 +56,4 @@ const CreateUserPage = () => {
   );
 };
 
-export default CreateUserPage;
+export default CreatePage;

@@ -12,7 +12,7 @@ const BuyPage = () => {
 
   return (
     <>
-      <Header title="Buy Cards" subtitle="Choose your favorite cards" icon="shopping_cart" />
+      <Header title="Buy Cards" subtitle="Buy cards to complete your deck" icon="shopping_cart" />
       <Container>
         <Table>
           <TableHead>
