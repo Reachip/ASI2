@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  # api-card-microservice:
+  #  build:
+  #    context: .
+  #    dockerfile: ./api-card-microservice/Dockerfile
+  #  ports:
+  #    - "8080:8080"
+  #  depends_on:
+  #    - postgres
+  #  networks:
+  #    - atelier3
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres-atelier3
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - atelier3
+
+networks:
+  atelier3:
+    external: true
+
+volumes:
+  postgres_data:
+    driver: local

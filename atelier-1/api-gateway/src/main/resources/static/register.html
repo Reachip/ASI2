@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription | ScoobyCards</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+</head>
+
+<body>
+    <div id="content">
+        <div class="form-register-container">
+            <img class="form-register-logo" src="assets/login.png" alt="Logo ScoobyCards">
+            <h2>Inscription</h2>
+            <form id="form-register" method="POST">
+                <label for="surname">Prénom</label>
+                <input type="text" id="form-register-surname" name="surname" required>
+                <label for="name">Nom</label>
+                <input type="text" id="form-register-name" name="name" required>
+                <label for="email">E-mail</label>
+                <input type="email" id="form-register-email" name="email" required>
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" id="form-register-username" name="username" required>
+                <label for="password">Mot de passe</label>
+                <input type="password" id="form-register-password" name="password" required>
+                <label for="password-confirmation">Confirmation du mot de passe</label>
+                <input type="password" id="form-register-password-confirmation"
+                    name="password-confirmation" required>
+                <span>Déjà un compte ? <a class="no-decoration badge badge-primary badge-small" href="login.html">Se
+                        connecter</a></span>
+                <button type="submit"><i class="fa-solid fa-right-to-bracket"></i> S'inscrire</button>
+            </form>
+            <div id="alerts"></div>
+        </div>
+    </div>
+    <script type="module" src="js/script.js"></script>
+    <script type="module" src="js/register.js"></script>
+</body>
+
+</html>

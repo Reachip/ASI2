@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="css/custom.css">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <title>Accueil | ScoobyCards</title>
+</head>
+
+<body>
+    <div id="content">
+        <h2 class="centered-icon-text"><img id="user-icon" src=""
+                alt="Icone de l'utilisateur" class="user-icon-big"> Bonjour, <span class="identity fw-light"></span>
+        </h2>
+        <div id="alerts"></div>
+        <br>
+        <div class="user-container">
+            <div class="user-left-side">
+                <div class="form-user-container">
+                    <h2>Modifier mes informations</h2>
+                    <form id="form-user-data">
+                        <label for="surname">Prénom</label>
+                        <input type="text" id="form-user-surname" name="surname" required>
+                        <label for="name">Nom</label>
+                        <input type="text" id="form-user-name" name="name" required>
+                        <label for="email">E-mail</label>
+                        <input type="email" id="form-user-email" name="email" required>
+                        <label for="username">Nom d'utilisateur</label>
+                        <input type="text" id="form-user-username" name="username" required>
+                        <button type="submit"><i class="fa-solid fa-check"></i> Valider</button>
+                    </form>
+                </div>
+            </div>
+            <div class="user-right-side">
+                <div class="form-user-container">
+                    <h2>Modifier mon mot de passe</h2>
+                    <form id="form-user-password">
+                        <label for="password-old">Ancien mot de passe</label>
+                        <input type="password" id="form-user-password-old" name="password-old" required>
+                        <label for="password-new">Nouveau mot de passe</label>
+                        <input type="password" id="form-user-password-new" name="password-new" required>
+                        <label for="password-new-confirmation">Confirmation du nouveau mot de passe</label>
+                        <input type="password" id="form-user-password-new-confirmation" name="password-new-confirmation"
+                            required>
+                        <button type="submit"><i class="fa-solid fa-check"></i> Valider</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="js/script.js"></script>
+    <script type="module" src="js/user.js"></script>
+</body>
+
+</html>
