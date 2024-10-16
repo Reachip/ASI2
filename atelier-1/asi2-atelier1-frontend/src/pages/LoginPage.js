@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
-import { Container } from 'semantic-ui-react';
-import Form from '../components/Form';
-import FormField from '../components/FormField';
-import Input from '../components/Input';
-import Button from '../components/Button';
-import Header from '../components/Header'; // Assurez-vous d'importer le Header
+import { Container, TextField, Button } from '@mui/material';
+import Header from '../components/Header';
 
 const LoginPage = () => {
     const [loginDetails, setLoginDetails] = useState({});
@@ -12,7 +8,7 @@ const LoginPage = () => {
     const handleInputChange = (e) => {
         setLoginDetails({
             ...loginDetails,
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.value,
         });
     };
 
@@ -23,18 +19,30 @@ const LoginPage = () => {
 
     return (
         <>
-            <Header title="Login" subtitle="Please enter your credentials" icon="user" />
+            <Header title="Login" subtitle="Please authentificate" icon="user" />
             <Container>
-                <h1>Login</h1>
-                <Form onSubmit={handleSubmit}>
-                    <FormField label="Username">
-                        <Input type="text" name="username" onChange={handleInputChange} />
-                    </FormField>
-                    <FormField label="Password">
-                        <Input type="password" name="password" onChange={handleInputChange} />
-                    </FormField>
-                    <Button label="Login" />
-                </Form>
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        label="Username"
+                        name="username"
+                        value={loginDetails.username || ''}
+                        onChange={handleInputChange}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Password"
+                        name="password"
+                        type="password"
+                        value={loginDetails.password || ''}
+                        onChange={handleInputChange}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <Button type="submit" variant="contained" color="primary">
+                        Login
+                    </Button>
+                </form>
             </Container>
         </>
     );

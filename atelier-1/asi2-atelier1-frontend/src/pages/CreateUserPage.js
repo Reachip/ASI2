@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import { Container } from 'semantic-ui-react';
-import Form from '../components/Form';
-import FormField from '../components/FormField';
-import Input from '../components/Input';
-import Checkbox from '../components/Checkbox';
-import Button from '../components/Button';
+import { Container, TextField, Checkbox, Button, FormControlLabel } from '@mui/material';
 import Header from '../components/Header';
 
 const CreateUserPage = () => {
@@ -16,12 +11,12 @@ const CreateUserPage = () => {
     acceptedTerms: false,
   });
 
-  const handleChange = (e, { name, value }) => {
-    setFormData({ ...formData, [name]: value });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleCheckboxChange = (e, { checked }) => {
-    setFormData({ ...formData, acceptedTerms: checked });
+  const handleCheckboxChange = (e) => {
+    setFormData({ ...formData, acceptedTerms: e.target.checked });
   };
 
   const handleSubmit = (e) => {
@@ -31,50 +26,51 @@ const CreateUserPage = () => {
 
   return (
     <>
-      <Header title="Create User" subtitle="Please fill in the details" icon="user" />
+      <Header title="Create User" subtitle="Register a new account" icon="person_add" />
       <Container>
-        <Form onSubmit={handleSubmit}>
-          <FormField label="First Name">
-            <Input
-              type="text"
-              name="firstname"
-              placeholder="First Name"
-              onChange={handleChange}
-            />
-          </FormField>
-          <FormField label="Last Name">
-            <Input
-              type="text"
-              name="lastname"
-              placeholder="Last Name"
-              onChange={handleChange}
-            />
-          </FormField>
-          <FormField label="Password">
-            <Input
-              type="password"
-              name="password"
-              placeholder="Your Password"
-              onChange={handleChange}
-            />
-          </FormField>
-          <FormField label="Re-Password">
-            <Input
-              type="password"
-              name="repassword"
-              placeholder="Your Password Again"
-              onChange={handleChange}
-            />
-          </FormField>
-          <FormField>
-            <Checkbox
-              label="I accept the terms and conditions"
-              checked={formData.acceptedTerms}
-              onChange={handleCheckboxChange}
-            />
-          </FormField>
-          <Button label="Submit" />
-        </Form>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="First Name"
+            name="firstname"
+            value={formData.firstname}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Last Name"
+            name="lastname"
+            value={formData.lastname}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Re-enter Password"
+            name="repassword"
+            type="password"
+            value={formData.repassword}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+          <FormControlLabel
+            control={<Checkbox checked={formData.acceptedTerms} onChange={handleCheckboxChange} />}
+            label="I accept the terms and conditions"
+          />
+          <Button type="submit" variant="contained" color="primary">
+            Create User
+          </Button>
+        </form>
       </Container>
     </>
   );

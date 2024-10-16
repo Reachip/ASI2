@@ -1,10 +1,10 @@
 import React from 'react';
-import { Button as SUIButton } from 'semantic-ui-react';
+import { Button as MUIButton } from '@mui/material';
 
 const Button = ({ label, onClick, className }) => (
-    <SUIButton className={className} onClick={onClick}>
+    <MUIButton variant="contained" color="primary" onClick={onClick} className={className}>
         {label}
-    </SUIButton>
+    </MUIButton>
 );
 
 export default Button;

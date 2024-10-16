@@ -1,11 +1,11 @@
 import React from 'react';
-import { Form as SUIForm } from 'semantic-ui-react';
+import { Typography } from '@mui/material';
 
 const FormField = ({ label, children }) => (
-    <SUIForm.Field>
-        <label>{label}</label>
+    <div>
+        <Typography variant="body1">{label}</Typography>
         {children}
-    </SUIForm.Field>
+    </div>
 );
 
 export default FormField;
