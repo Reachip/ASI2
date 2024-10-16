@@ -13,11 +13,6 @@ public interface CardRepository extends CrudRepository<Card, Integer> {
     @Query("SELECT count(c) FROM Card c")
     long count();
 
-    @Query("SELECT c FROM Card c WHERE c.store is not null")
-    List<Card> findOnSaleCards();
-
     @Query("SELECT c FROM Card c WHERE c.owner IS NULL")
     List<Card> findNotOwnerCards();
-
-    List<Card> findByStoreId(int storeId);
 }
