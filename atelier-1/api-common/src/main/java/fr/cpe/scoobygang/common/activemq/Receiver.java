@@ -1,5 +1,7 @@
 package fr.cpe.scoobygang.common.activemq;
 
+import jakarta.jms.TextMessage;
+
 public interface Receiver<T extends JsonConvertable> {
-    T receive(String received);
+    void receive(TextMessage received);
 }
