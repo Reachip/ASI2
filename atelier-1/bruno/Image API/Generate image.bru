@@ -1,0 +1,18 @@
+meta {
+  name: Generate image
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8989/fake/prompt/req
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+          "promptTxt":"a cute lama ninja, pixar style",
+          "negativePromptTxt":""
+  }
+}
