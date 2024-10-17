@@ -1,6 +1,5 @@
 package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.controller;
 
-import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model.CardGenerationTransaction;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.service.CardGenerationService;
 import fr.cpe.scoobygang.common.activemq.model.GenerationMessage;
 import org.springframework.beans.factory.annotation.Autowired;

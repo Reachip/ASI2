@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Text extends Content {
+public class PostMessageText extends Content {
     private String result;
 
 }

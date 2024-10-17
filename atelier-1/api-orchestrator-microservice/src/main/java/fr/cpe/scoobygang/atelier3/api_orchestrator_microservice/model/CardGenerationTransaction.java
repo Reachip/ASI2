@@ -1,6 +1,5 @@
 package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model;
 
-import fr.cpe.scoobygang.common.activemq.model.Image;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

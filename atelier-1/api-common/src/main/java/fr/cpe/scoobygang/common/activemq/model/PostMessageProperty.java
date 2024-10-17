@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Property extends Content {
+public class PostMessageProperty extends Content {
     private Float valueToDispatch;
     private int nb_of_colors;
     private Float randPart;

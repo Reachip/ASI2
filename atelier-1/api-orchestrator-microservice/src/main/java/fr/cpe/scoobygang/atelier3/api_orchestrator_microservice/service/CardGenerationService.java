@@ -2,6 +2,7 @@ package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.service;
 
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model.CardGenerationTransaction;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.repository.CardGenerationTransactionRepository;
+import fr.cpe.scoobygang.common.activemq.BusService;
 import fr.cpe.scoobygang.common.activemq.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,23 @@ import java.util.Optional;
 public class CardGenerationService {
     @Autowired
     private CardGenerationTransactionRepository cardGenerationTransactionRepository;
+    @Autowired
+    private BusService busService;
+
+
+    public void createCard(){
+        // Sauvegarde de la création
+
+
+        //busService.sendMessage(, QueuesConstants.QUEUE_GENERATION_IMAGE);
+        //busService.sendMessage(, QueuesConstants.QUEUE_GENERATION_TEXT);
+    }
+
 
     public void postImage(GenerationMessage message) {
         String uidMessage = message.getUuid();
 
-        Image image = (Image) message.getContent();
+        PostMessageImage image = (PostMessageImage) message.getContent();
 
         Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
 
@@ -29,13 +42,15 @@ public class CardGenerationService {
         // Check si le texte n'est pas vide
         if (!cardGenerationTransaction.get().getPrompt().isEmpty()) {
             // Si le text n'est pas vide -> Générer les properties
+
+            //busService.sendMessage(, QueuesConstants.QUEUE_GENERATION_PROPERTY);
         }
     }
 
     public void postText(GenerationMessage message) {
         String uidMessage = message.getUuid();
 
-        Text text = (Text) message.getContent();
+        PostMessageText text = (PostMessageText) message.getContent();
 
         Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
 
@@ -51,13 +66,15 @@ public class CardGenerationService {
         // Check si l'image n'est pas vide
         if (!cardGenerationTransaction.get().getImageURL().isEmpty()) {
             // Si l'image n'est pas vide -> Générer les properties
+
+            //busService.sendMessage(, QueuesConstants.QUEUE_GENERATION_PROPERTY);
         }
     }
 
     public void postProperty(GenerationMessage message) {
         String uidMessage = message.getUuid();
 
-        Property property = (Property) message.getContent();
+        PostMessageProperty property = (PostMessageProperty) message.getContent();
 
         Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
 
@@ -72,6 +89,5 @@ public class CardGenerationService {
         // Mise à jour de la transaction en base
         cardGenerationTransactionRepository.save(cardGenerationTransaction.get());
 
-            // Si l'image n'est pas vide -> Générer les properties
     }
 }
