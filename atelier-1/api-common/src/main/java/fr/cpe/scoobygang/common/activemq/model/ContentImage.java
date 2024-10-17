@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PostMessageText extends Content {
-    private String prompt;
+public class ContentImage extends Content {
+    private String url;
 }
