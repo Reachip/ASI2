@@ -1,36 +1,93 @@
 package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.service;
 
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model.CardGenerationTransaction;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.repository.CardGenerationTransactionRepository;
+import fr.cpe.scoobygang.common.activemq.BusService;
+import fr.cpe.scoobygang.common.activemq.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class CardGenerationService {
     @Autowired
     private CardGenerationTransactionRepository cardGenerationTransactionRepository;
+    @Autowired
+    private BusService busService;
 
-    public void postImage(fr.cpe.scoobygang.common.activemq.model.Image image) {
-        if (cardGenerationTransactionRepository.findByUuid(image.getTransactionUUID()).isEmpty()) {
-            return;
-        }
 
-        if (cardGenerationTransactionRepository.thereIsPrompt()) {
-            // Ne pas générer les properties
-        }
+    public void createCard(){
+        // Sauvegarde de la création
 
-        else {
-            // Générer les properties
-        }
 
+        //busService.sendMessage(, QueuesConstants.QUEUE_GENERATION_IMAGE);
+        //busService.sendMessage(, QueuesConstants.QUEUE_GENERATION_TEXT);
     }
 
-    public void postText(Object text) {
-        if (cardGenerationTransactionRepository.thereIsImageURL()) {
-            // Ne pas générer les properties
-        }
 
-        else {
-            // Générer les properties
+    public void postImage(GenerationMessage message) {
+        String uidMessage = message.getUuid();
+
+        PostMessageImage image = (PostMessageImage) message.getContent();
+
+        Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
+
+        // Vérification que la transaction existe bien
+        if (cardGenerationTransaction.isEmpty()) return;
+
+        // Ajout de l'image à la transaction
+        cardGenerationTransaction.get().setImageURL(image.getUrl());
+
+        // Check si le texte n'est pas vide
+        if (!cardGenerationTransaction.get().getPrompt().isEmpty()) {
+            // Si le text n'est pas vide -> Générer les properties
+
+            //busService.sendMessage(, QueuesConstants.QUEUE_GENERATION_PROPERTY);
         }
+    }
+
+    public void postText(GenerationMessage message) {
+        String uidMessage = message.getUuid();
+
+        PostMessageText text = (PostMessageText) message.getContent();
+
+        Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
+
+        // Vérification que la transaction existe bien
+        if (cardGenerationTransaction.isEmpty()) return;
+
+        // Ajout du texte à la transaction
+        cardGenerationTransaction.get().setPrompt(text.getResult());
+
+        // Mise à jour de la transaction en base
+        cardGenerationTransactionRepository.save(cardGenerationTransaction.get());
+
+        // Check si l'image n'est pas vide
+        if (!cardGenerationTransaction.get().getImageURL().isEmpty()) {
+            // Si l'image n'est pas vide -> Générer les properties
+
+            //busService.sendMessage(, QueuesConstants.QUEUE_GENERATION_PROPERTY);
+        }
+    }
+
+    public void postProperty(GenerationMessage message) {
+        String uidMessage = message.getUuid();
+
+        PostMessageProperty property = (PostMessageProperty) message.getContent();
+
+        Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
+
+        // Vérification que la transaction existe bien
+        if (cardGenerationTransaction.isEmpty()) return;
+
+        // Ajout des properties à la transaction
+        cardGenerationTransaction.get().setRandPart(property.getRandPart());
+        cardGenerationTransaction.get().setNb_of_colors(property.getNb_of_colors());
+        cardGenerationTransaction.get().setValueToDispatch(property.getValueToDispatch());
+
+        // Mise à jour de la transaction en base
+        cardGenerationTransactionRepository.save(cardGenerationTransaction.get());
+
     }
 }

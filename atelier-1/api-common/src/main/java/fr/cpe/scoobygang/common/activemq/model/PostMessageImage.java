@@ -5,7 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Image {
-    private String transactionUUID;
+public class PostMessageImage extends Content {
     private String url;
 }

@@ -1,6 +1,5 @@
 package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model;
 
-import fr.cpe.scoobygang.common.activemq.model.Image;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +19,12 @@ public class CardGenerationTransaction {
     private String imageURL;
 
     private String prompt;
+
+    private Float valueToDispatch;
+
+    private int nb_of_colors;
+
+    private Float randPart;
 
     public CardGenerationTransaction(String uuid) {
         this.uuid = uuid;
