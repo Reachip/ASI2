@@ -9,8 +9,18 @@ public class CardGenerationService {
     @Autowired
     private CardGenerationTransactionRepository cardGenerationTransactionRepository;
 
-    public void postImage(fr.cpe.scoobygang.common.activemq.model.Image image) {
-        if (cardGenerationTransactionRepository.findByUuid(image.getTransactionUUID()).isEmpty()) {
+    public void postText(Object text) {
+        if (cardGenerationTransactionRepository.thereIsImageURL()) {
+            // Ne pas générer les properties
+        }
+
+        else {
+            // Générer les properties
+        }
+    }
+
+    public void postImage(fr.cpe.scoobygang.common.activemq.model.GenerationMessage message) {
+        if (cardGenerationTransactionRepository.findByUuid(null).isEmpty()) {
             return;
         }
 
@@ -22,15 +32,5 @@ public class CardGenerationService {
             // Générer les properties
         }
 
-    }
-
-    public void postText(Object text) {
-        if (cardGenerationTransactionRepository.thereIsImageURL()) {
-            // Ne pas générer les properties
-        }
-
-        else {
-            // Générer les properties
-        }
     }
 }
