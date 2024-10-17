@@ -58,7 +58,7 @@ public class CardGenerationService {
         if (cardGenerationTransaction.isEmpty()) return;
 
         // Ajout du texte à la transaction
-        cardGenerationTransaction.get().setPrompt(text.getResult());
+        // cardGenerationTransaction.get().setPrompt(text.getResult());
 
         // Mise à jour de la transaction en base
         cardGenerationTransactionRepository.save(cardGenerationTransaction.get());
@@ -83,7 +83,7 @@ public class CardGenerationService {
 
         // Ajout des properties à la transaction
         cardGenerationTransaction.get().setRandPart(property.getRandPart());
-        cardGenerationTransaction.get().setNb_of_colors(property.getNb_of_colors());
+        // cardGenerationTransaction.get().setNb_of_colors(property.getNb_of_colors());
         cardGenerationTransaction.get().setValueToDispatch(property.getValueToDispatch());
 
         // Mise à jour de la transaction en base

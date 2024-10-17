@@ -9,20 +9,13 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class ImageGenerationService {
-
-    private final WebClient webClient;
-
     @Value("${api.image.url}")
     private String apiUrl;
 
-    public ImageGenerationService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl(apiUrl).build();
-    }
-
     public Mono<String> generateImage(String promptTxt, String negativePromptTxt) {
-        ImageRequest request = new ImageRequest(promptTxt, negativePromptTxt);
+        final ImageRequest request = new ImageRequest(promptTxt, negativePromptTxt);
 
-        WebClient webClient = WebClient.builder()
+        final WebClient webClient = WebClient.builder()
                 .baseUrl(apiUrl)
                 .build();
 
