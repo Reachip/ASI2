@@ -7,7 +7,6 @@ import java.util.Map;
 
 @Service
 public class PropertyGenerationService {
-
    public void createProperty(String urlImg){
        Map<String, Float> result = ImgToProperties.getPropertiesFromImg(urlImg, 100f, 4,0.3f,true);
    }

@@ -1,4 +1,4 @@
-package fr.cpe.scoobygang.atelier3.api_generation_text_microservice.receiver;
+package fr.cpe.scoobygang.atelier3.api_generation_property_microservice.receiver;
 
 import fr.cpe.scoobygang.atelier3.api_generation_property_microservice.service.PropertyGenerationService;
 import fr.cpe.scoobygang.common.activemq.QueuesConstants;
@@ -16,8 +16,7 @@ public class PropertyGenerationReceiver implements Receiver<GenerationMessage> {
     @Override
     public void receive(TextMessage received) {
         System.out.println(received.toString());
-
-        propertyGenerationService.createProperty(message);
+        // propertyGenerationService.createProperty(message);
     }
 
     @JmsListener(destination = QueuesConstants.QUEUE_GENERATION_PROPERTY, containerFactory = "queueConnectionFactory")
