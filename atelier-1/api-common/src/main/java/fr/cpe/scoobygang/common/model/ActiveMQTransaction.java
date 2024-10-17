@@ -21,6 +21,7 @@ public class ActiveMQTransaction {
 
     private String uuid;
 
+
     public ActiveMQTransaction(String uuid) {
         this.uuid = uuid;
     }

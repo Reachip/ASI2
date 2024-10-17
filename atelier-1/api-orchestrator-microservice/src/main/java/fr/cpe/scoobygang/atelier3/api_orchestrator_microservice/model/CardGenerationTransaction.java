@@ -21,6 +21,12 @@ public class CardGenerationTransaction {
 
     private String prompt;
 
+    private Float valueToDispatch;
+
+    private int nb_of_colors;
+
+    private Float randPart;
+
     public CardGenerationTransaction(String uuid) {
         this.uuid = uuid;
     }

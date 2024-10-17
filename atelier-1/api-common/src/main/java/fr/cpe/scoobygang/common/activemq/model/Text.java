@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class Text extends Content {
     private String result;
+
 }
