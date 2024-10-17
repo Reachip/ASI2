@@ -29,7 +29,7 @@ public class CardGenerationService {
     public void postImage(GenerationMessage message) {
         String uidMessage = message.getUuid();
 
-        PostMessageImage image = (PostMessageImage) message.getContent();
+        ContentImage image = (ContentImage) message.getContent();
 
         Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
 
@@ -50,7 +50,7 @@ public class CardGenerationService {
     public void postText(GenerationMessage message) {
         String uidMessage = message.getUuid();
 
-        PostMessageText text = (PostMessageText) message.getContent();
+        ContentText text = (ContentText) message.getContent();
 
         Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
 
@@ -74,7 +74,7 @@ public class CardGenerationService {
     public void postProperty(GenerationMessage message) {
         String uidMessage = message.getUuid();
 
-        PostMessageProperty property = (PostMessageProperty) message.getContent();
+        ContentProperty property = (ContentProperty) message.getContent();
 
         Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
 
