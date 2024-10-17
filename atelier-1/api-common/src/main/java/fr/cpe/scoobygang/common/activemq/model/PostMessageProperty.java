@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class PostMessageProperty extends Content {
     private Float valueToDispatch;
-    private int nb_of_colors;
+    private int nbOfColors;
     private Float randPart;
 }
