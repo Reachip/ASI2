@@ -2,9 +2,9 @@ package fr.cpe.scoobygang.common.activemq.model;
 
 import fr.cpe.scoobygang.common.activemq.JsonConvertable;
 
-public class PropertyDemandActiveMQ implements JsonConvertable {
+public class ImageDemandActiveMQ implements JsonConvertable {
     private String uuid;
-    private String url;
+    private String prompt;
 
     @Override
     public String toJson() {
