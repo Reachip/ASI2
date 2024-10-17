@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Image extends Content {
-    private String url;
+public class Text extends Content {
+    private String result;
 }
