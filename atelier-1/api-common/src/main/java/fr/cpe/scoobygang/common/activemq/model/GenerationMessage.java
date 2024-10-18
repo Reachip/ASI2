@@ -10,9 +10,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GenerationMessage implements JsonConvertable {
+public class GenerationMessage<T> implements JsonConvertable {
     private String uuid;
-    private Content content;
+    private T content;
 
     @Override
     public String toJson() {

@@ -1,5 +1,7 @@
 package fr.cpe.scoobygang.common.http.client;
 
+import fr.cpe.scoobygang.common.activemq.model.CardProperties;
+import fr.cpe.scoobygang.common.activemq.model.ContentImage;
 import fr.cpe.scoobygang.common.activemq.model.GenerationMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -13,7 +15,7 @@ public class OrchestratorClient {
     @Value("${api.orchestrator.url}")
     private String apiUrl;
 
-    public Mono<Void> postImage(GenerationMessage generationMessage) {
+    public Mono<Void> postImage(GenerationMessage<ContentImage> generationMessage) {
         final WebClient webClient = WebClient.builder()
                 .baseUrl(apiUrl)
                 .build();
@@ -38,15 +40,15 @@ public class OrchestratorClient {
                 .bodyToMono(Void.class);
     }
 
-    public Mono<Void> postProperty(GenerationMessage generationMessage) {
+    public Mono<Void> postProperty(String uuid, CardProperties cardProperties) {
         final WebClient webClient = WebClient.builder()
                 .baseUrl(apiUrl)
                 .build();
 
         return webClient.post()
-                .uri("/property")
+                .uri("/card/transaction/property")
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(generationMessage))
+                .body(BodyInserters.fromValue(new GenerationMessage<>(uuid, cardProperties)))
                 .retrieve()
                 .bodyToMono(Void.class);
     }

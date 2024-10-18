@@ -1,13 +1,12 @@
 package fr.cpe.scoobygang.atelier3.api_generation_property_microservice.service;
 
+import fr.cpe.scoobygang.common.activemq.model.CardProperties;
 import org.springframework.stereotype.Service;
 import tp.cpe.ImgToProperties;
 
-import java.util.Map;
-
 @Service
 public class PropertyGenerationService {
-    public void createProperty(String urlImg) {
-        Map<String, Float> result = ImgToProperties.getPropertiesFromImg(urlImg, 100f, 4, 0.3f, true);
+    public CardProperties createProperty(String urlImg) {
+        return CardProperties.from(ImgToProperties.getPropertiesFromImg(urlImg, 100f, 4, 0.3f, false));
     }
 }

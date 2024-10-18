@@ -8,11 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Content implements JsonConvertable {
-    private String value;
-
     @Override
     public String toJson() {
         return null;

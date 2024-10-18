@@ -3,9 +3,7 @@ package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.service;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model.CardGenerationTransaction;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.repository.CardGenerationTransactionRepository;
 import fr.cpe.scoobygang.common.activemq.BusService;
-import fr.cpe.scoobygang.common.activemq.model.ContentProperty;
-import fr.cpe.scoobygang.common.activemq.model.ContentText;
-import fr.cpe.scoobygang.common.activemq.model.GenerationMessage;
+import fr.cpe.scoobygang.common.activemq.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +27,7 @@ public class CardGenerationService {
     }
 
 
-    public void postImage(GenerationMessage message) {
+    public void postImage(GenerationMessage<ContentImage> message) {
         String uidMessage = message.getUuid();
 
         Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
@@ -38,7 +36,7 @@ public class CardGenerationService {
         if (cardGenerationTransaction.isEmpty()) return;
 
         // Ajout de l'image à la transaction
-        cardGenerationTransaction.get().setImageURL(message.getContent().getValue());
+        cardGenerationTransaction.get().setImageURL(message.getContent().getUrl());
 
         // Check si le texte n'est pas vide
         if (!cardGenerationTransaction.get().getPrompt().isEmpty()) {
@@ -72,10 +70,9 @@ public class CardGenerationService {
         }
     }
 
-    public void postProperty(GenerationMessage message) {
+    public void postProperty(GenerationMessage<CardProperties> message) {
         String uidMessage = message.getUuid();
-
-        ContentProperty property = (ContentProperty) message.getContent();
+        CardProperties property = message.getContent();
 
         Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
 
@@ -83,9 +80,9 @@ public class CardGenerationService {
         if (cardGenerationTransaction.isEmpty()) return;
 
         // Ajout des properties à la transaction
-        cardGenerationTransaction.get().setRandPart(property.getRandPart());
+        // cardGenerationTransaction.get().setRandPart(property.getRandPart());
         // cardGenerationTransaction.get().setNb_of_colors(property.getNb_of_colors());
-        cardGenerationTransaction.get().setValueToDispatch(property.getValueToDispatch());
+        // cardGenerationTransaction.get().setValueToDispatch(property.getValueToDispatch());
 
         // Mise à jour de la transaction en base
         cardGenerationTransactionRepository.save(cardGenerationTransaction.get());

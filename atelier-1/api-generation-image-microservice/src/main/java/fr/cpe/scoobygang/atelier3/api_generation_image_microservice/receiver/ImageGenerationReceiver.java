@@ -6,6 +6,7 @@ import fr.cpe.scoobygang.atelier3.api_generation_image_microservice.service.Imag
 import fr.cpe.scoobygang.common.activemq.QueuesConstants;
 import fr.cpe.scoobygang.common.activemq.Receiver;
 import fr.cpe.scoobygang.common.activemq.model.Content;
+import fr.cpe.scoobygang.common.activemq.model.ContentImage;
 import fr.cpe.scoobygang.common.activemq.model.GenerationMessage;
 import fr.cpe.scoobygang.common.activemq.model.ImageDemandActiveMQ;
 import fr.cpe.scoobygang.common.http.client.OrchestratorClient;
@@ -16,7 +17,7 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ImageGenerationReceiver implements Receiver<GenerationMessage> {
+public class ImageGenerationReceiver implements Receiver {
     @Autowired
     private ImageGenerationService imageGenerationService;
 
@@ -32,7 +33,7 @@ public class ImageGenerationReceiver implements Receiver<GenerationMessage> {
         final ImageDemandActiveMQ imageDemandActiveMQ = (ImageDemandActiveMQ) objectMapper.readValue(received.getText(), Class.forName(clazz));
 
         final String url = imageGenerationService.generateImage(imageDemandActiveMQ.getUuid(), imageDemandActiveMQ.getPrompt()).block();
-        orchestratorClient.postImage(new GenerationMessage(imageDemandActiveMQ.getUuid(), new Content(url))).block();
+        orchestratorClient.postImage(new GenerationMessage<>(imageDemandActiveMQ.getUuid(), new ContentImage(url))).block();
     }
 
     @JmsListener(destination = QueuesConstants.QUEUE_GENERATION_IMAGE, containerFactory = "queueConnectionFactory")
