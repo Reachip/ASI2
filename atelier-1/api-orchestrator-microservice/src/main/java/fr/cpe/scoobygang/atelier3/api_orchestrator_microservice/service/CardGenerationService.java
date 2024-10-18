@@ -46,10 +46,10 @@ public class CardGenerationService {
         }
     }
 
-    public void postText(GenerationMessage message) {
+    public void postText(GenerationMessage<ContentText> message) {
         String uidMessage = message.getUuid();
 
-        ContentText text = (ContentText) message.getContent();
+        ContentText text = message.getContent();
 
         Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
 

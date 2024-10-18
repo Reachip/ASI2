@@ -2,6 +2,7 @@ package fr.cpe.scoobygang.atelier3.api_generation_image_microservice.service;
 
 
 import fr.cpe.scoobygang.common.dto.request.ImageRequest;
+import fr.cpe.scoobygang.common.dto.request.ImageResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,6 +13,9 @@ public class ImageGenerationService {
     @Value("${api.image.url}")
     private String apiUrl;
 
+    @Value("${api.image.fake:true}")
+    private boolean imageFakeGeneration;
+
     public Mono<String> generateImage(String promptTxt, String negativePromptTxt) {
         final ImageRequest request = new ImageRequest(promptTxt, negativePromptTxt);
 
@@ -20,10 +24,10 @@ public class ImageGenerationService {
                 .build();
 
         return webClient.post()
-                .uri("/fake/prompt/req")
+                .uri(imageFakeGeneration ? "/fake/prompt/req" : "/prompt/req")
                 .body(Mono.just(request), ImageRequest.class)
                 .retrieve()
-                .bodyToMono(String.class)
-                .map(response -> apiUrl + "/imgs/default-2.jpg");
+                .bodyToMono(ImageResponse.class)
+                .map(response -> apiUrl + response.getUrl());
     }
 }
