@@ -20,7 +20,7 @@ public class BusService {
 
         jmsTemplate.send(busName, s -> {
             try {
-                TextMessage msg = s.createTextMessage(jsonConvertable.toJson());
+                TextMessage msg = s.createTextMessage(objectMapper.writeValueAsString(jsonConvertable));
 
                 msg.setStringProperty("Content-Type", "application/json");
                 msg.setStringProperty("ObjectType", jsonConvertable.getClass().getCanonicalName());
