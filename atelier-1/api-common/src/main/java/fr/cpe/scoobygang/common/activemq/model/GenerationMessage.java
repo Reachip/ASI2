@@ -1,21 +1,17 @@
 package fr.cpe.scoobygang.common.activemq.model;
 
-import fr.cpe.scoobygang.common.activemq.JsonConvertable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GenerationMessage<T> implements JsonConvertable {
+public class GenerationMessage<T> implements Serializable {
     private String uuid;
     private T content;
-
-    @Override
-    public String toJson() {
-        return "";
-    }
 }

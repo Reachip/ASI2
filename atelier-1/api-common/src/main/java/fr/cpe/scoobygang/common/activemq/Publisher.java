@@ -1,5 +1,7 @@
 package fr.cpe.scoobygang.common.activemq;
 
-public interface Publisher<T extends JsonConvertable> {
+import java.io.Serializable;
+
+public interface Publisher<T extends Serializable> {
     void send(T toSend);
 }

@@ -1,13 +1,8 @@
 package fr.cpe.scoobygang.common.activemq.model;
 
-import fr.cpe.scoobygang.common.activemq.JsonConvertable;
+import java.io.Serializable;
 
-public class TextDemandActiveMQ implements JsonConvertable {
+public class TextDemandActiveMQ implements Serializable {
     private String uuid;
     private String prompt;
-
-    @Override
-    public String toJson() {
-        return this.toJson();
-    }
 }

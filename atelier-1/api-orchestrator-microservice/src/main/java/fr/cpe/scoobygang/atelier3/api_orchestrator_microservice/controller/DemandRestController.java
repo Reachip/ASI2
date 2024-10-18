@@ -20,13 +20,13 @@ public class DemandRestController {
 
     @PostMapping("/image")
     public ResponseEntity<Void> imageDemand() {
-        busService.sendMessage(new ImageDemandActiveMQ(UUID.randomUUID().toString(), "A beautiful cat"), QueuesConstants.QUEUE_GENERATION_IMAGE);
+        busService.send(new ImageDemandActiveMQ(UUID.randomUUID().toString(), "A beautiful cat"), QueuesConstants.QUEUE_GENERATION_IMAGE);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/properties")
     public ResponseEntity<Void> propertiesDemand() {
-        busService.sendMessage(new PropertyDemandActiveMQ(UUID.randomUUID().toString(), "http://localhost:8989/imgs/default-2.jpg"), QueuesConstants.QUEUE_GENERATION_PROPERTY);
+        busService.send(new PropertyDemandActiveMQ(UUID.randomUUID().toString(), "http://localhost:8989/imgs/default-2.jpg"), QueuesConstants.QUEUE_GENERATION_PROPERTY);
         return ResponseEntity.ok().build();
     }
 }

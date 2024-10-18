@@ -6,16 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.jms.core.JmsTemplate;
 
+import java.io.Serializable;
+
 
 @Service
-public class BusService {
+public class BusService implements BusSender {
     @Autowired
     private JmsTemplate jmsTemplate;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    public void sendMessage(JsonConvertable jsonConvertable, String busName) {
+    @Override
+    public void send(Serializable jsonConvertable, String busName) {
         System.out.println("[BUSSERVICE] SEND String MSG=["+ jsonConvertable +"] to Bus=["+busName+"]");
 
         jmsTemplate.send(busName, s -> {
