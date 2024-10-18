@@ -10,6 +10,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
@@ -36,8 +37,12 @@ public final class WebSocketHandler extends TextWebSocketHandler {
         logger.info("Récéption d'un message : " + message.getPayload());
     }
 
-    public void broadcastMessage(final WSMessage message) {
+    public void broadcastMessage(final WSMessage message) throws IOException {
         // TODO: Appeler cette méthode quand on a la réponse
         //  de l'orchestrateur qui nous signal via requête POST que tout est terminé ...
+
+        //        for (WebSocketSession session : sessions) {
+        //                session.sendMessage(new TextMessage("du JSON sous forme de string ..."));
+        //        }
     }
 }
