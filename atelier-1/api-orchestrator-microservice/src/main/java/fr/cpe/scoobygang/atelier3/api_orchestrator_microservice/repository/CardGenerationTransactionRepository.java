@@ -3,9 +3,11 @@ package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.repository;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model.CardGenerationTransaction;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
 public interface CardGenerationTransactionRepository extends CrudRepository<CardGenerationTransaction, Integer> {
     Optional<CardGenerationTransaction> findByUuid(String uuid);
     Optional<CardGenerationTransaction> findByImageURL(String url);

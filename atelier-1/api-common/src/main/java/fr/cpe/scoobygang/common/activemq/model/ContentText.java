@@ -7,4 +7,8 @@ import lombok.Setter;
 @Setter
 public class ContentText extends Content {
     private String prompt;
+
+    public ContentText(String value) {
+        super(value);
+    }
 }

@@ -3,7 +3,9 @@ package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.service;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model.CardGenerationTransaction;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.repository.CardGenerationTransactionRepository;
 import fr.cpe.scoobygang.common.activemq.BusService;
-import fr.cpe.scoobygang.common.activemq.model.*;
+import fr.cpe.scoobygang.common.activemq.model.ContentProperty;
+import fr.cpe.scoobygang.common.activemq.model.ContentText;
+import fr.cpe.scoobygang.common.activemq.model.GenerationMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import java.util.Optional;
 public class CardGenerationService {
     @Autowired
     private CardGenerationTransactionRepository cardGenerationTransactionRepository;
+
     @Autowired
     private BusService busService;
 
@@ -29,15 +32,13 @@ public class CardGenerationService {
     public void postImage(GenerationMessage message) {
         String uidMessage = message.getUuid();
 
-        ContentImage image = (ContentImage) message.getContent();
-
         Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
 
         // Vérification que la transaction existe bien
         if (cardGenerationTransaction.isEmpty()) return;
 
         // Ajout de l'image à la transaction
-        cardGenerationTransaction.get().setImageURL(image.getUrl());
+        cardGenerationTransaction.get().setImageURL(message.getContent().getValue());
 
         // Check si le texte n'est pas vide
         if (!cardGenerationTransaction.get().getPrompt().isEmpty()) {

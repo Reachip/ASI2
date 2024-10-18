@@ -1,12 +1,15 @@
 package fr.cpe.scoobygang.atelier3.api_generation_image_microservice.receiver;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.cpe.scoobygang.atelier3.api_generation_image_microservice.service.ImageGenerationService;
 import fr.cpe.scoobygang.common.activemq.QueuesConstants;
 import fr.cpe.scoobygang.common.activemq.Receiver;
-import fr.cpe.scoobygang.common.activemq.model.ContentImage;
+import fr.cpe.scoobygang.common.activemq.model.Content;
 import fr.cpe.scoobygang.common.activemq.model.GenerationMessage;
 import fr.cpe.scoobygang.common.activemq.model.ImageDemandActiveMQ;
 import fr.cpe.scoobygang.common.http.client.OrchestratorClient;
+import jakarta.jms.JMSException;
 import jakarta.jms.TextMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
@@ -20,18 +23,20 @@ public class ImageGenerationReceiver implements Receiver<GenerationMessage> {
     @Autowired
     private OrchestratorClient orchestratorClient;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Override
-    public void receive(TextMessage received) {
-        final String uuid = "123e4567-e89b-12d3-a456-426614174000";
-        final ImageDemandActiveMQ imageDemandActiveMQ = new ImageDemandActiveMQ(uuid, "a beautiful cat on a plane");
+    public void receive(TextMessage received) throws JMSException, ClassNotFoundException, JsonProcessingException {
+        final String clazz = received.getStringProperty("ObjectType");
+        final ImageDemandActiveMQ imageDemandActiveMQ = (ImageDemandActiveMQ) objectMapper.readValue(received.getText(), Class.forName(clazz));
 
         final String url = imageGenerationService.generateImage(imageDemandActiveMQ.getUuid(), imageDemandActiveMQ.getPrompt()).block();
-
-        orchestratorClient.postImage(new GenerationMessage(uuid, new ContentImage(url)));
+        orchestratorClient.postImage(new GenerationMessage(imageDemandActiveMQ.getUuid(), new Content(url))).block();
     }
 
     @JmsListener(destination = QueuesConstants.QUEUE_GENERATION_IMAGE, containerFactory = "queueConnectionFactory")
-    public void receiveMessageResult(TextMessage message) {
+    public void receiveMessageResult(TextMessage message) throws JMSException, ClassNotFoundException, JsonProcessingException {
         receive(message);
     }
 }

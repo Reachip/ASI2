@@ -19,9 +19,8 @@ public class OrchestratorClient {
                 .build();
 
         return webClient.post()
-                .uri("/image")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(generationMessage))
+                .uri("/card/transaction/image")
+                .body(Mono.just(generationMessage), GenerationMessage.class)
                 .retrieve()
                 .bodyToMono(Void.class);
     }
@@ -32,7 +31,7 @@ public class OrchestratorClient {
                 .build();
 
         return webClient.post()
-                .uri("/prompt")
+                .uri("/card/transaction/prompt")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(generationMessage))
                 .retrieve()

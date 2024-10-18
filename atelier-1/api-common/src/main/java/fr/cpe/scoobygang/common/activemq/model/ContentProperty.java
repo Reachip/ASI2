@@ -9,4 +9,8 @@ public class ContentProperty extends Content {
     private Float valueToDispatch;
     private int nbOfColors;
     private Float randPart;
+
+    public ContentProperty(String value) {
+        super(value);
+    }
 }

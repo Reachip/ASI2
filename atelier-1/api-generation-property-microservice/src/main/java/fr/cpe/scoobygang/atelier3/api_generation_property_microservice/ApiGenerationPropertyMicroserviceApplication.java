@@ -11,12 +11,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableDiscoveryClient
 @EnableJpaRepositories(basePackages = "fr.cpe.scoobygang.common.repository")
 @ComponentScan(basePackages = {
-		"fr.cpe.scoobygang.common.*"
+        "fr.cpe.scoobygang.common.*"
 })
 @EntityScan("fr.cpe.scoobygang.common.model")
 public class ApiGenerationPropertyMicroserviceApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(ApiGenerationPropertyMicroserviceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ApiGenerationPropertyMicroserviceApplication.class, args);
+    }
 
 }

@@ -1,6 +1,7 @@
 ## Installer colorToproperties-1.1.2
 
 Usage de la Librairie pour évaluer les attributs
+
 - Récupérer le jar depuis les ressources mises à disposition
 - Installer en local en tant que package maven sur votre machine the jar en question
 

@@ -23,9 +23,11 @@ public class ApiGatewayApplication {
 
 	@Bean
 	public RouteLocator routeLocator(RouteLocatorBuilder builder) {
+		// .route("card-route", r -> r.path("/card/**").uri("lb://api-card-microservice"))
+
 		return builder
 				.routes()
-				.route("card-route", r -> r.path("/card/**").uri("lb://api-card-microservice"))
+				.route("orchestrator-route", r -> r.path("/orchestrator/**").uri("lb://api-orchestrator-microservice"))
 				.build();
 	}
 
