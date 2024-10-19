@@ -1,9 +1,10 @@
 package fr.cpe.scoobygang.common.activemq;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.jms.JMSException;
 import jakarta.jms.TextMessage;
 
+import java.io.IOException;
+
 public interface Receiver {
-    void receive(TextMessage received) throws JMSException, ClassNotFoundException, JsonProcessingException;
+    void receive(TextMessage received) throws JMSException, ClassNotFoundException, IOException;
 }

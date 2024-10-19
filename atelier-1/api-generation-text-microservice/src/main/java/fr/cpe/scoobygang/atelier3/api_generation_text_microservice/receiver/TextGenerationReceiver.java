@@ -9,13 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class TextGenerationReceiver implements Receiver {
     @Override
+    @JmsListener(destination = QueuesConstants.QUEUE_GENERATION_TEXT, containerFactory = "queueConnectionFactory")
     public void receive(TextMessage received) {
         System.out.println(received.toString());
     }
-
-    @JmsListener(destination = QueuesConstants.QUEUE_GENERATION_TEXT, containerFactory = "queueConnectionFactory")
-    public void receiveMessageResult(TextMessage message) {
-        receive(message);
-    }
-
 }
