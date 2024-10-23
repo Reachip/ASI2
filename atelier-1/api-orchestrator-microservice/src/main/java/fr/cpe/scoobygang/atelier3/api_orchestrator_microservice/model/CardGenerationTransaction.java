@@ -12,6 +12,7 @@ import lombok.Setter;
 @Table(name = "card_generation_transaction")
 public class CardGenerationTransaction {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String uuid;
@@ -20,11 +21,13 @@ public class CardGenerationTransaction {
 
     private String prompt;
 
-    private Float valueToDispatch;
+    private float defense;
 
-    private int nb_of_colors;
+    private float energy;
 
-    private Float randPart;
+    private float hp;
+
+    private float attack;
 
     public CardGenerationTransaction(String uuid) {
         this.uuid = uuid;

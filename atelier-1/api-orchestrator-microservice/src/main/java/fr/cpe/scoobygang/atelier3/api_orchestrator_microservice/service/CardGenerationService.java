@@ -1,9 +1,9 @@
 package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.service;
 
-import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model.CardGenerationTransaction;
-import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.repository.CardGenerationTransactionRepository;
-import fr.cpe.scoobygang.common.activemq.BusService;
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.publisher.OrchestratorPublisher;
 import fr.cpe.scoobygang.common.activemq.model.*;
+import fr.cpe.scoobygang.common.model.ActiveMQTransaction;
+import fr.cpe.scoobygang.common.repository.ActiveMQTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,80 +12,91 @@ import java.util.Optional;
 @Service
 public class CardGenerationService {
     @Autowired
-    private CardGenerationTransactionRepository cardGenerationTransactionRepository;
-
+    private ActiveMQTransactionRepository activeMQTransactionRepository;
     @Autowired
-    private BusService busService;
+    private OrchestratorPublisher orchestratorPublisher;
 
+    public void createCard(String uuid, String promptImage, String promptText){
+        // Publication des demandes de création
+        ImageDemandActiveMQ imageDemandActiveMQ = new ImageDemandActiveMQ(uuid,promptImage);
+        orchestratorPublisher.sendToImageMS(imageDemandActiveMQ);
 
-    public void createCard(){
-        // Sauvegarde de la création
-
-
-        //busService.sendMessage(, QueuesConstants.QUEUE_GENERATION_IMAGE);
-        //busService.sendMessage(, QueuesConstants.QUEUE_GENERATION_TEXT);
+        TextDemandActiveMQ textDemandActiveMQ = new TextDemandActiveMQ(uuid,promptText);
+        orchestratorPublisher.sendToTextMS(textDemandActiveMQ);
     }
 
 
     public void postImage(GenerationMessage<ContentImage> message) {
-        String uidMessage = message.getUuid();
+        String uuid = message.getUuid();
 
-        Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
+        Optional<ActiveMQTransaction> activeMQTransactionOptional = activeMQTransactionRepository.findByUuid(uuid);
 
         // Vérification que la transaction existe bien
-        if (cardGenerationTransaction.isEmpty()) return;
+        if (activeMQTransactionOptional.isEmpty()) return;
+        ActiveMQTransaction activeMQTransaction = activeMQTransactionOptional.get();
 
         // Ajout de l'image à la transaction
-        cardGenerationTransaction.get().setImageURL(message.getContent().getUrl());
+        String urlImage = message.getContent().getUrl();
+        activeMQTransaction.setImageURL(urlImage);
+
+        // Mise à jour de la transaction en base
+        activeMQTransactionRepository.save(activeMQTransaction);
 
         // Check si le texte n'est pas vide
-        if (!cardGenerationTransaction.get().getPrompt().isEmpty()) {
+        if (activeMQTransaction.getPrompt()!=null) {
             // Si le text n'est pas vide -> Générer les properties
 
-            //busService.sendMessage(, QueuesConstants.QUEUE_GENERATION_PROPERTY);
+            PropertyDemandActiveMQ propertyDemandActiveMQ = new PropertyDemandActiveMQ(uuid,urlImage);
+            orchestratorPublisher.sendToPropertyMS(propertyDemandActiveMQ);
         }
     }
 
     public void postText(GenerationMessage<ContentText> message) {
-        String uidMessage = message.getUuid();
+        String uuid = message.getUuid();
 
-        ContentText text = message.getContent();
+        ContentText contentText = message.getContent();
 
-        Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
+        Optional<ActiveMQTransaction> activeMQTransactionOptional = activeMQTransactionRepository.findByUuid(uuid);
 
         // Vérification que la transaction existe bien
-        if (cardGenerationTransaction.isEmpty()) return;
+        if (activeMQTransactionOptional.isEmpty()) return;
+        ActiveMQTransaction activeMQTransaction = activeMQTransactionOptional.get();
 
         // Ajout du texte à la transaction
-        // cardGenerationTransaction.get().setPrompt(text.getResult());
+        activeMQTransaction.setPrompt(contentText.getPrompt());
 
         // Mise à jour de la transaction en base
-        cardGenerationTransactionRepository.save(cardGenerationTransaction.get());
+        activeMQTransactionRepository.save(activeMQTransaction);
 
         // Check si l'image n'est pas vide
-        if (!cardGenerationTransaction.get().getImageURL().isEmpty()) {
+        if (activeMQTransaction.getImageURL() != null) {
             // Si l'image n'est pas vide -> Générer les properties
 
-            //busService.sendMessage(, QueuesConstants.QUEUE_GENERATION_PROPERTY);
+            PropertyDemandActiveMQ propertyDemandActiveMQ = new PropertyDemandActiveMQ(uuid,activeMQTransaction.getImageURL());
+            orchestratorPublisher.sendToPropertyMS(propertyDemandActiveMQ);
         }
     }
 
     public void postProperty(GenerationMessage<CardProperties> message) {
-        String uidMessage = message.getUuid();
-        CardProperties property = message.getContent();
+        String uuid = message.getUuid();
+        CardProperties cardProperties = message.getContent();
 
-        Optional<CardGenerationTransaction> cardGenerationTransaction = cardGenerationTransactionRepository.findByUuid(uidMessage);
+        Optional<ActiveMQTransaction> activeMQTransactionOptional = activeMQTransactionRepository.findByUuid(uuid);
 
         // Vérification que la transaction existe bien
-        if (cardGenerationTransaction.isEmpty()) return;
+        if (activeMQTransactionOptional.isEmpty()) return;
+        ActiveMQTransaction activeMQTransaction = activeMQTransactionOptional.get();
 
         // Ajout des properties à la transaction
-        // cardGenerationTransaction.get().setRandPart(property.getRandPart());
-        // cardGenerationTransaction.get().setNb_of_colors(property.getNb_of_colors());
-        // cardGenerationTransaction.get().setValueToDispatch(property.getValueToDispatch());
+        activeMQTransaction.setHp(cardProperties.getHp());
+        activeMQTransaction.setAttack(cardProperties.getAttack());
+        activeMQTransaction.setDefense(cardProperties.getDefense());
+        activeMQTransaction.setEnergy(cardProperties.getEnergy());
 
         // Mise à jour de la transaction en base
-        cardGenerationTransactionRepository.save(cardGenerationTransaction.get());
+        activeMQTransactionRepository.save(activeMQTransaction);
 
+        // Informe l'app que la carte à été créée
+        orchestratorPublisher.sendToNotify(new NotifyDemandActiveMQ(uuid));
     }
 }

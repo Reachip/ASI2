@@ -1,8 +1,6 @@
 package fr.cpe.scoobygang.common.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,10 +15,22 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ActiveMQTransaction {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String uuid;
 
+    private String imageURL;
+
+    private String prompt;
+
+    private float defense;
+
+    private float energy;
+
+    private float hp;
+
+    private float attack;
 
     public ActiveMQTransaction(String uuid) {
         this.uuid = uuid;

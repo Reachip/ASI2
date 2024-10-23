@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TextDemandActiveMQ implements Serializable {
+public class NotifyDemandActiveMQ implements Serializable{
     private String uuid;
-    private String prompt;
+
 }

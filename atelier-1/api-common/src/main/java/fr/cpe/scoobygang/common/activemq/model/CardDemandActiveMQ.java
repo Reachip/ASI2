@@ -11,7 +11,8 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TextDemandActiveMQ implements Serializable {
+public class CardDemandActiveMQ implements Serializable{
     private String uuid;
-    private String prompt;
+    private String promptImage;
+    private String promptText;
 }
