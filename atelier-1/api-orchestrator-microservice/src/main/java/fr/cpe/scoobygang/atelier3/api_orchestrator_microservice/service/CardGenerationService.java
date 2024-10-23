@@ -13,6 +13,7 @@ import java.util.Optional;
 public class CardGenerationService {
     @Autowired
     private ActiveMQTransactionRepository activeMQTransactionRepository;
+
     @Autowired
     private OrchestratorPublisher orchestratorPublisher;
 
@@ -32,7 +33,9 @@ public class CardGenerationService {
         Optional<ActiveMQTransaction> activeMQTransactionOptional = activeMQTransactionRepository.findByUuid(uuid);
 
         // Vérification que la transaction existe bien
-        if (activeMQTransactionOptional.isEmpty()) return;
+        if (activeMQTransactionOptional.isEmpty())
+            return;
+
         ActiveMQTransaction activeMQTransaction = activeMQTransactionOptional.get();
 
         // Ajout de l'image à la transaction
@@ -45,7 +48,6 @@ public class CardGenerationService {
         // Check si le texte n'est pas vide
         if (activeMQTransaction.getPrompt()!=null) {
             // Si le text n'est pas vide -> Générer les properties
-
             PropertyDemandActiveMQ propertyDemandActiveMQ = new PropertyDemandActiveMQ(uuid,urlImage);
             orchestratorPublisher.sendToPropertyMS(propertyDemandActiveMQ);
         }
@@ -71,8 +73,7 @@ public class CardGenerationService {
         // Check si l'image n'est pas vide
         if (activeMQTransaction.getImageURL() != null) {
             // Si l'image n'est pas vide -> Générer les properties
-
-            PropertyDemandActiveMQ propertyDemandActiveMQ = new PropertyDemandActiveMQ(uuid,activeMQTransaction.getImageURL());
+            PropertyDemandActiveMQ propertyDemandActiveMQ = new PropertyDemandActiveMQ(uuid, activeMQTransaction.getImageURL());
             orchestratorPublisher.sendToPropertyMS(propertyDemandActiveMQ);
         }
     }

@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Component
 public class OrchestratorPublisher {
     @Autowired
-    BusService busService;
+    private BusService busService;
 
     public void sendToImageMS(Serializable jsonConvertable) {
         busService.send(jsonConvertable, QueuesConstants.QUEUE_GENERATION_IMAGE);
@@ -25,6 +25,4 @@ public class OrchestratorPublisher {
     public void sendToNotify(Serializable jsonConvertable) {
         busService.send(jsonConvertable, QueuesConstants.QUEUE_NOTIFY);
     }
-
-
 }

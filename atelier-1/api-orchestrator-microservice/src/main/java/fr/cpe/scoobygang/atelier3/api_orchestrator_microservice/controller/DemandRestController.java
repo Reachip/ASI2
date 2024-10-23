@@ -20,12 +20,15 @@ import java.util.UUID;
 public class DemandRestController {
     @Autowired
     private BusService busService;
+
     @Autowired
     private ActiveMQTransactionRepository activeMQTransactionRepository;
+
     @PostMapping("/card")
     public ResponseEntity<Void> cardDemand() {
-        ActiveMQTransaction activeMQTransaction = new ActiveMQTransaction().build();
+        ActiveMQTransaction activeMQTransaction = ActiveMQTransaction.build();
         activeMQTransactionRepository.save(activeMQTransaction);
+
         busService.send(new CardDemandActiveMQ(activeMQTransaction.getUuid(), "A beautiful cat","test"), QueuesConstants.QUEUE_GENERATION_CARD);
 
         return ResponseEntity.ok().build();
