@@ -23,11 +23,10 @@ public class ApiGatewayApplication {
 
 	@Bean
 	public RouteLocator routeLocator(RouteLocatorBuilder builder) {
-		return builder
-				.routes()
+		return builder.routes()
+				.route("react-app-route", r -> r.path("/**").and().path("/api/**", "/orchestrator/**").negate().uri("http://localhost:80/"))
 				.route("backend-route", r -> r.path("/api/**").uri("lb://api-backend"))
 				.route("orchestrator-route", r -> r.path("/orchestrator/**").uri("lb://api-orchestrator-microservice"))
-				.route("react-app-route", r -> r.path("/**").uri("http://localhost:80/"))
 				.build();
 	}
 
