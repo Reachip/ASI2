@@ -11,7 +11,7 @@
 	<groupId>fr.cpe.scoobygang.atelier3</groupId>
 	<artifactId>api-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>api-card-microservice</name>
+	<name>api-backend</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<sonar.organization>asi-microservice-cpe</sonar.organization>
