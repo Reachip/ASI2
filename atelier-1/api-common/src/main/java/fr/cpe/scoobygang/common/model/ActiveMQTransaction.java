@@ -22,6 +22,7 @@ public class ActiveMQTransaction {
 
     private String imageURL;
 
+    @Column(columnDefinition = "TEXT")
     private String prompt;
 
     private float defense;

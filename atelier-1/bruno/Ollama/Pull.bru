@@ -1,0 +1,17 @@
+meta {
+  name: Pull
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:11434/api/pull
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "qwen2:0.5b"
+  }
+}

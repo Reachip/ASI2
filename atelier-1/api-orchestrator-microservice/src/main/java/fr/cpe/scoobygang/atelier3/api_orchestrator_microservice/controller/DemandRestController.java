@@ -5,6 +5,7 @@ import fr.cpe.scoobygang.common.activemq.QueuesConstants;
 import fr.cpe.scoobygang.common.activemq.model.CardDemandActiveMQ;
 import fr.cpe.scoobygang.common.activemq.model.ImageDemandActiveMQ;
 import fr.cpe.scoobygang.common.activemq.model.PropertyDemandActiveMQ;
+import fr.cpe.scoobygang.common.activemq.model.TextDemandActiveMQ;
 import fr.cpe.scoobygang.common.model.ActiveMQTransaction;
 import fr.cpe.scoobygang.common.repository.ActiveMQTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,12 @@ public class DemandRestController {
     @PostMapping("/image")
     public ResponseEntity<Void> imageDemand() {
         busService.send(new ImageDemandActiveMQ(UUID.randomUUID().toString(), "A beautiful cat"), QueuesConstants.QUEUE_GENERATION_IMAGE);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/text")
+    public ResponseEntity<Void> textDemand() {
+        busService.send(new TextDemandActiveMQ(UUID.randomUUID().toString(), "Why is the sky blue?"), QueuesConstants.QUEUE_GENERATION_TEXT);
         return ResponseEntity.ok().build();
     }
 
