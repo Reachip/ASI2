@@ -1,4 +1,4 @@
-package fr.cpe.scoobygang.common.dto.request;
+package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
