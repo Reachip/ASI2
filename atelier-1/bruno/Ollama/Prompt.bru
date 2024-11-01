@@ -1,0 +1,19 @@
+meta {
+  name: Prompt
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:11434/api/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "model": "qwen2:0.5b",
+      "prompt": "Why is the sky blue?",
+      "stream": false
+  }
+}
