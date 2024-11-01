@@ -41,4 +41,18 @@ public class ActiveMQTransaction implements Serializable {
     public static ActiveMQTransaction build() {
         return new ActiveMQTransaction(UUID.randomUUID().toString());
     }
+
+    @Override
+    public String toString() {
+        return "ActiveMQTransaction{" +
+                "id=" + id +
+                ", uuid='" + uuid + '\'' +
+                ", imageURL='" + imageURL + '\'' +
+                ", prompt='" + prompt + '\'' +
+                ", defense=" + defense +
+                ", energy=" + energy +
+                ", hp=" + hp +
+                ", attack=" + attack +
+                '}';
+    }
 }
