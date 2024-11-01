@@ -1,5 +1,6 @@
 package fr.cpe.scoobygang.atelier3.api_generation_text_microservice.service;
 
+import fr.cpe.scoobygang.atelier3.api_generation_text_microservice.model.OllamaPromptResult;
 import fr.cpe.scoobygang.common.dto.request.TextRequest;
 import fr.cpe.scoobygang.common.dto.request.TextResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +43,7 @@ public class TextGenerationService {
                 .uri(apiUrl + "/api/generate")
                 .body(Mono.just(request), TextRequest.class)
                 .retrieve()
-                .bodyToMono(TextResponse.class)
-                .map(response -> apiUrl + response.getText());
+                .bodyToMono(OllamaPromptResult.class)
+                .map(response -> response.getResponse());
     }
 }
