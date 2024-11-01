@@ -20,6 +20,7 @@ import java.util.UUID;
 // test
 @RestController
 @RequestMapping("/demand")
+@Deprecated
 public class DemandRestController {
     private static final Logger logger = LoggerFactory.getLogger(DemandRestController.class);
 
@@ -30,8 +31,10 @@ public class DemandRestController {
     private ActiveMQTransactionRepository activeMQTransactionRepository;
 
     @PostMapping("/card")
+    @Deprecated
     public ResponseEntity<Void> cardDemand() {
         logger.info("Received card demand request");
+
         ActiveMQTransaction activeMQTransaction = ActiveMQTransaction.build();
         activeMQTransactionRepository.save(activeMQTransaction);
 
@@ -42,6 +45,7 @@ public class DemandRestController {
     }
 
     @PostMapping("/image")
+    @Deprecated
     public ResponseEntity<Void> imageDemand() {
         logger.info("Received image demand request");
         busService.send(new ImageDemandActiveMQ(UUID.randomUUID().toString(), "A beautiful cat"), QueuesConstants.QUEUE_GENERATION_IMAGE);
@@ -51,6 +55,7 @@ public class DemandRestController {
     }
 
     @PostMapping("/text")
+    @Deprecated
     public ResponseEntity<Void> textDemand() {
         logger.info("Received text demand request");
         busService.send(new TextDemandActiveMQ(UUID.randomUUID().toString(), "Why is the sky blue?"), QueuesConstants.QUEUE_GENERATION_TEXT);
@@ -60,6 +65,7 @@ public class DemandRestController {
     }
 
     @PostMapping("/properties")
+    @Deprecated
     public ResponseEntity<Void> propertiesDemand() {
         logger.info("Received properties demand request");
         busService.send(new PropertyDemandActiveMQ(UUID.randomUUID().toString(), "http://localhost:8989/imgs/default-2.jpg"), QueuesConstants.QUEUE_GENERATION_PROPERTY);

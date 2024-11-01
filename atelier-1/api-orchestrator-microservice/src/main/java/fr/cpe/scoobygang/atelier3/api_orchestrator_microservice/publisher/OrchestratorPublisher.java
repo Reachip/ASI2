@@ -37,6 +37,6 @@ public class OrchestratorPublisher {
     public void sendToNotify(Serializable jsonConvertable) {
         logger.info("Sending notification message: {}", jsonConvertable);
         busService.send(jsonConvertable, QueuesConstants.QUEUE_NOTIFY);
-        logger.info("Notification message sent successfully");
+        logger.info("Notification message sent successfully : {}", jsonConvertable);
     }
 }

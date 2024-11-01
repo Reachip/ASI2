@@ -29,9 +29,12 @@ public class CardGenerationReceiver implements Receiver {
     @JmsListener(destination = QueuesConstants.QUEUE_GENERATION_CARD, containerFactory = "queueConnectionFactory")
     public void receive(TextMessage received) throws JMSException, ClassNotFoundException, IOException {
         logger.info("Received message on queue: {}", QueuesConstants.QUEUE_GENERATION_CARD);
+
         final CardDemandActiveMQ cardDemandActiveMQ = parser.toObject(received);
         logger.info("Parsed card demand: {}", cardDemandActiveMQ);
-        cardGenerationService.createCard(cardDemandActiveMQ.getUuid(), cardDemandActiveMQ.getPromptImage(), cardDemandActiveMQ.getPromptText());
-        logger.info("Card creation process initiated for uuid: {}", cardDemandActiveMQ.getUuid());
+
+        cardGenerationService.createCard(cardDemandActiveMQ);
+
+        logger.info("Card creation process initiate");
     }
 }
