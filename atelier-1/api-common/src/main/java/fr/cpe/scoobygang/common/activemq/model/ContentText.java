@@ -11,4 +11,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ContentText extends Content {
     private String prompt;
+
+    @Override
+    public String toString() {
+        return "ContentText{" +
+                "prompt='" + prompt + '\'' +
+                '}';
+    }
 }

@@ -23,4 +23,14 @@ public class CardProperties extends Content {
                 .hp(colorToProperties.get("HP"))
                 .build();
     }
+
+    @Override
+    public String toString() {
+        return "CardProperties{" +
+                "defense=" + defense +
+                ", energy=" + energy +
+                ", hp=" + hp +
+                ", attack=" + attack +
+                '}';
+    }
 }

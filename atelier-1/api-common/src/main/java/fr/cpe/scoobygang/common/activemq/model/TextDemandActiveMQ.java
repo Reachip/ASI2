@@ -14,4 +14,12 @@ import java.io.Serializable;
 public class TextDemandActiveMQ implements Serializable {
     private String uuid;
     private String prompt;
+
+    @Override
+    public String toString() {
+        return "TextDemandActiveMQ{" +
+                "uuid='" + uuid + '\'' +
+                ", prompt='" + prompt + '\'' +
+                '}';
+    }
 }

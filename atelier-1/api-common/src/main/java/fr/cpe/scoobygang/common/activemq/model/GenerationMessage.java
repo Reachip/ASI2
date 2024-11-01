@@ -14,4 +14,12 @@ import java.io.Serializable;
 public class GenerationMessage<T> implements Serializable {
     private String uuid;
     private T content;
+
+    @Override
+    public String toString() {
+        return "GenerationMessage{" +
+                "uuid='" + uuid + '\'' +
+                ", content=" + content +
+                '}';
+    }
 }

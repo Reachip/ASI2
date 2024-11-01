@@ -11,4 +11,11 @@ import lombok.Setter;
 @Setter
 public class OllamaPromptResult {
     private String response;
+
+    @Override
+    public String toString() {
+        return "OllamaPromptResult{" +
+                "response='" + response + '\'' +
+                '}';
+    }
 }

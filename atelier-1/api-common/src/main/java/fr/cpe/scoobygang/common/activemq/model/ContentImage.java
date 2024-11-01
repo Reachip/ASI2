@@ -11,4 +11,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ContentImage extends Content {
     private String url;
+
+    @Override
+    public String toString() {
+        return "ContentImage{" +
+                "url='" + url + '\'' +
+                '}';
+    }
 }
