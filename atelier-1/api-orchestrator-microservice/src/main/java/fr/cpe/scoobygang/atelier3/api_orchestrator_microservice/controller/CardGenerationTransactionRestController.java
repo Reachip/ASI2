@@ -1,12 +1,8 @@
 package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.controller;
 
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.service.CardGenerationService;
-import fr.cpe.scoobygang.common.activemq.BusService;
-import fr.cpe.scoobygang.common.activemq.QueuesConstants;
 import fr.cpe.scoobygang.common.activemq.model.*;
 import fr.cpe.scoobygang.common.dto.request.CardDemandRequest;
-import fr.cpe.scoobygang.common.model.ActiveMQTransaction;
-import fr.cpe.scoobygang.common.repository.ActiveMQTransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/card/transaction")
