@@ -1,4 +1,4 @@
-package fr.cpe.scoobygang.common.model;
+package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model;
 
 import jakarta.persistence.*;
 

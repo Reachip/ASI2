@@ -1,4 +1,4 @@
-package fr.cpe.scoobygang.common.websocket;
+package fr.cpe.scoobygang.atelier3.api_backend.model;
 
 import lombok.Getter;
 import lombok.Setter;

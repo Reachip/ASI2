@@ -9,12 +9,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableJpaRepositories(basePackages = "fr.cpe.scoobygang.common.repository")
 @ComponentScan(basePackages = {
 		"fr.cpe.scoobygang.common.*",
 		"fr.cpe.scoobygang.atelier3.api_generation_text_microservice.*",
 })
-@EntityScan("fr.cpe.scoobygang.common.model")
 public class ApiGenerationTextMicroserviceApplication {
 
 	public static void main(String[] args) {

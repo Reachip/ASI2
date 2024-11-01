@@ -1,7 +1,6 @@
 package fr.cpe.scoobygang.atelier3.api_backend.handler;
 
-
-import fr.cpe.scoobygang.common.websocket.WSMessage;
+import fr.cpe.scoobygang.atelier3.api_backend.model.WSMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
