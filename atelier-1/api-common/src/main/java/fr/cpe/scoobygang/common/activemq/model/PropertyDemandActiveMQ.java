@@ -14,4 +14,12 @@ import java.io.Serializable;
 public class PropertyDemandActiveMQ implements Serializable {
     private String uuid;
     private String url;
+
+    @Override
+    public String toString() {
+        return "PropertyDemandActiveMQ{" +
+                "uuid='" + uuid + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }

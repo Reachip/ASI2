@@ -15,4 +15,13 @@ public class CardDemandActiveMQ implements Serializable{
     private String uuid;
     private String promptImage;
     private String promptText;
+
+    @Override
+    public String toString() {
+        return "CardDemandActiveMQ{" +
+                "uuid='" + uuid + '\'' +
+                ", promptImage='" + promptImage + '\'' +
+                ", promptText='" + promptText + '\'' +
+                '}';
+    }
 }

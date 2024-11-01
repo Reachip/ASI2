@@ -14,4 +14,10 @@ import java.io.Serializable;
 public class NotifyDemandActiveMQ implements Serializable{
     private String uuid;
 
+    @Override
+    public String toString() {
+        return "NotifyDemandActiveMQ{" +
+                "uuid='" + uuid + '\'' +
+                '}';
+    }
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ActiveMQTransaction {
+public class ActiveMQTransaction implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,5 +40,19 @@ public class ActiveMQTransaction {
 
     public static ActiveMQTransaction build() {
         return new ActiveMQTransaction(UUID.randomUUID().toString());
+    }
+
+    @Override
+    public String toString() {
+        return "ActiveMQTransaction{" +
+                "id=" + id +
+                ", uuid='" + uuid + '\'' +
+                ", imageURL='" + imageURL + '\'' +
+                ", prompt='" + prompt + '\'' +
+                ", defense=" + defense +
+                ", energy=" + energy +
+                ", hp=" + hp +
+                ", attack=" + attack +
+                '}';
     }
 }
