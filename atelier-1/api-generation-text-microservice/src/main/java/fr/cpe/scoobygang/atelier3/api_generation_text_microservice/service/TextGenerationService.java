@@ -20,7 +20,6 @@ public class TextGenerationService {
 
     public TextGenerationService() {
         this.webClient = WebClient.builder().build();
-        initializeModel();
     }
 
     private void initializeModel() {
@@ -35,6 +34,8 @@ public class TextGenerationService {
     }
 
     public Mono<String> generateText(String promptTxt) {
+        initializeModel();
+
         TextRequest request = new TextRequest(modelName, promptTxt, false);
 
         return webClient.post()
