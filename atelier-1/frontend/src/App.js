@@ -1,25 +1,22 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import BuyPage from './pages/BuyPage';
-import SellPage from './pages/SellPage';
-import CreatePage from './pages/CreatePage';
-import UserFormPage from './pages/UserFormPage';
-import LoginPage from './pages/LoginPage';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { theme } from './theme';
+import AppRoutes from './routes/AppRoutes';
+import { AuthProvider } from './contexts/AuthContext';
 
-function App() {
+const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/buy" element={<BuyPage />} />
-        <Route path="/sell" element={<SellPage />} />
-        <Route path="/create" element={<CreatePage />} />
-        <Route path="/user-form" element={<UserFormPage />} />
-        <Route path="/login" element={<LoginPage />} />
-      </Routes>
-    </Router>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AuthProvider>
+        <Router>
+          <AppRoutes />
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;
