@@ -27,7 +27,7 @@ public class ImageGenerationReceiver implements Receiver {
     @Autowired
     private TextMessageParser parser;
 
-    @Override
+    @Override&
     @JmsListener(destination = QueuesConstants.QUEUE_GENERATION_IMAGE, containerFactory = "queueConnectionFactory")
     public void receive(TextMessage received) throws JMSException, ClassNotFoundException, IOException {
         final ImageDemandActiveMQ imageDemandActiveMQ = parser.toObject(received);
