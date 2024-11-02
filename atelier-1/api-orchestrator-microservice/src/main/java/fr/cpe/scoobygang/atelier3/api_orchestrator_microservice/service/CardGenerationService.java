@@ -96,7 +96,7 @@ public class CardGenerationService {
         ActiveMQTransaction activeMQTransaction = activeMQTransactionOptional.get();
 
         // Ajout de l'image à la transaction
-        String urlImage = message.getContent().getUrl().replace("/static", "");
+        String urlImage = message.getContent().getUrl();
         activeMQTransaction.setImageURL(urlImage);
 
         // Mise à jour de la transaction en base
