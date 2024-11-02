@@ -36,7 +36,7 @@ public class OrchestratorClient {
                 .doOnError(error -> logger.error("Failed to post image", error));
     }
 
-    public Mono<Void> postPrompt(GenerationMessage generationMessage) {
+    public Mono<Void> postPrompt(GenerationMessage<String> generationMessage) {
         final WebClient webClient = WebClient.builder()
                 .baseUrl(apiUrl)
                 .build();

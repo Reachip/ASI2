@@ -17,6 +17,9 @@ public class ImageGenerationService {
     @Value("${api.image.url}")
     private String apiUrl;
 
+    @Value("${api.image.url.proxy}")
+    private String apiUrlProxy;
+
     @Value("${api.image.fake:true}")
     private boolean imageFakeGeneration;
 
@@ -34,7 +37,7 @@ public class ImageGenerationService {
                 .retrieve()
                 .bodyToMono(ImageResponse.class)
                 .map(response -> {
-                    String imageUrl = apiUrl + response.getUrl();
+                    String imageUrl = apiUrlProxy + response.getUrl().replace("/static", "");
                     logger.info("Generated image URL: {}", imageUrl);
                     return imageUrl;
                 });

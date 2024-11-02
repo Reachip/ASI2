@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useSelector } from 'react-redux';
+import { selectAuth } from '../store/authSlice';
 import Layout from '../components/layout/Layout';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
@@ -10,7 +11,7 @@ import SellCardsPage from '../pages/SellCardsPage';
 import CreateCardPage from '../pages/CreateCardPage';
 
 const PrivateRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user } = useSelector(selectAuth);
   return user ? children : <Navigate to="/login" />;
 };
 

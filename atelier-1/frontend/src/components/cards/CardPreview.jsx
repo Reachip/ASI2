@@ -19,7 +19,7 @@ const CardPreview = ({
   onAction, 
   actionLabel = "Buy for",
   actionColor = "primary",
-  showAction = true // Ajoutez cette prop
+  showAction = true
 }) => {
   if (!card) return null;
 
@@ -72,7 +72,7 @@ const CardPreview = ({
               size="small"
             />
           </Box>
-          {showAction && ( // Affiche le bouton seulement si showAction est vrai
+          {showAction && (
             <Button
               variant="contained"
               color={actionColor}

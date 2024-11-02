@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Box } from '@mui/material';
-import { useAuth } from '../contexts/AuthContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectAuth } from '../store/authSlice';
 import CardsTable from '../components/cards/CardsTable';
 import CardPreview from '../components/cards/CardPreview';
 
 const SellCardsPage = () => {
-  const { user, login } = useAuth();
+  const dispatch = useDispatch();
+  const { user } = useSelector(selectAuth);
   const [selectedCard, setSelectedCard] = useState(null);
   const [userCards] = useState([
     {
@@ -18,8 +20,8 @@ const SellCardsPage = () => {
       energy: 100,
       attack: 15,
       defense: 15,
-      price: 250
-    }
+      price: 250,
+    },
   ]);
 
   useEffect(() => {
@@ -29,9 +31,9 @@ const SellCardsPage = () => {
   }, [userCards]);
 
   const handleSell = (card) => {
-    login({
-      ...user,
-      wallet: user.wallet + card.price,
+    dispatch({
+      type: 'auth/loginUser/fulfilled',
+      payload: { ...user, wallet: user.wallet + card.price },
     });
   };
 
@@ -42,20 +44,10 @@ const SellCardsPage = () => {
       </Typography>
       <Box display="flex">
         <Box flex={1} pr={2}>
-          <CardsTable
-            cards={userCards}
-            selectedCard={selectedCard}
-            onSelectCard={setSelectedCard}
-            action="sell"
-          />
+          <CardsTable cards={userCards} selectedCard={selectedCard} onSelectCard={setSelectedCard} action="sell" />
         </Box>
         <Box width="360px" pl={2}>
-          <CardPreview 
-            card={selectedCard} 
-            onAction={handleSell}
-            actionLabel="Sell for"
-            actionColor="error"
-          />
+          <CardPreview card={selectedCard} onAction={handleSell} actionLabel="Sell for" actionColor="error" />
         </Box>
       </Box>
     </div>
