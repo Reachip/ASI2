@@ -85,8 +85,14 @@
             <version>4.1.2</version>
             <scope>compile</scope>
         </dependency>
+		<dependency>
+			<groupId>fr.cpe.scoobygang.atelier3</groupId>
+			<artifactId>api-orchestrator-microservice</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 
-    </dependencies>
+	</dependencies>
 
 	<build>
 		<plugins>

@@ -7,13 +7,16 @@ import java.util.Optional;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_backend.common.tools.DTOMapper;
+import fr.cpe.scoobygang.atelier3.api_backend.user.controller.UserService;
+import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserModel;
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.dto.request.CardDemandRequest;
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model.ActiveMQTransaction;
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.repository.ActiveMQTransactionRepository;
+import fr.cpe.scoobygang.common.activemq.*;
+import fr.cpe.scoobygang.common.activemq.model.CardDemandActiveMQ;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 //ONLY FOR TEST NEED ALSO TO ALLOW CROOS ORIGIN ON WEB BROWSER SIDE
@@ -23,9 +26,13 @@ import org.springframework.web.server.ResponseStatusException;
 public class CardRestController {
 
 	private final CardModelService cardModelService;
+	private final UserService userService;
+	private BusService busService;
+	private ActiveMQTransactionRepository activeMQTransactionRepository;
 	
-	public CardRestController(CardModelService cardModelService) {
+	public CardRestController(CardModelService cardModelService, UserService userService) {
 		this.cardModelService=cardModelService;
+		this.userService = userService;
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/cards")
@@ -65,5 +72,26 @@ public class CardRestController {
 		cardModelService.deleteCardModel(Integer.valueOf(id));
 	}
 
-	
+	// Send a card demand
+	@PostMapping("/generateCard")
+	public ResponseEntity<Void> cardDemand(CardDemandRequest cardDemand) {
+		CardGenerationService cardGenerationService = new CardGenerationService();
+		cardGenerationService.sendGenerationCardDemand(cardDemand.getPromptImage(), cardDemand.getPromptText());
+		return ResponseEntity.ok().build();
+	}
+
+	// Receive a card from the orchestrator
+	@PostMapping("/receiveCard")
+	public ResponseEntity<Void> receiveCard(@RequestBody CardDTO cardDto)
+	{
+		CardModel card = DTOMapper.fromCardDtoToCardModel(cardDto);
+		UserModel user = card.getUser();
+
+		cardModelService.addCard(card);
+
+		user.setAccount(user.getAccount() - card.getPrice());
+		userService.updateUser(user);
+
+		return ResponseEntity.ok().build();
+	}
 }
