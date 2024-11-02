@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Paper,
@@ -9,20 +11,27 @@ import {
   FormControlLabel,
   Checkbox,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { registerUser, selectAuth } from '../store/authSlice';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    username: '',
     password: '',
     confirmPassword: '',
     acceptTerms: false,
   });
-  const [error, setError] = useState('');
-  const { register } = useAuth();
+  const [validationError, setValidationError] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { status, error, isAuthenticated } = useSelector(selectAuth);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -32,21 +41,28 @@ const RegisterPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setValidationError('Passwords do not match');
       return;
     }
     if (!formData.acceptTerms) {
-      setError('You must accept the terms of service');
+      setValidationError('You must accept the terms of service');
       return;
     }
-    register({
-      firstName: formData.firstName,
+
+    const userData = {
+      pwd: formData.password,
+      account: 5000,
       lastName: formData.lastName,
-    });
-    navigate('/');
+      surName: formData.firstName,
+      username: formData.username,
+      email: '',
+      cardList: [],
+    };
+
+    dispatch(registerUser(userData));
   };
 
   return (
@@ -55,7 +71,11 @@ const RegisterPage = () => {
         <Typography variant="h4" align="center" gutterBottom>
           Register
         </Typography>
-        {error && <Typography color="error">{error}</Typography>}
+        {(validationError || error) && (
+          <Typography color="error" align="center" gutterBottom>
+            {validationError || error}
+          </Typography>
+        )}
         <Box component="form" onSubmit={handleSubmit}>
           <TextField
             fullWidth
@@ -71,6 +91,14 @@ const RegisterPage = () => {
             name="lastName"
             margin="normal"
             value={formData.lastName}
+            onChange={handleChange}
+          />
+          <TextField
+            fullWidth
+            label="Username"
+            name="username"
+            margin="normal"
+            value={formData.username}
             onChange={handleChange}
           />
           <TextField
@@ -106,8 +134,9 @@ const RegisterPage = () => {
             fullWidth
             variant="contained"
             sx={{ mt: 3 }}
+            disabled={status === 'loading'}
           >
-            Register
+            {status === 'loading' ? 'Loading...' : 'Register'}
           </Button>
         </Box>
       </Paper>

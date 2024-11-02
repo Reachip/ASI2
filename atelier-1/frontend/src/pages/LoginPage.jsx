@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
     Container,
     Paper,
@@ -7,22 +9,24 @@ import {
     Typography,
     Box,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import { loginUser, selectAuth } from '../store/authSlice';
 
 const LoginPage = () => {
     const [credentials, setCredentials] = useState({ username: '', password: '' });
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const dispatch = useDispatch();
+    const { status, error, isAuthenticated } = useSelector(selectAuth);
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/');
+        }
+    }, [isAuthenticated, navigate]);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        login({
-            username: credentials.username,
-            wallet: 5000,
-        });
-        navigate('/');
+        dispatch(loginUser(credentials));
     };
 
     return (
@@ -31,6 +35,11 @@ const LoginPage = () => {
                 <Typography variant="h4" align="center" gutterBottom>
                     Login
                 </Typography>
+                {error && (
+                    <Typography color="error" align="center" gutterBottom>
+                        {error}
+                    </Typography>
+                )}
                 <Box component="form" onSubmit={handleSubmit}>
                     <TextField
                         fullWidth
@@ -40,6 +49,7 @@ const LoginPage = () => {
                         onChange={(e) =>
                             setCredentials({ ...credentials, username: e.target.value })
                         }
+                        disabled={status === 'loading'}
                     />
                     <TextField
                         fullWidth
@@ -50,14 +60,16 @@ const LoginPage = () => {
                         onChange={(e) =>
                             setCredentials({ ...credentials, password: e.target.value })
                         }
+                        disabled={status === 'loading'}
                     />
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
                         sx={{ mt: 3 }}
+                        disabled={status === 'loading'}
                     >
-                        Login
+                        {status === 'loading' ? 'Loading...' : 'Login'}
                     </Button>
                     <Typography variant="body2" align="center" sx={{ mt: 2 }}>
                         Don't have an account? <Link to="/register">Register here</Link>

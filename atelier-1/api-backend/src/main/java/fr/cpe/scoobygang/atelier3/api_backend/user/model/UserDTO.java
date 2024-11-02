@@ -8,11 +8,11 @@ import java.util.Set;
 
 public class UserDTO {
 	private Integer id;
-	private String login;
 	private String pwd;
 	private float account;
 	private String lastName;
 	private String surName;
+	private String username;
 	private String email;
 	private Set<Integer> cardList = new HashSet<>();
 	
@@ -21,11 +21,11 @@ public class UserDTO {
 
 	public UserDTO(UserModel user) {
 		this.id = user.getId();
-		this.login = user.getLogin();
 		this.pwd = user.getPwd();
 		this.account = user.getAccount();
 		this.lastName = user.getLastName();
 		this.surName = user.getSurName();
+		this.username = user.getUsername();
 		this.email = user.getEmail();
 		for (CardModel card : user.getCardList()) {
 			this.cardList.add(card.getId());
@@ -38,14 +38,6 @@ public class UserDTO {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public String getLogin() {
-		return login;
-	}
-
-	public void setLogin(String login) {
-		this.login = login;
 	}
 
 	public String getPwd() {
@@ -86,6 +78,14 @@ public class UserDTO {
 
 	public void setSurName(String surName) {
 		this.surName = surName;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getEmail() {

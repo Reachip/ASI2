@@ -10,11 +10,13 @@ import {
   IconButton,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectAuth, logout } from '../../store/authSlice';
 import HomeIcon from '@mui/icons-material/Home';
 
 const Navbar = ({ subtitle }) => {
-  const { user, logout } = useAuth();
+  const dispatch = useDispatch();
+  const { user } = useSelector(selectAuth);
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -28,7 +30,8 @@ const Navbar = ({ subtitle }) => {
 
   const handleLogout = () => {
     handleMenuClose();
-    logout();
+    dispatch(logout());
+    navigate('/login');
   };
 
   return (
@@ -55,7 +58,7 @@ const Navbar = ({ subtitle }) => {
         <Box sx={{ flexGrow: 1 }} />
         {user && (
           <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-            <Avatar sx={{ mr: 1 }}>{user.username[0]}</Avatar>
+            <Avatar sx={{ mr: 1 }}>{user.username}</Avatar>
             <Box>
               <Typography
                 variant="body1"

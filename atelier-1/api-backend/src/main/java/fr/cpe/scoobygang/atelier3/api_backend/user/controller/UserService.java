@@ -64,9 +64,9 @@ public class UserService {
 		userRepository.deleteById(Integer.valueOf(id));
 	}
 
-	public List<UserModel> getUserByLoginPwd(String login, String pwd) {
+	public List<UserModel> getUserByUsernamePwd(String username, String pwd) {
 		List<UserModel> ulist = null;
-		ulist = userRepository.findByLoginAndPwd(login, pwd);
+		ulist = userRepository.findByUsernameAndPwd(username, pwd);
 		return ulist;
 	}
 

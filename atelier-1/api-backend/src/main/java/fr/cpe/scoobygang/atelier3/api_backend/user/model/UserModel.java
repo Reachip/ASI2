@@ -24,11 +24,11 @@ public class UserModel implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
-	private String login;
 	private String pwd;
 	private float account;
 	private String lastName;
 	private String surName;
+	private String username;
 	private String email;
 
 
@@ -38,29 +38,30 @@ public class UserModel implements Serializable {
 	private Set<CardModel> cardList = new HashSet<>();
 
 	public UserModel() {
-		this.login = "";
 		this.pwd = "";
 		this.lastName="lastname_default";
 		this.surName="surname_default";
+		this.username="";
 		this.email="email_default";
 	}
 
-	public UserModel(String login, String pwd) {
+	public UserModel(String username, String pwd) {
 		super();
-		this.login = login;
 		this.pwd = pwd;
 		this.lastName="lastname_default";
 		this.surName="surname_default";
+		this.username="username_default";
 		this.email="email_default";
 	}
 
 	public UserModel(UserDTO user) {
 		this.id=user.getId();
-		this.login=user.getLogin();
+		this.username=user.getUsername();
 		this.pwd=user.getPwd();
 		this.account=user.getAccount();
 		this.lastName=user.getLastName();
 		this.surName=user.getSurName();
+		this.username=user.getUsername();
 		this.email=user.getEmail();
 	}
 
@@ -70,14 +71,6 @@ public class UserModel implements Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public String getLogin() {
-		return login;
-	}
-
-	public void setLogin(String login) {
-		this.login = login;
 	}
 
 	public String getPwd() {
@@ -137,6 +130,14 @@ public class UserModel implements Serializable {
 
 	public void setSurName(String surName) {
 		this.surName = surName;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getEmail() {
