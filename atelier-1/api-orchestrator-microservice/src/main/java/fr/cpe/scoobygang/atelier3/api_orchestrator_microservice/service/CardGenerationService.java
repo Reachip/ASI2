@@ -1,6 +1,7 @@
 package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.service;
 
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.dto.request.CardDemandRequest;
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.mapper.ActiveMQTransactionMapper;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model.ActiveMQTransaction;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.publisher.OrchestratorPublisher;
 import fr.cpe.scoobygang.common.activemq.model.*;
@@ -126,7 +127,7 @@ public class CardGenerationService {
         activeMQTransactionRepository.save(activeMQTransaction);
         logger.info("Card properties updated for uuid: {}", uuid);
 
-        orchestratorPublisher.sendToNotify(activeMQTransaction);
+        orchestratorPublisher.sendToNotify(ActiveMQTransactionMapper.INSTANCE.ActiveMQTransactionToActiveMQTransactionDTO(activeMQTransaction));
         logger.info("Notification sent for card creation for uuid: {}", uuid);
     }
 }
