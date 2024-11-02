@@ -1,12 +1,10 @@
 package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.controller;
 
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.dto.request.CardDemandRequest;
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.dto.response.CardCreationResponse;
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.mapper.CardCreationMapper;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.service.CardGenerationService;
-import fr.cpe.scoobygang.common.activemq.BusService;
-import fr.cpe.scoobygang.common.activemq.QueuesConstants;
 import fr.cpe.scoobygang.common.activemq.model.*;
-import fr.cpe.scoobygang.common.dto.request.CardDemandRequest;
-import fr.cpe.scoobygang.common.model.ActiveMQTransaction;
-import fr.cpe.scoobygang.common.repository.ActiveMQTransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/card/transaction")
 public class CardGenerationTransactionRestController {
@@ -28,7 +24,7 @@ public class CardGenerationTransactionRestController {
     private CardGenerationService cardGenerationService;
 
     @PostMapping("/create")
-    public ResponseEntity<Void> cardDemand(@RequestBody CardDemandRequest cardDemand) {
+    public ResponseEntity<CardCreationResponse> cardDemand(@RequestBody CardDemandRequest cardDemand) {
         if (cardDemand.getPromptImage() == null || cardDemand.getPromptText() == null) {
             logger.error("Validation failed for card demand: {}", cardDemand);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -36,9 +32,7 @@ public class CardGenerationTransactionRestController {
 
         logger.info("Received card demand : {}", cardDemand);
 
-        cardGenerationService.createCard(cardDemand);
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(CardCreationMapper.INSTANCE.transactionToCardCreationResponse(cardGenerationService.createCard(cardDemand)));
     }
 
     @PostMapping("/prompt")

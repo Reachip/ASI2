@@ -1,18 +1,17 @@
 package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.service;
 
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.dto.request.CardDemandRequest;
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.mapper.ActiveMQTransactionMapper;
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model.ActiveMQTransaction;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.publisher.OrchestratorPublisher;
-import fr.cpe.scoobygang.common.activemq.QueuesConstants;
 import fr.cpe.scoobygang.common.activemq.model.*;
-import fr.cpe.scoobygang.common.dto.request.CardDemandRequest;
-import fr.cpe.scoobygang.common.model.ActiveMQTransaction;
-import fr.cpe.scoobygang.common.repository.ActiveMQTransactionRepository;
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.repository.ActiveMQTransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class CardGenerationService {
@@ -24,8 +23,9 @@ public class CardGenerationService {
     @Autowired
     private OrchestratorPublisher orchestratorPublisher;
 
-    private void createCard(String promptImage, String promptText) {
+    private ActiveMQTransaction createCard(String promptImage, String promptText) {
         ActiveMQTransaction activeMQTransaction = activeMQTransactionRepository.save(ActiveMQTransaction.build());
+
         logger.info("Creating card with UUID : {}", activeMQTransaction.getUuid());
 
         logger.info("Creating card with uuid: {}, promptImage: {}, promptText: {}", activeMQTransaction.getUuid(), promptImage, promptText);
@@ -37,14 +37,16 @@ public class CardGenerationService {
         orchestratorPublisher.sendToTextMS(textDemandActiveMQ);
 
         logger.info("Card creation requests published for uuid: {}",  activeMQTransaction.getUuid());
+
+        return activeMQTransaction;
     }
 
-    public void createCard(CardDemandRequest cardDemand) {
-        createCard(cardDemand.getPromptImage(), cardDemand.getPromptText());
+    public ActiveMQTransaction createCard(CardDemandRequest cardDemand) {
+        return createCard(cardDemand.getPromptImage(), cardDemand.getPromptText());
     }
 
-    public void createCard(CardDemandActiveMQ cardDemandActiveMQ) {
-        createCard(cardDemandActiveMQ.getPromptImage(), cardDemandActiveMQ.getPromptText());
+    public ActiveMQTransaction createCard(CardDemandActiveMQ cardDemandActiveMQ) {
+        return createCard(cardDemandActiveMQ.getPromptImage(), cardDemandActiveMQ.getPromptText());
     }
 
     public void postText(GenerationMessage<ContentText> message) {
@@ -94,7 +96,7 @@ public class CardGenerationService {
         ActiveMQTransaction activeMQTransaction = activeMQTransactionOptional.get();
 
         // Ajout de l'image à la transaction
-        String urlImage = message.getContent().getUrl().replace("/static", "");
+        String urlImage = message.getContent().getUrl();
         activeMQTransaction.setImageURL(urlImage);
 
         // Mise à jour de la transaction en base
@@ -125,7 +127,7 @@ public class CardGenerationService {
         activeMQTransactionRepository.save(activeMQTransaction);
         logger.info("Card properties updated for uuid: {}", uuid);
 
-        orchestratorPublisher.sendToNotify(activeMQTransaction);
+        orchestratorPublisher.sendToNotify(ActiveMQTransactionMapper.INSTANCE.ActiveMQTransactionToActiveMQTransactionDTO(activeMQTransaction));
         logger.info("Notification sent for card creation for uuid: {}", uuid);
     }
 }
