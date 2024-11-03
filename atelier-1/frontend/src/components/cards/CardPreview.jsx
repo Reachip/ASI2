@@ -14,9 +14,9 @@ import FlashOnIcon from '@mui/icons-material/FlashOn';
 import SecurityIcon from '@mui/icons-material/Security';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 
-const CardPreview = ({ 
-  card, 
-  onAction, 
+const CardPreview = ({
+  card,
+  onAction,
   actionLabel = "Buy for",
   actionColor = "primary",
   showAction = true
@@ -27,15 +27,17 @@ const CardPreview = ({
     <Paper sx={{ p: 2, height: '100%' }}>
       <Card>
         <Box sx={{ position: 'relative' }}>
-          <Chip
-            label={card.family_name}
-            sx={{
-              position: 'absolute',
-              top: 8,
-              left: 8,
-              zIndex: 1,
-            }}
-          />
+          {card.family_name &&
+            <Chip
+              label={card.family_name}
+              sx={{
+                position: 'absolute',
+                top: 8,
+                left: 8,
+                zIndex: 1,
+              }}
+            />
+          }
           <CardMedia
             component="img"
             height="200"

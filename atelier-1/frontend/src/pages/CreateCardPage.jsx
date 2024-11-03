@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import { Typography, TextField, Button, Box, Checkbox, FormControlLabel, Snackbar, Alert } from '@mui/material';
+import { Typography, TextField, Button, Box, Checkbox, FormControlLabel } from '@mui/material';
+import Notification from '../components/layout/Notification';
+import CardPreview from '../components/cards/CardPreview';
 
-const CreateCardPage = () => {
+const CreateCardPage = ({ generatedCard }) => {
   const [imagePrompt, setImagePrompt] = useState('');
   const [descriptionPrompt, setDescriptionPrompt] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [successOpen, setSuccessOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleGenerate = () => {
     if (!acceptTerms) {
       alert("Vous devez accepter les conditions d'utilisation.");
       return;
     }
+
+    setLoading(true);
 
     fetch('http://localhost:8080/api/generateCard', {
       method: 'POST',
@@ -24,23 +28,20 @@ const CreateCardPage = () => {
       }),
     })
       .then(response => {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+
         if (response.ok) {
-          setSuccessOpen(true);
           return response.json();
         } else {
           throw new Error('La génération de la carte a échoué');
         }
       })
       .catch(error => {
+        setLoading(false);
         console.error('Error:', error);
       });
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSuccessOpen(false);
   };
 
   return (
@@ -76,11 +77,12 @@ const CreateCardPage = () => {
         Generate Card
       </Button>
 
-      <Snackbar open={successOpen} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          La génération de la carte est en cours...
-        </Alert>
-      </Snackbar>
+      <Box sx={{ mt: 4, maxWidth: '400px', mx: 'auto' }}>
+        {generatedCard && <Typography variant="h5" gutterBottom>Card Preview</Typography>}
+        {generatedCard && <CardPreview card={generatedCard} showAction={false} />}
+      </Box>
+
+      <Notification open={loading} currentMessage="Card generation in progress..." onClose={() => setLoading(false)} />
     </Box>
   );
 };
