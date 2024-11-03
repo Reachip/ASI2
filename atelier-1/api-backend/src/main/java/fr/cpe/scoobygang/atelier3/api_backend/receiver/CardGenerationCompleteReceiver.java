@@ -1,6 +1,7 @@
 package fr.cpe.scoobygang.atelier3.api_backend.receiver;
 
 import fr.cpe.scoobygang.atelier3.api_backend.card.Controller.CardModelRepository;
+import fr.cpe.scoobygang.atelier3.api_backend.card.Controller.CardModelService;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_backend.handler.WebSocketHandler;
 import fr.cpe.scoobygang.atelier3.api_backend.mapper.CardModelMapper;
@@ -28,7 +29,7 @@ public class CardGenerationCompleteReceiver implements Receiver {
     private TextMessageParser parser;
 
     @Autowired
-    private CardModelRepository cardModelRepository;
+    CardModelService cardModelService;
 
     @Autowired
     private WebSocketHandler webSocketHandler;
@@ -42,18 +43,22 @@ public class CardGenerationCompleteReceiver implements Receiver {
         logger.info("Received message on queue: {}", QueuesConstants.QUEUE_NOTIFY);
 
         ActiveMQTransaction activeMQTransaction = parser.toObject(received);
+        logger.info("Parsed activeMQTransaction demand: {}", activeMQTransaction);
 
         final CardModel cardModel = CardModelMapper.INSTANCE.activeMQTransactionToCard(activeMQTransaction);
         cardModel.setUser(userService.getUser(activeMQTransaction.getUserId()).get());
-        cardModelRepository.save(cardModel);
+
+        cardModelService.addCard(cardModel);
+        logger.info("Add Card");
 
         // Debit user :
         UserModel user = cardModel.getUser();
         user.setAccount(user.getAccount() - 100);
         userService.updateUser(user);
 
-        logger.info("Parsed card demand: {}", cardModel);
-        logger.info("Card creation process initiate");
+        logger.info("Update user account");
+
+        logger.info("Card creation process terminate");
 
         webSocketHandler.broadcastMessage(cardModel);
     }

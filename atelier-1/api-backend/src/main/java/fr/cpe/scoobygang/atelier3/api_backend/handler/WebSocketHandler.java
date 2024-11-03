@@ -1,6 +1,8 @@
 package fr.cpe.scoobygang.atelier3.api_backend.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardDTO;
+import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -43,7 +45,7 @@ public final class WebSocketHandler extends TextWebSocketHandler {
     }
 
     public void broadcastMessage(final Serializable message) throws IOException {
-        final String messageAsString = mapper.writeValueAsString(message);
+        final String messageAsString = mapper.writeValueAsString(new CardDTO((CardModel) message));
         logger.info("Broadcast message : " + messageAsString + "to " + sessions.size() + " clients");
 
         for (WebSocketSession session : sessions) {

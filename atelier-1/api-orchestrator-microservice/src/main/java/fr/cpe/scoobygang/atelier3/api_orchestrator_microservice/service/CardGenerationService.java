@@ -27,6 +27,8 @@ public class CardGenerationService {
         ActiveMQTransaction activeMQTransaction = activeMQTransactionRepository.save(ActiveMQTransaction.build());
         activeMQTransaction.setUserId(userId);
 
+        activeMQTransactionRepository.save(activeMQTransaction);
+
         logger.info("Creating card with UUID : {}", activeMQTransaction.getUuid());
 
         logger.info("Creating card with uuid: {}, promptImage: {}, promptText: {}", activeMQTransaction.getUuid(), promptImage, promptText);

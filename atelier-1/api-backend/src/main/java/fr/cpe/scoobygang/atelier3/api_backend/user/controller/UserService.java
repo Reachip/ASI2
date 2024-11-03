@@ -33,6 +33,10 @@ public class UserService {
 		return userRepository.findById(Integer.valueOf(id));
 	}
 
+	public Optional<UserModel> getUserByUsername(String username) {
+		return userRepository.findByUsername(username);
+	}
+
 	public Optional<UserModel> getUser(Integer id) {
 		return userRepository.findById(id);
 	}

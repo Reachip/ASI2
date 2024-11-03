@@ -9,6 +9,7 @@ import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_backend.common.tools.DTOMapper;
 import fr.cpe.scoobygang.atelier3.api_backend.user.controller.UserService;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,9 @@ public class CardRestController {
 
 	private final CardModelService cardModelService;
 	private final UserService userService;
+
+	@Autowired
+	private CardGenerationDemandService cardGenerationDemandService;
 
 	public CardRestController(CardModelService cardModelService, UserService userService) {
 		this.cardModelService=cardModelService;
@@ -67,17 +71,18 @@ public class CardRestController {
 
 	// Send a card demand
 	@PostMapping("/generateCard")
-	public ResponseEntity<Void> cardDemand(String promptImage, String promptText, String userId)
+	public ResponseEntity<Void> cardDemand(String promptImage, String promptText, String username)
 	{
 		// Check user account > 100
-		UserModel userModel = userService.getUser(Integer.valueOf(userId)).get();
+		Optional<UserModel> optionalUserModel = userService.getUserByUsername(username);
+		UserModel userModel = optionalUserModel.get();
+
 		if (userModel.getAccount() < 100)
 		{
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not enough money");
 		}
 
-		CardGenerationDemandService cardGenerationService = new CardGenerationDemandService();
-		cardGenerationService.sendGenerationCardDemand(promptImage, promptText, userId);
+		cardGenerationDemandService.sendGenerationCardDemand(promptImage, promptText, String.valueOf(userModel.getId()));
 		return ResponseEntity.ok().build();
 	}
 }

@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { selectAuth } from '../store/authSlice';
+
 import { Typography, TextField, Button, Box, Checkbox, FormControlLabel } from '@mui/material';
 import Notification from '../components/layout/Notification';
 import CardPreview from '../components/cards/CardPreview';
@@ -8,6 +11,10 @@ const CreateCardPage = ({ generatedCard }) => {
   const [descriptionPrompt, setDescriptionPrompt] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Récupérez le username de l'utilisateur connecté
+   const { user } = useSelector(selectAuth);
+   const username = user?.username;
 
   const handleGenerate = () => {
     if (!acceptTerms) {
@@ -25,6 +32,7 @@ const CreateCardPage = ({ generatedCard }) => {
       body: JSON.stringify({
         promptImage: imagePrompt,
         promptText: descriptionPrompt,
+        username: username
       }),
     })
       .then(response => {
