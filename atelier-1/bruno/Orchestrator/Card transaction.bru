@@ -5,14 +5,13 @@ meta {
 }
 
 post {
-  url: http://localhost:8086/orchestrator/card/transaction/create
+  url: http://localhost:8080/orchestrator/card/transaction/create
   body: json
   auth: none
 }
 
 body:json {
   {
-    "uuid": null,
     "promptImage": "A beautiful cat",
     "promptText": "Tell me story about a beautiful cat"
   }
