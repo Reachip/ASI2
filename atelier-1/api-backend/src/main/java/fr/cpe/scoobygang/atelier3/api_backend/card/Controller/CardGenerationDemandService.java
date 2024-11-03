@@ -10,6 +10,7 @@ public class CardGenerationDemandService
 {
     @Autowired
     private BackendPublisher backendPublisher;
+
     public void sendGenerationCardDemand(String promptImage, String promptText, String userId)
     {
         CardDemandActiveMQ cardDemandActiveMQ = new CardDemandActiveMQ(userId, promptImage, promptText);

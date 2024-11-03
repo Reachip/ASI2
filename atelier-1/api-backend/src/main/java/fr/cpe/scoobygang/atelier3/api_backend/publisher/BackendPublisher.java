@@ -11,10 +11,11 @@ import java.io.Serializable;
 
 @Component
 public class BackendPublisher {
-    private static final Logger logger = LoggerFactory.getLogger(fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.publisher.OrchestratorPublisher.class);
+    private static final Logger logger = LoggerFactory.getLogger(fr.cpe.scoobygang.atelier3.api_backend.publisher.BackendPublisher.class);
 
     @Autowired
     private BusService busService;
+
     public void sendToOrchestrator(Serializable jsonConvertable) {
         logger.info("Sending message to image MS: {}", jsonConvertable);
         busService.send(jsonConvertable, QueuesConstants.QUEUE_GENERATION_CARD);

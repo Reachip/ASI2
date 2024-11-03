@@ -70,7 +70,7 @@ public class CardRestController {
 	public ResponseEntity<Void> cardDemand(String promptImage, String promptText, String userId)
 	{
 		// Check user account > 100
-		UserModel userModel = userService.getUser(userId).get();
+		UserModel userModel = userService.getUser(Integer.valueOf(userId)).get();
 		if (userModel.getAccount() < 100)
 		{
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not enough money");
