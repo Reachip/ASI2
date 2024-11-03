@@ -1,6 +1,5 @@
 package fr.cpe.scoobygang.atelier3.api_backend.card.Controller;
 
-import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.dto.request.CardDemandRequest;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.dto.response.CardCreationResponse;
 import org.slf4j.Logger;
@@ -10,12 +9,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Service
-public class CardGenerationService {
+public class CardGenerationDemandService {
     private String apiUrl = "http://localhost:8080/orchestrator/card/transaction/create";
 
     public Mono<String> sendGenerationCardDemand(String promptImage, String promptText)
     {
-        final Logger logger = LoggerFactory.getLogger(CardGenerationService.class);
+        final Logger logger = LoggerFactory.getLogger(CardGenerationDemandService.class);
 
         final WebClient webClient = WebClient.builder()
                 .baseUrl(apiUrl)
