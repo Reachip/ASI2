@@ -23,17 +23,17 @@ public class CardGenerationTransactionRestController {
     @Autowired
     private CardGenerationService cardGenerationService;
 
-    @PostMapping("/create")
-    public ResponseEntity<CardCreationResponse> cardDemand(@RequestBody CardDemandRequest cardDemand) {
-        if (cardDemand.getPromptImage() == null || cardDemand.getPromptText() == null) {
-            logger.error("Validation failed for card demand: {}", cardDemand);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-
-        logger.info("Received card demand : {}", cardDemand);
-
-        return ResponseEntity.ok(CardCreationMapper.INSTANCE.transactionToCardCreationResponse(cardGenerationService.createCard(cardDemand)));
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<CardCreationResponse> cardDemand(@RequestBody CardDemandRequest cardDemand) {
+//        if (cardDemand.getPromptImage() == null || cardDemand.getPromptText() == null) {
+//            logger.error("Validation failed for card demand: {}", cardDemand);
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+//        }
+//
+//        logger.info("Received card demand : {}", cardDemand);
+//
+//        return ResponseEntity.ok(CardCreationMapper.INSTANCE.transactionToCardCreationResponse(cardGenerationService.createCard(cardDemand)));
+//    }
 
     @PostMapping("/prompt")
     public ResponseEntity<Object> postPrompt(@RequestBody GenerationMessage<ContentText> generationMessage) {

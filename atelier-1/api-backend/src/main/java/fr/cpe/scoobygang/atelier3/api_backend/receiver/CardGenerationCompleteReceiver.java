@@ -1,9 +1,12 @@
 package fr.cpe.scoobygang.atelier3.api_backend.receiver;
 
+import fr.cpe.scoobygang.atelier3.api_backend.card.Controller.CardModelRepository;
+import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_backend.handler.WebSocketHandler;
-import fr.cpe.scoobygang.atelier3.api_backend.mapper.CardMapper;
-import fr.cpe.scoobygang.atelier3.api_backend.model.Card;
-import fr.cpe.scoobygang.atelier3.api_backend.repository.CardRepository;
+import fr.cpe.scoobygang.atelier3.api_backend.mapper.CardModelMapper;
+import fr.cpe.scoobygang.atelier3.api_backend.user.controller.UserService;
+import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserModel;
+import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model.ActiveMQTransaction;
 import fr.cpe.scoobygang.common.activemq.QueuesConstants;
 import fr.cpe.scoobygang.common.activemq.Receiver;
 import fr.cpe.scoobygang.common.activemq.parse.TextMessageParser;
@@ -25,22 +28,33 @@ public class CardGenerationCompleteReceiver implements Receiver {
     private TextMessageParser parser;
 
     @Autowired
-    private CardRepository cardRepository;
+    private CardModelRepository cardModelRepository;
 
     @Autowired
     private WebSocketHandler webSocketHandler;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     @JmsListener(destination = QueuesConstants.QUEUE_NOTIFY, containerFactory = "queueConnectionFactory")
     public void receive(TextMessage received) throws JMSException, ClassNotFoundException, IOException {
         logger.info("Received message on queue: {}", QueuesConstants.QUEUE_NOTIFY);
 
-        final Card card = CardMapper.INSTANCE.activeMQTransactionToCard(parser.toObject(received));
-        cardRepository.save(card);
+        ActiveMQTransaction activeMQTransaction = parser.toObject(received);
 
-        logger.info("Parsed card demand: {}", card);
+        final CardModel cardModel = CardModelMapper.INSTANCE.activeMQTransactionToCard(activeMQTransaction);
+        cardModel.setUser(userService.getUser(activeMQTransaction.getUserId()).get());
+        cardModelRepository.save(cardModel);
+
+        // Debit user :
+        UserModel user = cardModel.getUser();
+        user.setAccount(user.getAccount() - 100);
+        userService.updateUser(user);
+
+        logger.info("Parsed card demand: {}", cardModel);
         logger.info("Card creation process initiate");
 
-        webSocketHandler.broadcastMessage(card);
+        webSocketHandler.broadcastMessage(cardModel);
     }
 }

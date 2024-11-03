@@ -1,35 +1,18 @@
 package fr.cpe.scoobygang.atelier3.api_backend.card.Controller;
 
-import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.dto.request.CardDemandRequest;
-import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.dto.response.CardCreationResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import fr.cpe.scoobygang.atelier3.api_backend.publisher.BackendPublisher;
+import fr.cpe.scoobygang.common.activemq.model.CardDemandActiveMQ;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 @Service
-public class CardGenerationDemandService {
-    private String apiUrl = "http://localhost:8080/orchestrator/card/transaction/create";
-
-    public Mono<String> sendGenerationCardDemand(String promptImage, String promptText)
+public class CardGenerationDemandService
+{
+    @Autowired
+    private BackendPublisher backendPublisher;
+    public void sendGenerationCardDemand(String promptImage, String promptText, String userId)
     {
-        final Logger logger = LoggerFactory.getLogger(CardGenerationDemandService.class);
-
-        final WebClient webClient = WebClient.builder()
-                .baseUrl(apiUrl)
-                .build();
-
-        final CardDemandRequest request = new CardDemandRequest(promptImage, promptText);
-
-        return webClient.post()
-                .body(Mono.just(request), CardDemandRequest.class)
-                .retrieve()
-                .bodyToMono(CardCreationResponse.class)
-                .map(response -> {
-                    String uuid = response.getUuid();
-                    logger.info("Generated card : {}", uuid);
-                    return uuid;
-                });
+        CardDemandActiveMQ cardDemandActiveMQ = new CardDemandActiveMQ(userId, promptImage, promptText);
+        backendPublisher.sendToOrchestrator(cardDemandActiveMQ);
     }
 }

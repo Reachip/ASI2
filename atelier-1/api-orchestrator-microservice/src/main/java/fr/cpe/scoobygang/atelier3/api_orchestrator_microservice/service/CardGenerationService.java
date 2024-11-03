@@ -23,8 +23,9 @@ public class CardGenerationService {
     @Autowired
     private OrchestratorPublisher orchestratorPublisher;
 
-    private ActiveMQTransaction createCard(String promptImage, String promptText) {
+    private ActiveMQTransaction createCard(String promptImage, String promptText, String userId) {
         ActiveMQTransaction activeMQTransaction = activeMQTransactionRepository.save(ActiveMQTransaction.build());
+        activeMQTransaction.setUserId(userId);
 
         logger.info("Creating card with UUID : {}", activeMQTransaction.getUuid());
 
@@ -41,12 +42,12 @@ public class CardGenerationService {
         return activeMQTransaction;
     }
 
-    public ActiveMQTransaction createCard(CardDemandRequest cardDemand) {
-        return createCard(cardDemand.getPromptImage(), cardDemand.getPromptText());
-    }
+//    public ActiveMQTransaction createCard(CardDemandRequest cardDemand) {
+//        return createCard(cardDemand.getPromptImage(), cardDemand.getPromptText());
+//    }
 
     public ActiveMQTransaction createCard(CardDemandActiveMQ cardDemandActiveMQ) {
-        return createCard(cardDemandActiveMQ.getPromptImage(), cardDemandActiveMQ.getPromptText());
+        return createCard(cardDemandActiveMQ.getPromptImage(), cardDemandActiveMQ.getPromptText(), cardDemandActiveMQ.getUserId());
     }
 
     public void postText(GenerationMessage<ContentText> message) {
@@ -127,7 +128,7 @@ public class CardGenerationService {
         activeMQTransactionRepository.save(activeMQTransaction);
         logger.info("Card properties updated for uuid: {}", uuid);
 
-        orchestratorPublisher.sendToNotify(ActiveMQTransactionMapper.INSTANCE.ActiveMQTransactionToActiveMQTransactionDTO(activeMQTransaction));
+        orchestratorPublisher.sendToNotify(activeMQTransaction);
         logger.info("Notification sent for card creation for uuid: {}", uuid);
     }
 }

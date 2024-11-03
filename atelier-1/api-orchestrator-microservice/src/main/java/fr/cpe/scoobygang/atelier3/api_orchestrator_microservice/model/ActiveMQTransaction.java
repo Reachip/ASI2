@@ -21,6 +21,8 @@ public class ActiveMQTransaction implements Serializable {
 
     private String uuid;
 
+    private String userId;
+
     private String imageURL;
 
     @Column(columnDefinition = "TEXT")
@@ -47,6 +49,7 @@ public class ActiveMQTransaction implements Serializable {
         return "ActiveMQTransaction{" +
                 "id=" + id +
                 ", uuid='" + uuid + '\'' +
+                ", userId='" + userId + '\'' +
                 ", imageURL='" + imageURL + '\'' +
                 ", prompt='" + prompt + '\'' +
                 ", defense=" + defense +

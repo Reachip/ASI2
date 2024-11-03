@@ -12,14 +12,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CardDemandActiveMQ implements Serializable{
-    private String uuid;
+    private String userId;
     private String promptImage;
     private String promptText;
 
     @Override
     public String toString() {
         return "CardDemandActiveMQ{" +
-                "uuid='" + uuid + '\'' +
+                ", userId='" + userId + '\'' +
                 ", promptImage='" + promptImage + '\'' +
                 ", promptText='" + promptText + '\'' +
                 '}';
