@@ -41,3 +41,5 @@ class Repository {
         return response.json();
     }
 }
+
+export default Repository;

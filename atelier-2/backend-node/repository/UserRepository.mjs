@@ -9,3 +9,5 @@ class UserRepository {
     return this.repository.get("users")
   }
 }
+
+export default UserRepository;
