@@ -59,7 +59,7 @@ services:
 
   react-app:
     build:
-      context: ./frontend
+      context: ./atelier-1/frontend
       dockerfile: Dockerfile
     container_name: react-app
     ports:
