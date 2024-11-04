@@ -63,14 +63,14 @@ const CardsTable = ({
               </TableCell>
               <TableCell>
                 <Chip 
-                  label={card.family_name} 
+                  label={card.family}
                   size="small" 
-                  color={card.family_name === "Marvel" ? "error" : "primary"}
+                  color={card.family === "Marvel" ? "error" : "primary"}
                 />
               </TableCell>
               <TableCell>{card.hp}</TableCell>
               <TableCell>{card.energy}</TableCell>
-              <TableCell>{card.defense}</TableCell>
+              <TableCell>{card.defence}</TableCell>
               <TableCell>{card.attack}</TableCell>
               <TableCell>
                 <Typography 
