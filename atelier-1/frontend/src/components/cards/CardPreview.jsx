@@ -27,9 +27,9 @@ const CardPreview = ({
     <Paper sx={{ p: 2, height: '100%' }}>
       <Card>
         <Box sx={{ position: 'relative' }}>
-          {card.family_name &&
+          {card.family &&
             <Chip
-              label={card.family_name}
+              label={card.family}
               sx={{
                 position: 'absolute',
                 top: 8,
@@ -65,7 +65,7 @@ const CardPreview = ({
             />
             <Chip
               icon={<SecurityIcon />}
-              label={`Defense: ${card.defense}`}
+              label={`Defense: ${card.defence}`}
               size="small"
             />
             <Chip

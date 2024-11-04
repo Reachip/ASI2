@@ -2,6 +2,7 @@ package fr.cpe.scoobygang.atelier3.api_backend.common.tools;
 
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
+import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserCardsDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserModel;
 
@@ -28,5 +29,8 @@ public class DTOMapper {
 		UserDTO uDto =new UserDTO(uM);
 		return uDto;
 	}
-	
+
+	public static UserCardsDTO fromUserModelToUserCardsDTO(UserModel uM) {
+		return new UserCardsDTO(uM);
+	}
 }
