@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
+import fr.cpe.scoobygang.atelier3.api_backend.game.entity.GameDeck;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -148,4 +149,6 @@ public class UserModel implements Serializable {
 		this.email = email;
 	}
 
+	@OneToMany(mappedBy = "user")
+	private Set<GameDeck> gameDecks = new HashSet<>();
 }

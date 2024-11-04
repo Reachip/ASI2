@@ -27,6 +27,18 @@ public class Game implements Serializable {
     @JoinColumn(name = "user2_id")
     private UserModel user2;
 
+    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GameDeck deck1;
+
+    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GameDeck deck2;
+
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GameHistory> gameHistories = new HashSet<>();
+
+    // Méthode utilitaire pour initialiser les decks
+    public void initializeDecks() {
+        this.deck1 = new GameDeck(this, user1);
+        this.deck2 = new GameDeck(this, user2);
+    }
 }
