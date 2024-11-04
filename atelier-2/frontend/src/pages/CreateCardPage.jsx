@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { Typography, TextField, Button, Box, Checkbox, FormControlLabel } from '@mui/material';
 import Notification from '../components/layout/Notification';
 import CardPreview from '../components/cards/CardPreview';
+import { useSelector } from 'react-redux';
+import { selectAuth } from '../store/authSlice';
 
 const CreateCardPage = ({ generatedCard }) => {
   const [imagePrompt, setImagePrompt] = useState('');
   const [descriptionPrompt, setDescriptionPrompt] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const { user } = useSelector(selectAuth); 
 
   const handleGenerate = () => {
     if (!acceptTerms) {
@@ -23,6 +27,7 @@ const CreateCardPage = ({ generatedCard }) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        username: user.username,
         promptImage: imagePrompt,
         promptText: descriptionPrompt,
       }),
