@@ -1,0 +1,19 @@
+meta {
+  name: Generate image
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8989/prompt/req
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "promptTxt":"a beautiful cat on a box",
+    "negativePromptTxt":""
+  }
+  
+}

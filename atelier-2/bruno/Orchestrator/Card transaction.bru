@@ -1,0 +1,18 @@
+meta {
+  name: Card transaction
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:8080/orchestrator/card/transaction/create
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "promptImage": "A beautiful cat",
+    "promptText": "Tell me story about a beautiful cat"
+  }
+}

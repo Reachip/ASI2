@@ -1,0 +1,21 @@
+meta {
+  name: Send properties
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8086/orchestrator/card/transaction/property
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "uuid": "123e4567-e89b-12d3-a456-426614174000",
+      "content": {
+          "value": "https://example.com/image.jpg"
+      }
+  }
+  
+}
