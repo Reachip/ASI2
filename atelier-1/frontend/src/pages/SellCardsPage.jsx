@@ -16,7 +16,6 @@ const SellCardsPage = () => {
   async function loadCards() {
     const userCardResponse = await fetch(`http://localhost:8088/api/user/${user.id}/cards`)
     const data = await userCardResponse.json()
-    console.log(data)
     setUserCards(data.cardList)
   }
 
