@@ -15,12 +15,13 @@ public class CardDTO extends CardBasics {
 
 	public CardDTO(CardModel cModel) {
 		super(cModel);
-		this.id = cModel.getId();
 		this.energy = cModel.getEnergy();
 		this.hp = cModel.getHp();
 		this.defence = cModel.getDefence();
 		this.attack = cModel.getAttack();
 		this.price = cModel.getPrice();
+		this.id = cModel.getId();
+
 		if (cModel.getUser() != null) {
 			this.userId = cModel.getUser().getId();
 		} else {

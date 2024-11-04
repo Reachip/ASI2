@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import fr.cpe.scoobygang.atelier3.api_backend.common.tools.DTOMapper;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.AuthDTO;
+import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserCardsDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserModel;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,17 @@ public class UserRestController {
 		ruser = userService.getUser(id);
 		if (ruser.isPresent()) {
 			return DTOMapper.fromUserModelToUserDTO(ruser.get());
+		}
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + id + ", not found", null);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/user/{id}/cards")
+	private UserCardsDTO getUserCards(@PathVariable String id) {
+		Optional<UserModel> ruser;
+		ruser = userService.getUser(id);
+
+		if (ruser.isPresent()) {
+			return DTOMapper.fromUserModelToUserCardsDTO(ruser.get());
 		}
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + id + ", not found", null);
 	}

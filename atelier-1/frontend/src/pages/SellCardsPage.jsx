@@ -2,33 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Box } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectAuth } from '../store/authSlice';
+
 import CardsTable from '../components/cards/CardsTable';
 import CardPreview from '../components/cards/CardPreview';
 
 const SellCardsPage = () => {
   const dispatch = useDispatch();
   const { user } = useSelector(selectAuth);
-  const [selectedCard, setSelectedCard] = useState(null);
-  const [userCards] = useState([
-    {
-      id: 3,
-      family_name: "Marvel",
-      img_src: "https://static.hitek.fr/img/actualite/2017/06/27/i_deadpool-2.jpg",
-      name: "DEADPOOL",
-      description: "Le convoi d'Ajax est attaqué par Deadpool...",
-      hp: 999,
-      energy: 100,
-      attack: 15,
-      defense: 15,
-      price: 250,
-    },
-  ]);
 
-  useEffect(() => {
-    if (userCards.length > 0) {
-      setSelectedCard(userCards[0]);
-    }
-  }, [userCards]);
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [userCards, setUserCards] = useState([]);
+
+  async function loadCards() {
+    const userCardResponse = await fetch(`http://localhost:8088/api/user/${user.id}/cards`)
+    const data = await userCardResponse.json()
+    console.log(data)
+    setUserCards(data.cardList)
+  }
+
+  useEffect( () => {
+    loadCards();
+  }, [user]);
 
   const handleSell = (card) => {
     dispatch({
