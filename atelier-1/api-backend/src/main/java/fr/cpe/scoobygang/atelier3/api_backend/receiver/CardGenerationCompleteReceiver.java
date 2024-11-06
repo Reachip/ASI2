@@ -1,6 +1,5 @@
 package fr.cpe.scoobygang.atelier3.api_backend.receiver;
 
-import fr.cpe.scoobygang.atelier3.api_backend.card.Controller.CardModelRepository;
 import fr.cpe.scoobygang.atelier3.api_backend.card.Controller.CardModelService;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_backend.handler.WebSocketHandler;
@@ -29,7 +28,7 @@ public class CardGenerationCompleteReceiver implements Receiver {
     private TextMessageParser parser;
 
     @Autowired
-    CardModelService cardModelService;
+    private CardModelService cardModelService;
 
     @Autowired
     private WebSocketHandler webSocketHandler;
