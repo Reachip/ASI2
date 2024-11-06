@@ -18,7 +18,9 @@ public class GameHistory implements Serializable {
 
     private int emitterId;
 
-    private int receiver2Id;
+    private int receiverId;
+
+    private int roomId;
 
     private String message;
 
