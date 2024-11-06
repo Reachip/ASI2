@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '../store/authSlice';
-import PlayerBoard from '../components/play/PlayerBoard';
-import Chat from '../components/chat/Chat';
-import GavelIcon from '@mui/icons-material/Gavel';
+import ChatPanel from '../components/chat/ChatPanel';
+import GameBoard from '../components/play/GameBoard';
 
 const sampleMessages = [
     { id: 1, sender: "Eric Smith", message: "Hey, good luck for this game!", timestamp: new Date("2024-01-01T10:00:00").toISOString() },
@@ -18,101 +17,21 @@ const sampleUsers = [
     { username: "Chuck Norris", id: 4 }
 ];
 
+const opponentCards = [
+    { id: 1, name: 'Dragon', img_src: 'https://r2.starryai.com/results/1018715876/210d992f-6c31-42e6-8256-c760ce1e5526.webp', family_name: 'Mythical', description: 'A fierce dragon', hp: 25, energy: 25, defense: 10, attack: 20 },
+    { id: 2, name: 'Phoenix', img_src: 'https://cdn.prod.website-files.com/632ac1a36830f75c7e5b16f0/64f115aafa4db6e7cb5d06ec_d7wb7qw1nmg5iAmD9Cb1W86MZkL6rJm36l09xBNTPKA.webp', family_name: 'Mythical', description: 'A majestic phoenix', hp: 22, energy: 22, defense: 8, attack: 18 },
+    { id: 3, name: 'Griffon', img_src: 'https://img.freepik.com/premium-photo/illustration-ofdesign-image-gryphon-sky-with-majes_756405-36588.jpg', family_name: 'Mythical', description: 'A mighty griffon', hp: 23, energy: 23, defense: 9, attack: 19 },
+    { id: 4, name: 'Unicorn', img_src: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e487da7a-b13a-469a-b84d-1615aeba211d/dg574e3-939a3270-e20e-45ed-9ea9-3acfd509f426.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2U0ODdkYTdhLWIxM2EtNDY5YS1iODRkLTE2MTVhZWJhMjExZFwvZGc1NzRlMy05MzlhMzI3MC1lMjBlLTQ1ZWQtOWVhOS0zYWNmZDUwOWY0MjYuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.2zP-EQodCPj64nHmSlUiS4mELL1kyZFcMnH9qT7j7VQ', family_name: 'Mythical', description: 'A magical unicorn', hp: 20, energy: 20, defense: 12, attack: 15 },
+];
+
+const playerCards = [
+    { id: 5, name: 'Tiger', img_src: 'https://r2.starryai.com/results/1020473103/592f664b-6e58-49f4-8f3a-560f4725c6a4.webp', family_name: 'Animals', description: 'A powerful tiger', hp: 20, energy: 20, defense: 7, attack: 15 },
+    { id: 6, name: 'Snake', img_src: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/681830a2-cd77-42b3-bc24-17b76848eedb/dh3yi1m-a6a9af9b-8adf-441d-9e53-af3349bc2766.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzY4MTgzMGEyLWNkNzctNDJiMy1iYzI0LTE3Yjc2ODQ4ZWVkYlwvZGgzeWkxbS1hNmE5YWY5Yi04YWRmLTQ0MWQtOWU1My1hZjMzNDliYzI3NjYucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.AjWAb0SpkI_I7WN1k-VM-WBJ1urkiI-CEce64Qkzwf0', family_name: 'Animals', description: 'A cunning snake', hp: 18, energy: 18, defense: 6, attack: 14 },
+    { id: 7, name: 'Wolf', img_src: 'https://img.freepik.com/premium-photo/african-wolf-about-attacking-images-generative-ai_880278-533.jpg', family_name: 'Animals', description: 'A fierce wolf', hp: 19, energy: 19, defense: 8, attack: 16 },
+    { id: 8, name: 'Shark', img_src: 'https://img.freepik.com/premium-photo/shark-attack-clear-ocean-waters_863013-102252.jpg', family_name: 'Animals', description: 'A deadly shark', hp: 21, energy: 21, defense: 9, attack: 17 },
+];
+
 const PlayPage = () => {
-    const opponentCards = [
-        {
-            id: 1,
-            name: 'Dragon',
-            img_src: 'https://r2.starryai.com/results/1018715876/210d992f-6c31-42e6-8256-c760ce1e5526.webp',
-            family_name: 'Mythical',
-            description: 'A fierce dragon',
-            hp: 25,
-            energy: 25,
-            defense: 10,
-            attack: 20,
-        },
-        {
-            id: 2,
-            name: 'Phoenix',
-            img_src: 'https://cdn.prod.website-files.com/632ac1a36830f75c7e5b16f0/64f115aafa4db6e7cb5d06ec_d7wb7qw1nmg5iAmD9Cb1W86MZkL6rJm36l09xBNTPKA.webp',
-            family_name: 'Mythical',
-            description: 'A majestic phoenix',
-            hp: 22,
-            energy: 22,
-            defense: 8,
-            attack: 18,
-        },
-        {
-            id: 3,
-            name: 'Griffon',
-            img_src: 'https://img.freepik.com/premium-photo/illustration-ofdesign-image-gryphon-sky-with-majes_756405-36588.jpg',
-            family_name: 'Mythical',
-            description: 'A mighty griffon',
-            hp: 23,
-            energy: 23,
-            defense: 9,
-            attack: 19,
-        },
-        {
-            id: 4,
-            name: 'Unicorn',
-            img_src: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e487da7a-b13a-469a-b84d-1615aeba211d/dg574e3-939a3270-e20e-45ed-9ea9-3acfd509f426.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2U0ODdkYTdhLWIxM2EtNDY5YS1iODRkLTE2MTVhZWJhMjExZFwvZGc1NzRlMy05MzlhMzI3MC1lMjBlLTQ1ZWQtOWVhOS0zYWNmZDUwOWY0MjYuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.2zP-EQodCPj64nHmSlUiS4mELL1kyZFcMnH9qT7j7VQ',
-            family_name: 'Mythical',
-            description: 'A magical unicorn',
-            hp: 20,
-            energy: 20,
-            defense: 12,
-            attack: 15,
-        },
-    ];
-
-    const playerCards = [
-        {
-            id: 5,
-            name: 'Tiger',
-            img_src: 'https://r2.starryai.com/results/1020473103/592f664b-6e58-49f4-8f3a-560f4725c6a4.webp',
-            family_name: 'Animals',
-            description: 'A powerful tiger',
-            hp: 20,
-            energy: 20,
-            defense: 7,
-            attack: 15,
-        },
-        {
-            id: 6,
-            name: 'Snake',
-            img_src: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/681830a2-cd77-42b3-bc24-17b76848eedb/dh3yi1m-a6a9af9b-8adf-441d-9e53-af3349bc2766.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzY4MTgzMGEyLWNkNzctNDJiMy1iYzI0LTE3Yjc2ODQ4ZWVkYlwvZGgzeWkxbS1hNmE5YWY5Yi04YWRmLTQ0MWQtOWU1My1hZjMzNDliYzI3NjYucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.AjWAb0SpkI_I7WN1k-VM-WBJ1urkiI-CEce64Qkzwf0',
-            family_name: 'Animals',
-            description: 'A cunning snake',
-            hp: 18,
-            energy: 18,
-            defense: 6,
-            attack: 14,
-        },
-        {
-            id: 7,
-            name: 'Wolf',
-            img_src: 'https://img.freepik.com/premium-photo/african-wolf-about-attacking-images-generative-ai_880278-533.jpg',
-            family_name: 'Animals',
-            description: 'A fierce wolf',
-            hp: 19,
-            energy: 19,
-            defense: 8,
-            attack: 16,
-        },
-        {
-            id: 8,
-            name: 'Shark',
-            img_src: 'https://img.freepik.com/premium-photo/shark-attack-clear-ocean-waters_863013-102252.jpg',
-            family_name: 'Animals',
-            description: 'A deadly shark',
-            hp: 21,
-            energy: 21,
-            defense: 9,
-            attack: 17,
-        },
-    ];
-
     const { user } = useSelector(selectAuth);
     const [selectedOpponentCard, setSelectedOpponentCard] = useState(opponentCards[0]);
     const [selectedPlayerCard, setSelectedPlayerCard] = useState(playerCards[0]);
@@ -129,90 +48,22 @@ const PlayPage = () => {
     };
 
     return (
-        <Box sx={{
-            display: 'flex',
-            height: 'calc(100vh - 80px)',
-            gap: 2,
-            padding: 0,
-        }}>
-            {/* Chat panel */}
-            <Box sx={{
-                width: '20%',
-                height: '100%',
-            }}>
-                <Chat
-                    currentUser={user.username}
-                    messages={sampleMessages}
-                    onSendMessage={() => { }}
-                    users={sampleUsers}
-                />
-            </Box>
-
-            {/* Main game board section */}
-            <Box sx={{
-                width: '80%',
-                display: 'flex',
-                flexDirection: 'column',
-                minHeight: 0,
-                margin: 0,
-                padding: 0,
-            }}>
-                {/* Opponent section */}
-                <Box sx={{
-                    display: 'flex',
-                    gap: 2,
-                    flex: 1,
-                    overflow: 'hidden',
-                    marginBottom: 2,
-                }}>
-                    <PlayerBoard
-                        player={opponent}
-                        cards={opponentCards}
-                        onCardSelect={handleOpponentCardSelect}
-                        selectedCard={selectedOpponentCard}
-                        isOpponent
-                    />
-                </Box>
-
-                {/* Control panel */}
-                <Box sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    borderTop: '1px solid',
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
-                    py: 1,
-                    px: 2,
-                    flexShrink: 0,
-                }}>
-                    <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button variant="contained" color="primary">End Turn</Button>
-                        <Button
-                            variant="contained"
-                            color="error"
-                            sx={{ height: '40px', width: '40px', minWidth: 'unset' }}
-                        >
-                            <GavelIcon />
-                        </Button>
-                    </Box>
-                </Box>
-
-                {/* Player section */}
-                <Box sx={{
-                    display: 'flex',
-                    gap: 2,
-                    flex: 1,
-                    overflow: 'hidden',
-                }}>
-                    <PlayerBoard
-                        player={currentPlayer}
-                        cards={playerCards}
-                        onCardSelect={handlePlayerCardSelect}
-                        selectedCard={selectedPlayerCard}
-                    />
-                </Box>
-            </Box>
+        <Box sx={{ display: 'flex', height: 'calc(100vh - 80px)', gap: 2, padding: 0 }}>
+            <ChatPanel
+                currentUser={user.username}
+                messages={sampleMessages}
+                users={sampleUsers}
+            />
+            <GameBoard
+                opponent={opponent}
+                currentPlayer={currentPlayer}
+                opponentCards={opponentCards}
+                playerCards={playerCards}
+                selectedOpponentCard={selectedOpponentCard}
+                selectedPlayerCard={selectedPlayerCard}
+                onOpponentCardSelect={handleOpponentCardSelect}
+                onPlayerCardSelect={handlePlayerCardSelect}
+            />
         </Box>
     );
 };

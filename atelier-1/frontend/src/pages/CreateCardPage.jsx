@@ -12,7 +12,6 @@ const CreateCardPage = ({ generatedCard }) => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Récupérez le username de l'utilisateur connecté
    const { user } = useSelector(selectAuth);
    const username = user?.username;
 
