@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import Navbar from './Navbar';
 import Notification from './Notification';
 
@@ -54,12 +54,12 @@ const Layout = ({ children, subtitle }) => {
   }, []);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box>
       <Navbar subtitle={subtitle} />
       <Notification open={open} currentMessage={currentMessage} onClose={handleClose} />
-      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', margin: '15px' }}>
+      <Container component="main" sx={{ flexGrow: 1, py: 1 }} maxWidth={false}>
         {React.cloneElement(children, { generatedCard })}
-      </Box>
+      </Container>
     </Box>
   );
 };

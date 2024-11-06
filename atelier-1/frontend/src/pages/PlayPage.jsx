@@ -1,132 +1,24 @@
 import React, { useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '../store/authSlice';
-import CardPreview from '../components/cards/CardPreview';
-import Card from '../components/cards/Card';
+import PlayerBoard from '../components/play/PlayerBoard';
 import Chat from '../components/chat/Chat';
 import GavelIcon from '@mui/icons-material/Gavel';
 
-// Sample chat messages
 const sampleMessages = [
-    {
-        id: 1,
-        sender: "Eric Smith",
-        message: "Hey, good luck for this game!",
-        timestamp: new Date("2024-01-01T10:00:00").toISOString(),
-    },
-    {
-        id: 2,
-        sender: "test",
-        message: "Thanks! May the best win 😊",
-        timestamp: new Date("2024-01-01T10:00:30").toISOString(),
-    },
-    {
-        id: 3,
-        sender: "Eric Smith",
-        message: "Nice card you played there!",
-        timestamp: new Date("2024-01-01T10:01:00").toISOString(),
-    }
+    { id: 1, sender: "Eric Smith", message: "Hey, good luck for this game!", timestamp: new Date("2024-01-01T10:00:00").toISOString() },
+    { id: 2, sender: "test", message: "Thanks! May the best win 😊", timestamp: new Date("2024-01-01T10:00:30").toISOString() },
+    { id: 3, sender: "Eric Smith", message: "Nice card you played there!", timestamp: new Date("2024-01-01T10:01:00").toISOString() }
 ];
 
-// Sample users for chat
 const sampleUsers = [
     { username: "Eric Smith", id: 2 },
     { username: "Kity Poulet", id: 3 },
-    { username: "Chuck Norris", id: 4 },
+    { username: "Chuck Norris", id: 4 }
 ];
 
-const ActionPoints = ({ points, total = 3, isTop }) => (
-    <Box
-        sx={{
-            position: 'absolute',
-            left: '-220px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
-            width: '200px',
-        }}
-    >
-        <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>
-            Action Points: {points}
-        </Typography>
-        <Box
-            sx={{
-                flex: 1,
-                minWidth: 100,
-                height: 4,
-                bgcolor: 'grey.300',
-                borderRadius: 2,
-                overflow: 'hidden',
-            }}
-        >
-            <Box
-                sx={{
-                    width: `${(points / total) * 100}%`,
-                    height: '100%',
-                    bgcolor: 'primary.main',
-                    transition: 'width 0.3s ease',
-                }}
-            />
-        </Box>
-    </Box>
-);
-
-const PlayerBoard = ({ player, cards, onCardSelect, selectedCard, isOpponent }) => (
-    <Box sx={{ position: 'relative', height: '100%', px: 3, border: '1px solid', borderColor: 'divider' }}>
-        <Typography
-            variant="h6"
-            sx={{
-                position: 'absolute',
-                [isOpponent ? 'top' : 'bottom']: '-30px',
-                left: '24px',
-            }}
-        >
-            {player.username}
-        </Typography>
-
-        <ActionPoints points={player.actionPoints} isTop={isOpponent} />
-
-        <Box
-            sx={{
-                display: 'flex',
-                gap: 2,
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100%',
-                padding: '20px',
-            }}
-        >
-            {cards.map((card) => (
-                <Card
-                    key={card.id}
-                    card={card}
-                    isSelected={selectedCard?.id === card.id}
-                    onClick={() => onCardSelect(card)}
-                />
-            ))}
-        </Box>
-    </Box>
-);
-
 const PlayPage = () => {
-    const { user } = useSelector(selectAuth);
-    const [selectedCard, setSelectedCard] = useState(null);
-
-    const opponent = {
-        username: 'Opponent',
-        actionPoints: 3,
-        isCurrentPlayer: false,
-    };
-
-    const currentPlayer = {
-        username: user.username,
-        actionPoints: 3,
-        isCurrentPlayer: true,
-    };
-
     const opponentCards = [
         {
             id: 1,
@@ -221,21 +113,33 @@ const PlayPage = () => {
         },
     ];
 
-    const handleCardSelect = (card) => {
-        setSelectedCard(card);
+    const { user } = useSelector(selectAuth);
+    const [selectedOpponentCard, setSelectedOpponentCard] = useState(opponentCards[0]);
+    const [selectedPlayerCard, setSelectedPlayerCard] = useState(playerCards[0]);
+
+    const opponent = { username: 'Eric Smith', actionPoints: 3, isCurrentPlayer: false };
+    const currentPlayer = { username: user.username, actionPoints: 3, isCurrentPlayer: true };
+
+    const handleOpponentCardSelect = (card) => {
+        setSelectedOpponentCard(card);
+    };
+
+    const handlePlayerCardSelect = (card) => {
+        setSelectedPlayerCard(card);
     };
 
     return (
-        <Box
-            sx={{
-                height: 'calc(100vh - 80px)',
-                display: 'flex',
-                gap: 2,
-                p: 2,
-            }}
-        >
-            {/* Left Section - Chat */}
-            <Box sx={{ width: '300px', height: '100%' }}>
+        <Box sx={{
+            display: 'flex',
+            height: 'calc(100vh - 80px)',
+            gap: 2,
+            padding: 0,
+        }}>
+            {/* Chat panel */}
+            <Box sx={{
+                width: '20%',
+                height: '100%',
+            }}>
                 <Chat
                     currentUser={user.username}
                     messages={sampleMessages}
@@ -244,25 +148,33 @@ const PlayPage = () => {
                 />
             </Box>
 
-            {/* Center Section - Game Boards and Controls */}
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', ml: '220px' }}>
-                {/* Opponent's Board */}
-                <Box
-                    sx={{
-                        flex: 1,
-                        position: 'relative',
-                    }}
-                >
+            {/* Main game board section */}
+            <Box sx={{
+                width: '80%',
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: 0,
+                margin: 0,
+                padding: 0,
+            }}>
+                {/* Opponent section */}
+                <Box sx={{
+                    display: 'flex',
+                    gap: 2,
+                    flex: 1,
+                    overflow: 'hidden',
+                    marginBottom: 2,
+                }}>
                     <PlayerBoard
                         player={opponent}
                         cards={opponentCards}
-                        onCardSelect={handleCardSelect}
-                        selectedCard={selectedCard}
+                        onCardSelect={handleOpponentCardSelect}
+                        selectedCard={selectedOpponentCard}
                         isOpponent
                     />
                 </Box>
 
-                {/* Controls Section */}
+                {/* Control panel */}
                 <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
@@ -272,49 +184,34 @@ const PlayPage = () => {
                     borderColor: 'divider',
                     py: 1,
                     px: 2,
+                    flexShrink: 0,
                 }}>
                     <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                        >
-                            End Turn
-                        </Button>
+                        <Button variant="contained" color="primary">End Turn</Button>
                         <Button
                             variant="contained"
                             color="error"
-                            sx={{
-                                height: '40px',
-                                width: '40px',
-                                minWidth: 'unset',
-                            }}
+                            sx={{ height: '40px', width: '40px', minWidth: 'unset' }}
                         >
                             <GavelIcon />
                         </Button>
                     </Box>
                 </Box>
 
-                {/* Player's Board */}
+                {/* Player section */}
                 <Box sx={{
+                    display: 'flex',
+                    gap: 2,
                     flex: 1,
-                    position: 'relative',
-                }}
-                >
+                    overflow: 'hidden',
+                }}>
                     <PlayerBoard
                         player={currentPlayer}
                         cards={playerCards}
-                        onCardSelect={handleCardSelect}
-                        selectedCard={selectedCard}
+                        onCardSelect={handlePlayerCardSelect}
+                        selectedCard={selectedPlayerCard}
                     />
                 </Box>
-            </Box>
-
-            <Box sx={{ width: '300px' }}>
-                {selectedCard && (
-                    <Box sx={{ width: '100%' }}>
-                        <CardPreview card={selectedCard} showAction={false} />
-                    </Box>
-                )}
             </Box>
         </Box>
     );
