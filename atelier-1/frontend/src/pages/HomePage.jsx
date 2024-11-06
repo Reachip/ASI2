@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ScienceIcon from '@mui/icons-material/Science';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -23,6 +24,11 @@ const HomePage = () => {
       title: 'Create',
       icon: <ScienceIcon sx={{ fontSize: 40 }} />,
       path: '/create',
+    },
+    {
+      title: 'Play',
+      icon: <SportsEsportsIcon sx={{ fontSize: 40 }} />,
+      path: '/play',
     },
   ];
 
