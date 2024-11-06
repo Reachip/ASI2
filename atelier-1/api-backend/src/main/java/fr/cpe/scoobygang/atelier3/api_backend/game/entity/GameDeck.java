@@ -4,7 +4,6 @@ package fr.cpe.scoobygang.atelier3.api_backend.game.entity;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserModel;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +16,6 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class GameDeck implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,6 +28,11 @@ public class GameDeck implements Serializable {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserModel user;
+
+    public GameDeck(Game game, UserModel user) {
+        this.game = game;
+        this.user = user;
+    }
 
     @ManyToMany
     @JoinTable(
