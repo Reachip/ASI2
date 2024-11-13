@@ -1,13 +1,12 @@
 package fr.cpe.scoobygang.atelier3.api_backend.receiver;
 
-import fr.cpe.scoobygang.atelier3.api_backend.card.Controller.CardModelRepository;
 import fr.cpe.scoobygang.atelier3.api_backend.card.Controller.CardModelService;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_backend.handler.WebSocketHandler;
 import fr.cpe.scoobygang.atelier3.api_backend.mapper.CardModelMapper;
 import fr.cpe.scoobygang.atelier3.api_backend.user.controller.UserService;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserModel;
-import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.model.ActiveMQTransaction;
+import fr.cpe.scoobygang.common.activemq.model.ActiveMQTransaction;
 import fr.cpe.scoobygang.common.activemq.QueuesConstants;
 import fr.cpe.scoobygang.common.activemq.Receiver;
 import fr.cpe.scoobygang.common.activemq.parse.TextMessageParser;

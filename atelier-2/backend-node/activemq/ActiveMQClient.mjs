@@ -38,33 +38,16 @@ class ActiveMQClient
         return new Promise((resolve, reject) => {
             const sendHeaders = {
                 destination: destination,
-                'content-type': 'text/plain',
+                'content-type': 'application/json',
+                'ObjectType': 'fr.cpe.scoobygang.common.activemq.model.MessageActiveMQ'
             };
             const frame = this.client.send(sendHeaders);
-            frame.write(message);
+            frame.write(JSON.stringify(message));
             frame.end();
             resolve();
         });
     }
-    async receive(destination, onMessage) {
-        await this._ensureConnected();
-        const subscribeHeaders = {
-            destination: destination,
-            ack: 'auto', // Utiliser le mode auto pour éviter l'acquittement manuel
-        };
-        this.client.subscribe(subscribeHeaders, (error, message) => {
-            if (error) {
-                console.error('Subscription error:', error.message);
-                return;
-            }
-            message.readString('utf-8', (error, body) => {
-                if (error) {
-                    console.error('Error reading message:', error.message);
-                    return;
-                }
-                onMessage(body);
-            });
-        });
-    }
 }
 export default ActiveMQClient;
+
+//'ObjectType': 'fr.cpe.scoobygang.atelier3.api_backend.receiver.MessageActiveMQ'

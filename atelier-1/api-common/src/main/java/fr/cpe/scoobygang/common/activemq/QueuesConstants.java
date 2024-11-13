@@ -6,6 +6,7 @@ public class QueuesConstants {
     public static final String QUEUE_GENERATION_PROPERTY = "queue.generation.property";
     public static final String QUEUE_GENERATION_CARD = "queue.generation.card";
     public static final String QUEUE_NOTIFY = "queue.notify";
+    public static final String QUEUE_SAVE_MESSAGE = "queue.save.message";
 
     private QueuesConstants() {
         throw new UnsupportedOperationException("This class cannot be instantiated.");
