@@ -1,0 +1,114 @@
+const addNewSelection = async (newSelectedUserId, userId) => {
+    // Récupère la liste des utilisateurs qui ont sélectionné l'utilisateur sélectionné
+    let newSelectedUserListSelectedBy = await redis.hget("selectedUser", newSelectedUserId);
+    console.log(`Liste des user qui ont selectionné ${newSelectedUserId} : `+newSelectedUserListSelectedBy);
+
+    // Si la clé n'existe pas encore, on initialise avec une liste vide
+    newSelectedUserListSelectedBy = newSelectedUserListSelectedBy ? JSON.parse(newSelectedUserListSelectedBy) : [];
+
+    // Ajout l'utilisateur qui à sélectionné
+    if (!newSelectedUserListSelectedBy.includes(userId)) {
+      newSelectedUserListSelectedBy.push(userId);
+      await redis.hset("selectedUser", newSelectedUserId, JSON.stringify(newSelectedUserListSelectedBy));
+      console.log(`Ajout de l'utilisateur ${userId} pour avoir sélectionné : `+newSelectedUserId);
+      console.log(`Liste des user qui ont selectionné ${newSelectedUserId} : `+JSON.stringify(newSelectedUserListSelectedBy));
+    }
+  }
+
+  // Fonction pour créer une room et stocker les informations dans Redis
+    /*
+  async function createRoom(user1, user2) {
+    const roomId = `room-${user1.socketId}-${user2.socketId}`;
+
+    const socketUser1 =  io.sockets.sockets.get(user1.socketId);
+    const socketUser2 =  io.sockets.sockets.get(user2.socketId);
+    // Ajoute les utilisateurs à la room dans Socket.IO
+    socketUser1.join(roomId);
+    socketUser2.join(roomId);
+
+    // Enregistre la room avec les utilisateurs dans Redis
+    await redis.hmset(roomId, {
+      user1: user1,
+      user2: user2,
+    });
+
+    // Envoie la notification d'appariement à chaque utilisateur
+    socketUser1.emit("paired", { roomId, pairedUser: user2.username });
+    socketUser2.emit("paired", { roomId, pairedUser: user1.username });
+
+    console.log(`Room créée : ${roomId} pour ${user1.username} et ${user2.username}`);
+  }
+  */
+
+  // Enregistre le lien username-socketId dans Redis
+    //await redis.set(`user:${username}`, socket.id);
+
+    // Ajoute l'utilisateur à la file d'attente Redis
+    //await redis.rpush("waitingQueue", JSON.stringify({ username, socketId: socket.id }));
+
+    // Vérifie si deux utilisateurs sont en file d'attente
+    /*const queueLength = await redis.llen("waitingQueue");
+    if (queueLength >= 2) {
+      // Récupère les deux premiers utilisateurs de la file d'attente
+      const user1 = JSON.parse(await redis.lpop("waitingQueue"));
+      const user2 = JSON.parse(await redis.lpop("waitingQueue"));
+
+      // Crée une room pour ces deux utilisateurs
+      //createRoom(user1, user2);
+    }
+    */
+
+    //await redis.del(`user:${username}`);
+        /*
+        const queue = await redis.lrange("waitingQueue", 0, -1);
+        const userIndex = queue.findIndex((u) => JSON.parse(u).socketId === socket.id);
+        if (userIndex !== -1) {
+          await redis.lrem("waitingQueue", 1, queue[userIndex]);
+        }
+
+        // Supprimer la room si l'utilisateur se déconnecte
+        const roomId = `room-${user1Data.socketId}-${user2Data.socketId}`; // Générer l'ID de la room si nécessaire
+
+        const roomInfo = await redis.hgetall(roomId);
+        if (roomInfo) {
+          const otherUserSocketId = JSON.parse(roomInfo[sender === "user1" ? "user2" : "user1"]).socketId;
+
+          // Informer l'autre utilisateur que la room est fermée
+          io.to(otherUserSocketId).emit("roomClosed", { message: "L'autre utilisateur s'est déconnecté." });
+
+          // Supprimer la room de Redis
+          await redis.del(roomId);
+          console.log(`Room ${roomId} supprimée car ${username} s'est déconnecté.`);
+        }
+
+         */
+
+
+  const checkMutualSelection = async (newSelectedUserId, userId, userSocket, newSelectedUserSocketId) => {
+      await existsInRedis(SELECTED_USER_HASH,userId,newSelectedUserId);
+
+      let userIdListSelectedBy = await redis.hget("selectedUser", userId);
+      if (userIdListSelectedBy) {
+        userIdListSelectedBy = JSON.parse(userIdListSelectedBy);
+
+        // Vérifie si l'utilisateur sélectionné a également sélectionné l'utilisateur actuel
+        if (userIdListSelectedBy.includes(newSelectedUserId)) {
+          console.log(`Les utilisateurs ${userId} et ${newSelectedUserId} se sont tous les deux sélectionnés`);
+
+          // Crée un identifiant de room unique basé sur les IDs des deux utilisateurs
+          const roomId = `chat_room_${Math.min(userId, newSelectedUserId)}_${Math.max(userId, newSelectedUserId)}`;
+
+          // Ajoute les utilisateurs dans cette room
+          userSocket.join(roomId);
+          const targetSocket = io.sockets.sockets.get(newSelectedUserSocketId);
+          if (targetSocket) {
+            targetSocket.join(roomId);
+          }
+
+          // Envoie une confirmation de la room aux deux utilisateurs
+          io.to(roomId).emit("roomCreated", {roomId, users: [userId, newSelectedUserId]});
+          console.log(`Création de la room: ${roomId}`);
+          await logDetailsRedis();
+        }
+      }
+    }
