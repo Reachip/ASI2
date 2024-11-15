@@ -6,22 +6,31 @@ import {notifyConversationHistorique} from "./notifyEvent.mjs";
 
 const updateSelectedUserEvent = async (redis, io, data, userSocket) => {
     const { oldSelectedUserId, newSelectedUserId, userId, newSelectedUserSocketId } = data;
-    console.log(`Utilisateur ${userId} sélectionne ${newSelectedUserId==null? "all" : newSelectedUserId }; Ancienne selection: ${oldSelectedUserId==null? "all" : oldSelectedUserId }`);
+    console.log(`Utilisateur ${userId} sélectionne ${newSelectedUserId }; Ancienne selection: ${oldSelectedUserId}`);
 
     // Seulement dans le cas ou l'ancien utilisateur selectionné n'etait pas all
-    if (oldSelectedUserId != null ){
+    if (oldSelectedUserId !== "all" ){
         // Suppression de la relation avec l'ancient utilisateur selectionné
         await deleteOldSelection(redis, io, oldSelectedUserId, userId);
     }
+    else {
+        userSocket.leave("chat_room_global");
+    }
 
+    let conversationHistory = null;
     // Seulement dans le cas ou le nouveau utilisateur selectionné n'est pas all
-    if (newSelectedUserId != null ) {
+    if (newSelectedUserId !== "all" ) {
         // Ajout de la relation avec le nouveau utilisateur selectionné
         await addNewSelection(redis, newSelectedUserId, userId);
         await checkMutualSelection(redis, io, newSelectedUserId, userId, userSocket, newSelectedUserSocketId);
+        conversationHistory =  await getConversationHistory(userId,newSelectedUserId);
+    }
+    else{
+        // Récupération de la conversation du chat global
+        conversationHistory =  await getConversationHistory("0","0");
+        userSocket.join("chat_room_global");
     }
 
-    const conversationHistory =  await getConversationHistory(userId,newSelectedUserId);
     await notifyConversationHistorique(io, userSocket, conversationHistory);
     console.log(`Envoie de l'historique des message à l'utilisateur ${userId}  : ${conversationHistory}`);
 
@@ -70,7 +79,7 @@ const checkMutualSelection = async (redis, io, newSelectedUserId, userId, userSo
 
 }
 
-const getConversationHistory = async (fromUserId, toUserId) => {
+export const getConversationHistory = async (fromUserId, toUserId) => {
     try {
 
         const response = await axios.get("http://localhost:8080/api/messages?userId1="+fromUserId+"&userId2="+toUserId);

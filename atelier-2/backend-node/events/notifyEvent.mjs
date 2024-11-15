@@ -15,3 +15,12 @@ export const notifyConversationHistorique = async (io, userSocket ,messages) => 
     // Envoi à tous les clients connectés
     userSocket.emit("notifyConversationHistory", messages);
 }
+
+export const notifyNewMessage = (socketUser, fromUsername, content, time) => {
+    socketUser.emit('newMessage', {
+        from: fromUsername,
+        content,
+        time
+    });
+    console.log(`Message envoyé à l'utilisateur ${fromUsername}`);
+}

@@ -80,7 +80,7 @@ export const getListFromRedis = async (redis, hash, key) => {
     try {
         // Récupère la valeur associée à la clé dans le hash
         const valueOfKey = await redis.hget(hash, key);
-        console.log(`Valeur de ${hash} pour ${key}: ${valueOfKey}`);
+        console.log(` getListFromRedis : Valeur de ${hash} pour ${key}: ${valueOfKey}`);
 
         // Si la clé n'existe pas, retourne une liste vide
         if (!valueOfKey) {
@@ -88,7 +88,10 @@ export const getListFromRedis = async (redis, hash, key) => {
         }
 
         // Parse la valeur JSON et retourne comme liste
-        return JSON.parse(valueOfKey);
+        const parsedValue = JSON.parse(valueOfKey);
+        console.log(` getListFromRedis : parsedValue de ${parsedValue} `);
+        console.log(`is Array ? ${Array.isArray(parsedValue)}`);
+        return parsedValue;
     } catch (error) {
         console.error(`Erreur lors de la récupération de la liste dans ${hash} pour ${key}:`, error);
         return []; // En cas d'erreur, retourne une liste vide

@@ -44,10 +44,19 @@ public class MessageService {
         String fromUserId = messageActiveMQ.getFromUserId();
         String toUserId = messageActiveMQ.getToUserId();
 
-        String userId1 = fromUserId.compareTo(toUserId) < 0 ? fromUserId : toUserId;
-        String userId2 = fromUserId.compareTo(toUserId) < 0 ? toUserId : fromUserId;
+        String userId1 = null;
+        String userId2 = null ;
+        // 0 - 0 chat global
+        if ("0".equals(fromUserId) || "0".equals(toUserId)) {
+            userId1 = "0";
+            userId2 = "0";
+        }
+        else{
+            userId1 = fromUserId.compareTo(toUserId) < 0 ? fromUserId : toUserId;
+            userId2 = fromUserId.compareTo(toUserId) < 0 ? toUserId : fromUserId;
+        }
 
-        Optional<Conversation> conversationOptional = conversationRepository.findByUserId1AndUserId2(userId1, userId2);
+        Optional<Conversation> conversationOptional =  conversationRepository.findByUserId1AndUserId2(userId1, userId2);
 
         Message newMessage =  DTOMapper.fromMessageActiveMQToMessage(messageActiveMQ);
 

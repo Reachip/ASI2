@@ -98,8 +98,8 @@ const ChatApp = () => {
 
     // Mise à jour de l'utilisateur selectionné
     socket.emit("updateSelectedUser", {
-      oldSelectedUserId: oldSelectedUser ? oldSelectedUser.userId : null,
-      newSelectedUserId: newSelectedUser ? newSelectedUser.userId : null,
+      oldSelectedUserId: oldSelectedUser ? oldSelectedUser.userId : "all",
+      newSelectedUserId: newSelectedUser ? newSelectedUser.userId : "all",
       userId: userId,
       newSelectedUserSocketId: newSelectedUser ? newSelectedUser.socketId : null
     });
@@ -112,7 +112,7 @@ const ChatApp = () => {
       console.log("selectedUser : "+selectedUser);
       const newMessage = {
         from: { id: userId, username: username }, // Contient les deux informations nécessaires
-        to: { id: selectedUser, username: connectedUsers.find(user => user.userId === selectedUser).username },
+        to: selectedUser!=="all" ? { id: selectedUser, username: connectedUsers.find(user => user.userId === selectedUser).username } : "all" ,
         content: message,
         time: new Date().toLocaleTimeString()
       };
@@ -151,7 +151,7 @@ const ChatApp = () => {
           <label>Sélectionner un utilisateur :</label>
           <select onChange={(e) => updateSelectedUser(e.target.value)}>
             {/*<option value="">Choisir un utilisateur</option>*/}
-            {connectedUsers.length > 0 && <option value="all">Tous</option>}
+            <option value="all">Tous</option>
             {connectedUsers.map((user) => (
                 <option key={user.userId } value={user.userId }>
                   {user.username}
