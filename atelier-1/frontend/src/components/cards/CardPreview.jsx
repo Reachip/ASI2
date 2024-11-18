@@ -5,7 +5,7 @@ import FlashOnIcon from '@mui/icons-material/FlashOn';
 import SecurityIcon from '@mui/icons-material/Security';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 
-const CardPreview = ({ card, label, color = 'primary' }) => {
+const CardPreview = ({ card, label, color = 'primary', onAction }) => {
     if (!card) return null;
 
     return (
@@ -50,7 +50,12 @@ const CardPreview = ({ card, label, color = 'primary' }) => {
                 </CardContent>
                 {label && (
                     <Box sx={{ p: 1 }}>
-                        <Button fullWidth variant="contained" color={color}>
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            color={color}
+                            onClick={() => onAction && onAction(card)}
+                        >
                             {label}
                         </Button>
                     </Box>
