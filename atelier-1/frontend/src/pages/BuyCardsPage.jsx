@@ -4,9 +4,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectAuth } from '../store/authSlice';
 import CardsTable from '../components/cards/CardsTable';
 import CardPreview from '../components/cards/CardPreview';
+import Notification from "../components/layout/Notification";
 
 const BuyCardsPage = () => {
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [currentMessage, setCurrentMessage] = useState('');
   const { user } = useSelector(selectAuth);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards] = useState([
@@ -51,17 +54,58 @@ const BuyCardsPage = () => {
     }
   }, [cards]);
 
-  const handleBuy = (card) => {
-    if (user.wallet >= card.price) {
+  const buyCard = async (card) => {
+    const response = await fetch('http://localhost:8088/api/store/buy', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: user.id,
+        card_id: card.id,
+      }),
+    });
+
+    if (response.ok)
+    {
+      const data = await response.json();
       dispatch({
         type: 'auth/loginUser/fulfilled',
-        payload: { ...user, wallet: user.wallet - card.price },
+        payload: { ...user, wallet: data.wallet },
       });
+        return true;
     }
+    return false;
+  }
+
+  const handleBuy = async (card) => {
+    if (user.wallet >= card.price)
+    {
+      let result = await buyCard(card);
+      console.log(result);
+      if (result)
+      {
+        setCurrentMessage(`You have successfully bought the card ${card.name}.`);
+        setOpen(true);
+      }
+    }
+    else
+    {
+        setCurrentMessage(`You don't have enough money to buy the card ${card.name}.`);
+        setOpen(true);
+    }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
   };
 
   return (
     <div className="relative min-h-screen">
+      <Notification open={open} currentMessage={currentMessage} onClose={handleClose} />
       <Typography variant="h4" gutterBottom>
         Buy Cards
       </Typography>
