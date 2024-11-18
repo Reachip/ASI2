@@ -24,7 +24,6 @@ const CardsTable = ({
           <TableRow>
             <TableCell>Card Name</TableCell>
             <TableCell>Description</TableCell>
-            <TableCell>Family</TableCell>
             <TableCell>HP</TableCell>
             <TableCell>Energy</TableCell>
             <TableCell>Defense</TableCell>
@@ -60,13 +59,6 @@ const CardsTable = ({
                 >
                   {card.description}
                 </Typography>
-              </TableCell>
-              <TableCell>
-                <Chip 
-                  label={card.family}
-                  size="small" 
-                  color={card.family === "Marvel" ? "error" : "primary"}
-                />
               </TableCell>
               <TableCell>{card.hp}</TableCell>
               <TableCell>{card.energy}</TableCell>
