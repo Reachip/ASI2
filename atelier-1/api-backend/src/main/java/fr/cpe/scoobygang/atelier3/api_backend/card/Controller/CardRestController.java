@@ -75,6 +75,11 @@ public class CardRestController {
 	{
 		// Check user account > 100
 		Optional<UserModel> optionalUserModel = userService.getUserByUsername(username);
+
+		if (optionalUserModel.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+		}
+
 		UserModel userModel = optionalUserModel.get();
 
 		if (userModel.getAccount() < 100)

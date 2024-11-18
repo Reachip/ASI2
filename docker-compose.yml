@@ -15,7 +15,6 @@ services:
     restart: always
     networks:
       - shared-net
-
   activemq:
     image: symptoma/activemq:5.18.3
     container_name: activemq
@@ -31,6 +30,7 @@ services:
       - "8161:8161"    # Port pour la console web ActiveMQ
     volumes:
       - activemq_data:/var/lib/activemq
+      - ./activemq.xml:/opt/activemq/conf/activemq.xml
     restart: always
     networks:
       - shared-net
