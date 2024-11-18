@@ -1,4 +1,4 @@
-package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.repository;
+package fr.cpe.scoobygang.common.repository;
 
 import fr.cpe.scoobygang.common.activemq.model.ActiveMQTransaction;
 import org.springframework.data.repository.CrudRepository;

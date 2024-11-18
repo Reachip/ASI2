@@ -13,6 +13,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		"fr.cpe.scoobygang.common.*",
 		"fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.*"
 })
+@EnableJpaRepositories(basePackages = "fr.cpe.scoobygang.common.repository")
+@EntityScan("fr.cpe.scoobygang.common.activemq.model")
 public class ApiOrchestratorMicroserviceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ApiOrchestratorMicroserviceApplication.class, args);

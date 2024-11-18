@@ -3,7 +3,7 @@ package fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.service;
 import fr.cpe.scoobygang.common.activemq.model.ActiveMQTransaction;
 import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.publisher.OrchestratorPublisher;
 import fr.cpe.scoobygang.common.activemq.model.*;
-import fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.repository.ActiveMQTransactionRepository;
+import fr.cpe.scoobygang.common.repository.ActiveMQTransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
