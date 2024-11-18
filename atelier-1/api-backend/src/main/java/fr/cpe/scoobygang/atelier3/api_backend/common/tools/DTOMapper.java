@@ -2,9 +2,11 @@ package fr.cpe.scoobygang.atelier3.api_backend.common.tools;
 
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
+import fr.cpe.scoobygang.atelier3.api_backend.message.model.Message;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserCardsDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserModel;
+import fr.cpe.scoobygang.common.activemq.model.MessageActiveMQ;
 
 public class DTOMapper {
 	
@@ -32,5 +34,16 @@ public class DTOMapper {
 
 	public static UserCardsDTO fromUserModelToUserCardsDTO(UserModel uM) {
 		return new UserCardsDTO(uM);
+	}
+
+	public static Message fromMessageActiveMQToMessage(MessageActiveMQ messageActiveMQ) {
+		Message message = new Message();
+		message.setFromUserId(messageActiveMQ.getFromUserId());
+		message.setFromUsername(messageActiveMQ.getFromUsername());
+		message.setToUserId(messageActiveMQ.getToUserId());
+		message.setToUsername(messageActiveMQ.getToUsername());
+		message.setContent(messageActiveMQ.getContent());
+		message.setTime(messageActiveMQ.getTime());
+		return message;
 	}
 }

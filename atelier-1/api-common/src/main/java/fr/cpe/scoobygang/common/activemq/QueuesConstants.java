@@ -8,6 +8,7 @@ public class QueuesConstants {
     public static final String QUEUE_NOTIFY = "queue.notify";
     public static final String QUEUE_GAME_TRANSACTION = "queue.game.transaction";
     public static final String QUEUE_GAME_HISTORY = "queue.game.history";
+    public static final String QUEUE_SAVE_MESSAGE = "queue.save.message";
 
     private QueuesConstants() {
         throw new UnsupportedOperationException("This class cannot be instantiated.");
