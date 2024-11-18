@@ -27,6 +27,7 @@ public class ApiGatewayApplication {
 				.route("ai-route", r -> r.path("/ai/**").filters(f -> f.stripPrefix(1)).uri("http://localhost:8989/"))
 				.route("react-app-route", r -> r.path("/**").and().path("/api/**", "/orchestrator/**").negate().uri("http://localhost:80/"))
 				.route("backend-route", r -> r.path("/api/**").uri("lb://api-backend"))
+				.route("backend-node-route", r -> r.path("/ws/**").filters(f -> f.stripPrefix(1)).uri("http://localhost:3002/"))
 				.route("orchestrator-route", r -> r.path("/orchestrator/**").uri("lb://api-orchestrator-microservice"))
 				.build();
 	}
