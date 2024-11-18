@@ -71,7 +71,7 @@ const BuyCardsPage = () => {
       const data = await response.json();
       dispatch({
         type: 'auth/loginUser/fulfilled',
-        payload: { ...user, wallet: data.wallet },
+        payload: { ...user, wallet: user.wallet - card.price },
       });
         return true;
     }
