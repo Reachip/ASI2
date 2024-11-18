@@ -40,7 +40,7 @@ const SellCardsPage = () => {
           <CardsTable cards={userCards} selectedCard={selectedCard} onSelectCard={setSelectedCard} action="sell" />
         </Box>
         <Box width="360px" pl={2}>
-          <CardPreview card={selectedCard} onAction={handleSell} actionLabel="Sell for" actionColor="error" />
+          <CardPreview card={selectedCard} label={`Sell`} color="primary" />
         </Box>
       </Box>
     </div>

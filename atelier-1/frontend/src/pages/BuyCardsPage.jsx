@@ -70,7 +70,7 @@ const BuyCardsPage = () => {
           <CardsTable cards={cards} selectedCard={selectedCard} onSelectCard={setSelectedCard} />
         </Box>
         <Box width="360px" pl={2}>
-          <CardPreview card={selectedCard} onAction={handleBuy} actionLabel="Buy for" actionColor="primary" />
+          <CardPreview card={selectedCard} onAction={handleBuy} label={`Buy for ${selectedCard ? selectedCard.price : ''}$`} color="primary" />
         </Box>
       </Box>
     </div>

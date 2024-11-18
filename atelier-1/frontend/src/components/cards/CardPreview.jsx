@@ -1,11 +1,11 @@
 import React from 'react';
-import { Card, CardContent, Typography, Box, Paper } from '@mui/material';
+import { Card, CardContent, Typography, Box, Paper, Button } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import SecurityIcon from '@mui/icons-material/Security';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 
-const CardPreview = ({ card }) => {
+const CardPreview = ({ card, label, color = 'primary' }) => {
     if (!card) return null;
 
     return (
@@ -48,6 +48,13 @@ const CardPreview = ({ card }) => {
                         </Box>
                     </Box>
                 </CardContent>
+                {label && (
+                    <Box sx={{ p: 1 }}>
+                        <Button fullWidth variant="contained" color={color}>
+                            {label}
+                        </Button>
+                    </Box>
+                )}
             </Card>
         </Paper>
     );
