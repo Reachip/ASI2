@@ -12,7 +12,6 @@ const BuyCardsPage = () => {
   const [cards] = useState([
     {
       id: 1,
-      family_name: "DC Comic",
       img_src: "http://www.superherobroadband.com/app/themes/superhero/assets/img/superhero.gif",
       name: "SUPERMAN",
       description: "The origin story of Superman...",
@@ -24,7 +23,6 @@ const BuyCardsPage = () => {
     },
     {
       id: 2,
-      family_name: "DC Comic",
       img_src: "https://static.fnac-static.com/multimedia/Images/8F/8F/7D/66/6716815-1505-1540-1/tsp20171122191008/Lego-lgtob12b-lego-batman-movie-lampe-torche-batman.jpg",
       name: "BATMAN",
       description: "Bruce Wayne, alias Batman...",
@@ -36,7 +34,6 @@ const BuyCardsPage = () => {
     },
     {
       id: 3,
-      family_name: "Marvel",
       img_src: "https://static.hitek.fr/img/actualite/2017/06/27/i_deadpool-2.jpg",
       name: "DEADPOOL",
       description: "Le convoi d'Ajax est attaqué...",

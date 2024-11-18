@@ -9,6 +9,7 @@ import HomePage from '../pages/HomePage';
 import BuyCardsPage from '../pages/BuyCardsPage';
 import SellCardsPage from '../pages/SellCardsPage';
 import CreateCardPage from '../pages/CreateCardPage';
+import PlayPage from '../pages/PlayPage';
 
 const PrivateRoute = ({ children }) => {
   const { user } = useSelector(selectAuth);
@@ -56,6 +57,16 @@ const AppRoutes = () => {
           <PrivateRoute>
             <Layout subtitle="Generate a card">
               <CreateCardPage />
+            </Layout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/play"
+        element={
+          <PrivateRoute>
+            <Layout subtitle="Play">
+              <PlayPage />
             </Layout>
           </PrivateRoute>
         }

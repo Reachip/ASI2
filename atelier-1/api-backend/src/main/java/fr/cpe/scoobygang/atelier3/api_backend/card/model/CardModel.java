@@ -3,9 +3,13 @@ package fr.cpe.scoobygang.atelier3.api_backend.card.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import fr.cpe.scoobygang.atelier3.api_backend.game.entity.GameDeck;
 import fr.cpe.scoobygang.atelier3.api_backend.store.model.StoreTransaction;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserModel;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
@@ -113,5 +117,8 @@ public class CardModel extends CardBasics implements java.io.Serializable {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	@ManyToMany(mappedBy = "selectedCards")
+	private Set<GameDeck> gameDecks = new HashSet<>();
 
 }

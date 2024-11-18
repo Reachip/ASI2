@@ -28,7 +28,7 @@ public class CardGenerationCompleteReceiver implements Receiver {
     private TextMessageParser parser;
 
     @Autowired
-    CardModelService cardModelService;
+    private CardModelService cardModelService;
 
     @Autowired
     private WebSocketHandler webSocketHandler;

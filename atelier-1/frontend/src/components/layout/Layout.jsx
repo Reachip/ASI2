@@ -54,10 +54,10 @@ const Layout = ({ children, subtitle }) => {
   }, []);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box>
       <Navbar subtitle={subtitle} />
       <Notification open={open} currentMessage={currentMessage} onClose={handleClose} />
-      <Container component="main" sx={{ flexGrow: 1, py: 3 }}>
+      <Container component="main" sx={{ flexGrow: 1, py: 1 }} maxWidth={false}>
         {React.cloneElement(children, { generatedCard })}
       </Container>
     </Box>

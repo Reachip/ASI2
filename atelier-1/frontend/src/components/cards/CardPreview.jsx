@@ -1,94 +1,56 @@
 import React from 'react';
-import {
-  Card,
-  CardMedia,
-  CardContent,
-  Typography,
-  Button,
-  Box,
-  Chip,
-  Paper
-} from '@mui/material';
+import { Card, CardContent, Typography, Box, Paper } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import SecurityIcon from '@mui/icons-material/Security';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 
-const CardPreview = ({
-  card,
-  onAction,
-  actionLabel = "Buy for",
-  actionColor = "primary",
-  showAction = true
-}) => {
-  if (!card) return null;
+const CardPreview = ({ card }) => {
+    if (!card) return null;
 
-  return (
-    <Paper sx={{ p: 2, height: '100%' }}>
-      <Card>
-        <Box sx={{ position: 'relative' }}>
-          {card.family &&
-            <Chip
-              label={card.family}
-              sx={{
-                position: 'absolute',
-                top: 8,
-                left: 8,
-                zIndex: 1,
-              }}
-            />
-          }
-          <CardMedia
-            component="img"
-            height="200"
-            image={card.img_src}
-            alt={card.name}
-          />
-        </Box>
-        <CardContent>
-          <Typography variant="h6" gutterBottom align="center">
-            {card.name}
-          </Typography>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ height: 80, overflow: 'auto', mb: 2 }}
-          >
-            {card.description}
-          </Typography>
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
-            <Chip icon={<FavoriteIcon />} label={`HP: ${card.hp}`} size="small" />
-            <Chip
-              icon={<FlashOnIcon />}
-              label={`Energy: ${card.energy}`}
-              size="small"
-            />
-            <Chip
-              icon={<SecurityIcon />}
-              label={`Defense: ${card.defence}`}
-              size="small"
-            />
-            <Chip
-              icon={<WhatshotIcon />}
-              label={`Attack: ${card.attack}`}
-              size="small"
-            />
-          </Box>
-          {showAction && (
-            <Button
-              variant="contained"
-              color={actionColor}
-              fullWidth
-              onClick={() => onAction(card)}
-              sx={{ mt: 2 }}
-            >
-              {actionLabel} {card.price}$
-            </Button>
-          )}
-        </CardContent>
-      </Card>
-    </Paper>
-  );
+    return (
+        <Paper sx={{ maxWidth: 500, margin: 'auto', aspectRatio: '3/4', display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 1, py: 0.5 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <FavoriteIcon sx={{ fontSize: 16 }} />
+                        <Typography variant="caption">{card.energy}</Typography>
+                    </Box>
+                    <Typography variant="subtitle2" sx={{ flex: 1, textAlign: 'center' }}>{card.name}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <FlashOnIcon sx={{ fontSize: 16 }} />
+                        <Typography variant="caption">{card.energy}</Typography>
+                    </Box>
+                </Box>
+                <Box sx={{ flex: 1, bgcolor: 'grey.200', margin: 1, borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                    <img src={card.img_src} alt={`${card.name}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </Box>
+                <Box sx={{ px: 1, py: 0.5 }}>
+                    <Typography variant="caption">{card.description}</Typography>
+                </Box>
+                <CardContent sx={{ mt: 'auto', p: 1, '&:last-child': { pb: 1 } }}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <WhatshotIcon sx={{ fontSize: 16 }} />
+                            <Typography variant="caption">{card.attack} attack</Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <FavoriteIcon sx={{ fontSize: 16 }} />
+                            <Typography variant="caption">{card.hp} hp</Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <SecurityIcon sx={{ fontSize: 16 }} />
+                            <Typography variant="caption">{card.defense} defense</Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <FlashOnIcon sx={{ fontSize: 16 }} />
+                            <Typography variant="caption">{card.energy} energy</Typography>
+                        </Box>
+                    </Box>
+                </CardContent>
+            </Card>
+        </Paper>
+    );
 };
 
 export default CardPreview;

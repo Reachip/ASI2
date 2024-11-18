@@ -3,7 +3,6 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  Avatar,
   Box,
   Menu,
   MenuItem,
@@ -13,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectAuth, logout } from '../../store/authSlice';
 import HomeIcon from '@mui/icons-material/Home';
+import UserAvatar from "../user/UserAvatar";
 
 const Navbar = ({ subtitle }) => {
   const dispatch = useDispatch();
@@ -58,7 +58,7 @@ const Navbar = ({ subtitle }) => {
         <Box sx={{ flexGrow: 1 }} />
         {user && (
           <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-            <Avatar sx={{ mr: 1 }}>{user.username}</Avatar>
+            <UserAvatar username={user.username} />
             <Box>
               <Typography
                 variant="body1"
