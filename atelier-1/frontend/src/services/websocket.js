@@ -65,7 +65,6 @@ class WebSocketService {
     });
 
     socket.on("notifyConversationHistory", (history) => {
-      console.log("Received conversation history:", history);
       this._notifyListeners('conversationHistory', history);
     });
 
