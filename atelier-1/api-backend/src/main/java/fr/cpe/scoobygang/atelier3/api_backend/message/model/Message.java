@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages")
@@ -17,12 +18,12 @@ public class Message implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String conversationId;
-    private String fromUserId;
+    private Long fromUserId;
     private String fromUsername;
-    private String toUserId;
+    private Long toUserId;
     private String toUsername;
     private String content;
-    private String time;
+    private LocalDateTime time;
 
     @Override
     public String toString() {

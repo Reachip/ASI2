@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 
 const ChatApp = () => {
-// État pour gérer les informations de l'utilisateur
+  // État pour gérer les informations de l'utilisateur
   const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
 
-// Liste d'utilisateurs connecté
+  // Liste d'utilisateurs connecté
   const [selectedUser, setSelectedUser] = useState("");
   const [connectedUsers, setConnectedUsers] = useState([]);
 
-// État pour gérer la connexion WebSocket, les messages, et l'entrée utilisateur
+  // État pour gérer la connexion WebSocket, les messages, et l'entrée utilisateur
   const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
@@ -52,7 +52,7 @@ const ChatApp = () => {
   useEffect(() => {
     if (socket) {
       socket.on("notifyConversationHistory", (msg) => {
-        console.log("Reception historique de la conversation : "+ JSON.stringify(msg));
+        console.log("Reception historique de la conversation : " + JSON.stringify(msg));
         setMessages(msg);
       });
     }
@@ -73,18 +73,18 @@ const ChatApp = () => {
       });
 
       setSocket(newSocket);
-      console.log("Socket :"+ socket);
+      console.log("Socket :" + socket);
     }
   };
 
   const updateSelectedUser = async (newValue) => {
     console.log("updateSelectedUser :");
-    console.log("Value selection :"+newValue);
-    console.log("Liste des utilisateurs connecté  :"+connectedUsers);
-    console.log("Value Ancienne selection  :"+selectedUser);
+    console.log("Value selection :" + newValue);
+    console.log("Liste des utilisateurs connecté  :" + connectedUsers);
+    console.log("Value Ancienne selection  :" + selectedUser);
 
-    console.log("Ancient utilisateur selectionné :"+ (selectedUser==="all" ? "all" : connectedUsers.find(user => user.userId === selectedUser).username) );
-    console.log("Nouveau utilisateur selectionné :"+ (newValue==="all" ? "all" : connectedUsers.find(user => user.userId === newValue).username));
+    console.log("Ancient utilisateur selectionné :" + (selectedUser === "all" ? "all" : connectedUsers.find(user => user.userId === selectedUser).username));
+    console.log("Nouveau utilisateur selectionné :" + (newValue === "all" ? "all" : connectedUsers.find(user => user.userId === newValue).username));
 
     // Dans le cas ou la precedente selection est all
     let oldSelectedUser = null;
@@ -106,19 +106,19 @@ const ChatApp = () => {
   }
 
 
-// Fonction pour gérer l'envoi de message
+  // Fonction pour gérer l'envoi de message
   const handleSendMessage = () => {
     if (message && socket) {
-      console.log("selectedUser : "+selectedUser);
+      console.log("selectedUser : " + selectedUser);
       const newMessage = {
         from: { id: userId, username: username }, // Contient les deux informations nécessaires
-        to: selectedUser!=="all" ? { id: selectedUser, username: connectedUsers.find(user => user.userId === selectedUser).username } : "all" ,
+        to: selectedUser !== "all" ? { id: selectedUser, username: connectedUsers.find(user => user.userId === selectedUser).username } : "all",
         content: message,
-        time: new Date().toLocaleTimeString()
+        time: new Date()
       };
 
       console.log(`${username} envoie d'un message a ${selectedUser} : ${message}`);
-      console.log("newMessage: "+newMessage);
+      console.log("newMessage: " + newMessage);
       // Envoi du message au serveur
       socket.emit("sendMessage", newMessage);
 
@@ -127,62 +127,62 @@ const ChatApp = () => {
   };
 
   return (
-      <div style={{ padding: "2rem" }}>
-        {/* Formulaire de sélection de l'utilisateur */}
-        <div>
-          <h2>Connexion de l'utilisateur</h2>
-          <input
-              type="text"
-              placeholder="ID de l'utilisateur"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-          />
-          <input
-              type="text"
-              placeholder="Nom d'utilisateur"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-          />
-          <button onClick={handleConnect}>Se connecter</button>
-        </div>
-
-        {/* Liste déroulante pour sélectionner l'utilisateur destinataire */}
-        <div style={{ marginTop: "1rem" }}>
-          <label>Sélectionner un utilisateur :</label>
-          <select onChange={(e) => updateSelectedUser(e.target.value)}>
-            {/*<option value="">Choisir un utilisateur</option>*/}
-            <option value="all">Tous</option>
-            {connectedUsers.map((user) => (
-                <option key={user.userId } value={user.userId }>
-                  {user.username}
-                </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Zone d'affichage des messages */}
-        <div style={{ marginTop: "1rem", border: "1px solid #ccc", padding: "1rem", maxHeight: "300px", overflowY: "scroll" }}>
-          <h3>Messages</h3>
-          {messages.map((msg, index) => (
-              <div key={index} style={{ marginBottom: "0.5rem" }}>
-                [{msg.time}] <strong>{msg.from}</strong> : {msg.content}
-              </div>
-          ))}
-        </div>
-
-        {/* Champ d'entrée pour les messages et bouton d'envoi */}
-        <div style={{ marginTop: "1rem" }}>
-<textarea
-    rows="2"
-    placeholder="Entrez votre message..."
-    value={message}
-    onChange={(e) => setMessage(e.target.value)}
-/>
-          <button onClick={handleSendMessage} style={{ marginTop: "0.5rem" }}>
-            Envoyer
-          </button>
-        </div>
+    <div style={{ padding: "2rem" }}>
+      {/* Formulaire de sélection de l'utilisateur */}
+      <div>
+        <h2>Connexion de l'utilisateur</h2>
+        <input
+          type="text"
+          placeholder="ID de l'utilisateur"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Nom d'utilisateur"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <button onClick={handleConnect}>Se connecter</button>
       </div>
+
+      {/* Liste déroulante pour sélectionner l'utilisateur destinataire */}
+      <div style={{ marginTop: "1rem" }}>
+        <label>Sélectionner un utilisateur :</label>
+        <select onChange={(e) => updateSelectedUser(e.target.value)}>
+          {/*<option value="">Choisir un utilisateur</option>*/}
+          <option value="all">Tous</option>
+          {connectedUsers.map((user) => (
+            <option key={user.userId} value={user.userId}>
+              {user.username}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Zone d'affichage des messages */}
+      <div style={{ marginTop: "1rem", border: "1px solid #ccc", padding: "1rem", maxHeight: "300px", overflowY: "scroll" }}>
+        <h3>Messages</h3>
+        {messages.map((msg, index) => (
+          <div key={index} style={{ marginBottom: "0.5rem" }}>
+            [{msg.time}] <strong>{msg.from}</strong> : {msg.content}
+          </div>
+        ))}
+      </div>
+
+      {/* Champ d'entrée pour les messages et bouton d'envoi */}
+      <div style={{ marginTop: "1rem" }}>
+        <textarea
+          rows="2"
+          placeholder="Entrez votre message..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button onClick={handleSendMessage} style={{ marginTop: "0.5rem" }}>
+          Envoyer
+        </button>
+      </div>
+    </div>
   );
 };
 

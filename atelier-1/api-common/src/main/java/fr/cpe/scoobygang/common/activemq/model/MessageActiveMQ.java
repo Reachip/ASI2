@@ -6,18 +6,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageActiveMQ implements Serializable {
-    private String fromUserId;
+    private Long fromUserId;
     private String fromUsername;
-    private String toUserId;
+    private Long toUserId;
     private String toUsername;
     private String content;
-    private String time;
+    private LocalDateTime time;
 
     @Override
     public String toString() {

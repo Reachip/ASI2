@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface ConversationRepository extends CrudRepository<Conversation, Long> {
-	Optional<Conversation> findByUserId1AndUserId2(String userId1, String userId2);
+	Optional<Conversation> findByUserId1AndUserId2(Long userId1, Long userId2);
 }

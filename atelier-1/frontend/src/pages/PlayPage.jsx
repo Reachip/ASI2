@@ -35,7 +35,7 @@ const playerCards = [
     { id: 12, name: 'Elephant', img_src: 'https://img.freepik.com/premium-photo/big-elephant-attack-forest-3d-design_909213-5431.jpg', description: 'A giant elephant', hp: 30, energy: 30, defense: 15, attack: 25 }
 ];
 
-const PlayPage = () => {
+const PlayPage = ({ chatMessages, connectedUsers, onSendMessage }) => {
     const { user } = useSelector(selectAuth);
     const [selectedOpponentCard, setSelectedOpponentCard] = useState(opponentCards[0]);
     const [selectedPlayerCard, setSelectedPlayerCard] = useState(playerCards[0]);
@@ -51,12 +51,15 @@ const PlayPage = () => {
         setSelectedPlayerCard(card);
     };
 
+    const filteredUsers = connectedUsers.filter(u => u.username !== user.username);
+
     return (
         <Box sx={{ display: 'flex', height: 'calc(100vh - 80px)', gap: 2, padding: 0 }}>
             <ChatPanel
                 currentUser={user.username}
-                messages={sampleMessages}
-                users={sampleUsers}
+                messages={chatMessages}
+                users={filteredUsers}
+                onSendMessage={onSendMessage}
             />
             <GameBoard
                 opponent={opponent}
