@@ -8,13 +8,12 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-
   api-activemq-log:
     name: API ActiveMQ Log
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: api-activemq-log
+        working-directory: atelier1/api-activemq-log
     steps:
       - uses: actions/checkout@v3
         with:
@@ -47,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: api-backend
+        working-directory: atelier1/api-backend
     steps:
       - uses: actions/checkout@v3
         with:
@@ -80,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: api-common
+        working-directory: atelier1/api-common
     steps:
       - uses: actions/checkout@v3
         with:
@@ -113,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: api-gateway
+        working-directory: atelier1/api-gateway
     steps:
       - uses: actions/checkout@v3
         with:
@@ -146,7 +145,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: api-generation-image-microservice
+        working-directory: atelier1/api-generation-image-microservice
     steps:
       - uses: actions/checkout@v3
         with:
@@ -179,7 +178,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: api-generation-property-microservice
+        working-directory: atelier1/api-generation-property-microservice
     steps:
       - uses: actions/checkout@v3
         with:
@@ -212,7 +211,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: api-generation-text-microservice
+        working-directory: atelier1/api-generation-text-microservice
     steps:
       - uses: actions/checkout@v3
         with:
@@ -245,7 +244,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: api-orchestrator-microservice
+        working-directory: atelier1/api-orchestrator-microservice
     steps:
       - uses: actions/checkout@v3
         with:
@@ -278,7 +277,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: frontend
+        working-directory: atelier1/frontend
     steps:
       - uses: actions/checkout@v3
         with:
