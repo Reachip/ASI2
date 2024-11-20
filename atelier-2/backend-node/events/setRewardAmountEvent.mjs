@@ -1,4 +1,5 @@
 import { GAME_HASH } from "../utils/constants.mjs";
+import { RewardAmountResponse } from "../dto/rewardAmountResponse.mjs";
 
 /**
  * Handles the event to set the reward amount for a game.
@@ -30,10 +31,12 @@ const setRewardAmountEvent = async (redis, io, socket, data) => {
 
     const gameData = JSON.parse(game);
     gameData.rewardAmount = rewardAmount;
-    
+
     await redis.hset(GAME_HASH, gameId, JSON.stringify(gameData));
 
-    io.to(gameId).emit("rewardAmountUpdated", { rewardAmount });
+    const response = new RewardAmountResponse(gameId, rewardAmount);
+
+    return io.to("fight").emit("rewardAmountResponse", response);
 }
 
 export default setRewardAmountEvent;
