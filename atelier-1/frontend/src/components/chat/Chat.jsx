@@ -116,7 +116,7 @@ const Chat = ({ currentUser, messages = [], onSendMessage, users = [], socket, u
         >
           <MenuItem value="all">Global Chat</MenuItem>
           {users.map((user) => (
-            <MenuItem key={user.userId} value={user.userId}>
+            <MenuItem key={user.id} value={user.id}>
               {user.username}
             </MenuItem>
           ))}
