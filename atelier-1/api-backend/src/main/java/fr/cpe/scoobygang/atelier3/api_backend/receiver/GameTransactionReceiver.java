@@ -46,7 +46,6 @@ public class GameTransactionReceiver implements Receiver {
                     .orElseThrow(() -> new IllegalArgumentException("Game not found"));
 
             game.setIsFinished();
-            gameRepository.save(game);
 
             UserModel user1 = userRepository.findById(gameTransaction.getUser1Id())
                     .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + gameTransaction.getUser1Id()));
@@ -58,6 +57,7 @@ public class GameTransactionReceiver implements Receiver {
             user2.setAccount(user2.getAccount() + gameTransaction.getMoneyOperation2());
 
             userRepository.saveAll(List.of(user1, user2));
+            gameRepository.save(game);
 
             logger.info("Updated account for user1Id: {} and user2Id: {}", gameTransaction.getUser1Id(), gameTransaction.getUser2Id());
         } catch (Exception why) {
