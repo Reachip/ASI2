@@ -15,6 +15,7 @@ services:
     restart: always
     networks:
       - shared-net
+
   activemq:
     image: symptoma/activemq:5.18.3
     container_name: activemq
@@ -57,7 +58,7 @@ services:
     networks:
       - shared-net
 
-  react-app:
+  frontend:
     build:
       context: ./atelier-1/frontend
       dockerfile: Dockerfile
@@ -67,11 +68,101 @@ services:
     restart: always
     networks:
       - shared-net
+
   redis:
     image: redis:latest
     container_name: redis
     ports:
       - "6379:6379"
+    networks:
+      - shared-net
+
+  api-activemq-log:
+    build:
+      context: ./atelier-1/api-activemq-log
+      dockerfile: Dockerfile
+    container_name: api-activemq-log
+    depends_on:
+      - postgres
+      - activemq
+    networks:
+      - shared-net
+    restart: always
+
+  api-backend:
+    build:
+      context: ./atelier-1/api-backend
+      dockerfile: Dockerfile
+    container_name: api-backend
+    depends_on:
+      - postgres
+    networks:
+      - shared-net
+    restart: always
+
+  api-common:
+    build:
+      context: ./atelier-1/api-common
+      dockerfile: Dockerfile
+    container_name: api-common
+    networks:
+      - shared-net
+    restart: always
+
+  api-gateway:
+    build:
+      context: ./atelier-1/api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    depends_on:
+      - api-common
+    networks:
+      - shared-net
+    restart: always
+
+  api-generation-image-microservice:
+    build:
+      context: ./atelier-1/api-generation-image-microservice
+      dockerfile: Dockerfile
+    container_name: api-generation-image-microservice
+    depends_on:
+      - api-common
+    networks:
+      - shared-net
+    restart: always
+
+  api-generation-property-microservice:
+    build:
+      context: ./atelier-1/api-generation-property-microservice
+      dockerfile: Dockerfile
+    container_name: api-generation-property-microservice
+    depends_on:
+      - api-common
+    networks:
+      - shared-net
+    restart: always
+
+  api-generation-text-microservice:
+    build:
+      context: ./atelier-1/api-generation-text-microservice
+      dockerfile: Dockerfile
+    container_name: api-generation-text-microservice
+    depends_on:
+      - api-common
+    networks:
+      - shared-net
+    restart: always
+
+  api-orchestrator-microservice:
+    build:
+      context: ./atelier-1/api-orchestrator-microservice
+      dockerfile: Dockerfile
+    container_name: api-orchestrator-microservice
+    depends_on:
+      - api-common
+    networks:
+      - shared-net
+    restart: always
 
 volumes:
   ollama:
