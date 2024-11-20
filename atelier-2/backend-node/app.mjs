@@ -7,6 +7,9 @@ import connectionEvent from "./events/connectionEvent.mjs";
 import updateSelectedUserEvent from "./events/updateSelectedUserEvent.mjs";
 import sendMessageEvent from "./events/sendMessageEvent.mjs";
 import disconnectEvent from "./events/disconnectEvent.mjs";
+import attackEvent from './events/attackEvent.mjs';
+import endTurnEvent from './events/endTurnEvent.mjs';
+import setRewardAmountEvent from './events/setRewardAmountEvent.mjs';
 import { CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH } from "./utils/constants.mjs";
 import { logDetailsRedis } from "./utils/redisUtils.mjs";
 
@@ -49,6 +52,18 @@ io.on("connection", async (socket) => {
 
   socket.on("disconnecting", async () => {
     await disconnectEvent(redis, io, socket, userId, username);
+  });
+
+  socket.on("setRewardAmount", async (data) => {
+    await setRewardAmountEvent(redis, io, socket, data);
+  });
+
+  socket.on("attack", async (data) => {
+    await attackEvent(redis, io, socket, data);
+  });
+
+  socket.on("endTurn", async (data) => {
+    await endTurnEvent(redis, io, socket, data);
   });
 });
 
