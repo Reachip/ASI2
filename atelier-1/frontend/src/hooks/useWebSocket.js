@@ -32,7 +32,7 @@ export const useWebSocket = (user) => {
     const handleNodeMessage = useCallback((msg) => {
         setChatMessages(prev => [...prev, {
             id: Date.now(),
-            sender: msg.from.username,
+            sender: msg.from,
             message: msg.content,
             timestamp: msg.time,
             source: 'node'
