@@ -44,7 +44,7 @@ class WebSocketService {
 
     const socket = io("http://localhost:3002", {
       query: {
-        userId: user.id,
+        id: user.id,
         username: user.username
       }
     });

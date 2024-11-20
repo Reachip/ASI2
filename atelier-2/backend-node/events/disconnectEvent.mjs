@@ -1,44 +1,81 @@
-import {deleteInRedis, getListFromRedis, logDetailsRedis} from "../utils/redisUtils.mjs";
-import {updateConnectedUsers} from "./notifyEvent.mjs";
-import {deleteRoom} from "../utils/roomUtils.mjs";
-import {CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH} from "../utils/constants.mjs";
+import { deleteInRedis, getListFromRedis, logDetailsRedis } from "../utils/redisUtils.mjs";
+import { updateConnectedUsers } from "./notifyEvent.mjs";
+import { deleteRoom } from "../utils/roomUtils.mjs";
+import { CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH } from "../utils/constants.mjs";
 
-const disconnectEvent = async (redis, io, socketId, userId, username) => {
-    console.log("Utilisateur déconnecté :", userId, username, socketId);
+const disconnectEvent = async (redis, io, socketId, id, username) => {
+    console.log("User disconnected:", id, username, socketId);
 
-    //const socket = io.sockets.sockets.get(socketId);
+    try {
+        try {
+            await redis.hdel(CONNECTED_USERS_HASH, id);
+            console.log(`User ${id} removed from connected users.`);
+        } catch (error) {
+            console.error("Error removing user from Redis connected users:", error.message);
+        }
 
-    // Supprimer l'utilisateur des utilisateurs connectés
-    await redis.hdel(CONNECTED_USERS_HASH, userId);
+        let rooms = [];
+        try {
+            rooms = await getListFromRedis(redis, USER_ROOMS_HASH, id);
+            console.log(`User ${id} was connected to rooms:`, rooms);
+        } catch (error) {
+            console.error("Error retrieving rooms from Redis:", error.message);
+        }
 
-    // Récupère toutes les rooms auxquelles l'utilisateur était connecté
-    const rooms = await getListFromRedis(redis, USER_ROOMS_HASH,userId);
-    console.log("L'utilisateur était connecté aux rooms :", rooms);
+        for (const room of rooms) {
+            try {
+                if (room.includes("chat_room")) {
+                    const match = room.match(/^chat_room_(\d+)_(\d+)$/);
+                    if (match) {
+                        const id1 = match[1];
+                        const id2 = match[2];
+                        const otherId = id1 === id.toString() ? id2 : id1;
 
-    for (const room of rooms) {
-        if (room.includes("chat_room")) {
-            // Extraire les deux IDs d'utilisateur de la room
-            const match = room.match(/^chat_room_(\d+)_(\d+)$/);
-            if (match) {
-                const id1 = match[1];
-                const id2 = match[2];
-                const otherUserId = id1 === userId.toString() ? id2 : id1;
+                        try {
+                            await deleteInRedis(redis, SELECTED_USER_HASH, id, otherId);
+                            await deleteInRedis(redis, SELECTED_USER_HASH, otherId, id);
+                            console.log(`Removed selection relationship between ${id} and ${otherId}.`);
+                        } catch (error) {
+                            console.error(`Error removing selection relationship between ${id} and ${otherId}:`, error.message);
+                        }
 
-                // Supprimer la relation d'utilisateur dans Redis
-                await deleteInRedis(redis, SELECTED_USER_HASH, userId, otherUserId);
-                await deleteInRedis(redis, SELECTED_USER_HASH, otherUserId, userId);
-                console.log(`Suppression des relation de selection entre ${userId} et ${otherUserId}`);
-                await deleteInRedis(redis, USER_ROOMS_HASH, userId, room);
-                await deleteInRedis(redis, USER_ROOMS_HASH, otherUserId, room);
-                console.log(`Suppression des relation de la room ${room} entre ${userId} et ${otherUserId}`);
+                        try {
+                            await deleteInRedis(redis, USER_ROOMS_HASH, id, room);
+                            await deleteInRedis(redis, USER_ROOMS_HASH, otherId, room);
+                            console.log(`Removed room relationship ${room} between ${id} and ${otherId}.`);
+                        } catch (error) {
+                            console.error(`Error removing room relationship for room ${room}:`, error.message);
+                        }
+                    }
+                }
+
+                try {
+                    deleteRoom(io, room);
+                    console.log(`Room ${room} deleted.`);
+                } catch (error) {
+                    console.error(`Error deleting room ${room}:`, error.message);
+                }
+            } catch (error) {
+                console.error("Error processing room:", error.message);
             }
         }
-        deleteRoom(io, room);
+
+        try {
+            await logDetailsRedis(io, redis);
+            console.log("Logged Redis details successfully.");
+        } catch (error) {
+            console.error("Error logging Redis details:", error.message);
+        }
+
+        try {
+            await updateConnectedUsers(io, redis);
+            console.log("Updated connected users successfully.");
+        } catch (error) {
+            console.error("Error updating connected users:", error.message);
+        }
+    } catch (error) {
+        console.error("Error in disconnectEvent:", error.message);
     }
-
-    await logDetailsRedis(io,redis);
-
-    await updateConnectedUsers(io,redis);
 };
 
 export default disconnectEvent;

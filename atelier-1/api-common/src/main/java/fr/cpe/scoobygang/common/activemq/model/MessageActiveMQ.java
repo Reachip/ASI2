@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageActiveMQ implements Serializable {
-    private Long fromUserId;
+    private Long fromId;
     private String fromUsername;
-    private Long toUserId;
+    private Long toId;
     private String toUsername;
     private String content;
     private LocalDateTime time;
@@ -23,9 +23,9 @@ public class MessageActiveMQ implements Serializable {
     @Override
     public String toString() {
         return "MessageActiveMQ{" +
-                "fromUserId='" + fromUserId + '\'' +
+                "fromId='" + fromId + '\'' +
                 ", fromUsername='" + fromUsername + '\'' +
-                ", toUserId='" + toUserId + '\'' +
+                ", toId='" + toId + '\'' +
                 ", toUsername='" + toUsername + '\'' +
                 ", content='" + content + '\'' +
                 ", timestamp='" + time + '\'' +

@@ -23,7 +23,7 @@ const CreateCardPage = ({ generatedCard }) => {
 
     setLoading(true);
 
-    fetch('http://localhost:8080/api/generateCard', {
+    fetch('http://localhost:8088/generateCard', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

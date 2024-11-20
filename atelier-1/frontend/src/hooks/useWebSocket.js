@@ -29,30 +29,27 @@ export const useWebSocket = (user) => {
         }
     }, []);
 
-    const handleNodeMessage = useCallback((msg) => {
+    const handleNodeMessage = useCallback((message) => {
         setChatMessages(prev => [...prev, {
             id: Date.now(),
-            sender: msg.from,
-            message: msg.content,
-            timestamp: msg.time,
-            source: 'node'
+            sender: { id: message.from.id, username: message.from.username },
+            message: message.content,
+            timestamp: message.time
         }]);
     }, []);
 
     const handleUserList = useCallback((users) => {
         setConnectedUsers(prev => {
-            const nodeUsers = prev.filter(user => user.source === 'node');
-            return [...nodeUsers, ...users.map(user => ({ ...user, source: 'spring' }))];
+            return [...prev, ...users.map(user => ({ ...user, source: 'spring' }))];
         });
     }, []);
 
     const handleConversationHistory = useCallback((history) => {
-        const formattedHistory = history.map(msg => ({
+        const formattedHistory = history.map(message => ({
             id: Date.now(),
-            sender: msg.from,
-            message: msg.content,
-            timestamp: msg.time,
-            source: 'node'
+            sender: { id: message.from.id, username: message.from.username },
+            message: message.content,
+            timestamp: message.time
         }));
         setChatMessages(formattedHistory);
     }, []);

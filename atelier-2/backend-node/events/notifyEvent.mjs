@@ -1,26 +1,39 @@
-import {CONNECTED_USERS_HASH} from "../utils/constants.mjs";
+import { CONNECTED_USERS_HASH } from "../utils/constants.mjs";
 
 export const updateConnectedUsers = async (io, redis) => {
-    const connectedUsers  = await redis.hgetall(CONNECTED_USERS_HASH);
+    try {
+        const connectedUsers = await redis.hgetall(CONNECTED_USERS_HASH);
+        try {
+            const usersList = Object.values(connectedUsers).map(user => JSON.parse(user));
+            console.log("Sending updated list of connected users:", JSON.stringify(usersList));
 
-    const usersList = Object.values(connectedUsers).map(user => JSON.parse(user));
-    console.log("Envoie mise à jour de la liste des utilisateurs connectés : "+JSON.stringify(usersList));
+            io.emit("updateConnectedUsers", usersList);
+        } catch (error) {
+            console.error("Error parsing or emitting connected users list:", error.message);
+        }
+    } catch (error) {
+        console.error("Error retrieving connected users from Redis:", error.message);
+    }
+};
 
-    // Envoi à tous les clients connectés
-    io.emit("updateConnectedUsers", usersList);
-}
+export const notifyConversationHistorique = async (io, userSocket, messages) => {
+    try {
+        userSocket.emit("notifyConversationHistory", messages);
+        console.log("Conversation history sent successfully.");
+    } catch (error) {
+        console.error("Error notifying conversation history:", error.message);
+    }
+};
 
-export const notifyConversationHistorique = async (io, userSocket ,messages) => {
-
-    // Envoi à tous les clients connectés
-    userSocket.emit("notifyConversationHistory", messages);
-}
-
-export const notifyNewMessage = (socketUser, fromUsername, content, time) => {
-    socketUser.emit('newMessage', {
-        from: fromUsername,
-        content,
-        time
-    });
-    console.log(`Message envoyé à l'utilisateur ${fromUsername}`);
-}
+export const notifyNewMessage = (socketUser, fromId, fromUsername, content, time) => {
+    try {
+        socketUser.emit('newMessage', {
+            from: { id: fromId, username: fromUsername },
+            content,
+            time
+        });
+        console.log(`Message sent to user ${fromUsername}.`);
+    } catch (error) {
+        console.error(`Error notifying new message to user ${fromUsername}:`, error.message);
+    }
+};
