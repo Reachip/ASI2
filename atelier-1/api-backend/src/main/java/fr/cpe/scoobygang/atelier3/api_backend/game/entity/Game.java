@@ -40,6 +40,12 @@ public class Game implements Serializable {
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GameHistory> gameHistories = new HashSet<>();
 
+    private boolean finished;
+
+    public void setIsFinished() {
+        this.finished = true;
+    }
+
     public void initializeDecks() {
         this.deck1 = new GameDeck(this, user1);
         this.deck2 = new GameDeck(this, user2);
