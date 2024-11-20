@@ -17,9 +17,6 @@ public class UserCardsDTO {
 
     public UserCardsDTO(UserModel user) {
         this.id = user.getId();
-
-        for (CardModel card : user.getCardList()) {
-            this.cardList.add(new CardDTO(card));
-        }
+        cardList.addAll(user.getCardList().stream().map(CardDTO::new).toList());
     }
 }
