@@ -5,7 +5,9 @@ import axios from 'axios';
 import { notifyConversationHistorique } from "./notifyEvent.mjs";
 
 const updateSelectedUserEvent = async (redis, io, data, userSocket) => {
-    const { oldSelectedId, newSelectedId, id, newSelectedUserSocketId } = data;
+    let { oldSelectedId, newSelectedId, id, newSelectedUserSocketId } = data;
+    newSelectedId = parseInt(newSelectedId);
+
     console.log(`User ${id} selects ${newSelectedId}; Previous selection: ${oldSelectedId}`);
 
     try {
