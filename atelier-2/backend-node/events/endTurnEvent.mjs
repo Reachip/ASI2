@@ -14,7 +14,38 @@ import { GAME_HASH } from "../utils/constants.mjs";
  * @returns {Promise<void>} Resolves when the turn-ending logic has been processed successfully.
  */
 const endTurnEvent = async (redis, io, socket, data) => {
+    // End turn event logic : no attack, no card played, just end the turn and add one action point to player
 
+    if (data === undefined || data === null)
+    {
+        return console.log("Error: gameId and userId are required.");
+    }
+
+    const gameId = data.gameId;
+    const userId = data.userId;
+
+    const game = await redis.hget(GAME_HASH, gameId);
+
+    if (!game)
+    {
+        return console.log("Error: Game not found.");
+    }
+
+    const gameData = JSON.parse(game);
+
+    // Get current player :
+    const currentPlayer = gameData.userGameMaster.userId === userId ? gameData.userGameMaster : gameData.user2;
+
+    if (!currentPlayer)
+    {
+        return console.log("Error: Current player not found.");
+    }
+
+    currentPlayer.actionPoint += 1;
+
+    await redis.hset(GAME_HASH, gameId, JSON.stringify(gameData));
+
+    io.to(gameId).emit("turnEnded", { userId });
 }
 
 export default endTurnEvent;
