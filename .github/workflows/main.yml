@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: atelier1/api-activemq-log
+        working-directory: atelier-1/api-activemq-log
     steps:
       - uses: actions/checkout@v3
         with:
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: atelier1/api-backend
+        working-directory: atelier-1/api-backend
     steps:
       - uses: actions/checkout@v3
         with:
@@ -79,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: atelier1/api-common
+        working-directory: atelier-1/api-common
     steps:
       - uses: actions/checkout@v3
         with:
@@ -112,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: atelier1/api-gateway
+        working-directory: atelier-1/api-gateway
     steps:
       - uses: actions/checkout@v3
         with:
@@ -145,7 +145,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: atelier1/api-generation-image-microservice
+        working-directory: atelier-1/api-generation-image-microservice
     steps:
       - uses: actions/checkout@v3
         with:
@@ -178,7 +178,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: atelier1/api-generation-property-microservice
+        working-directory: atelier-1/api-generation-property-microservice
     steps:
       - uses: actions/checkout@v3
         with:
@@ -211,7 +211,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: atelier1/api-generation-text-microservice
+        working-directory: atelier-1/api-generation-text-microservice
     steps:
       - uses: actions/checkout@v3
         with:
@@ -244,7 +244,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: atelier1/api-orchestrator-microservice
+        working-directory: atelier-1/api-orchestrator-microservice
     steps:
       - uses: actions/checkout@v3
         with:
@@ -277,7 +277,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: atelier1/frontend
+        working-directory: atelier-1/frontend
     steps:
       - uses: actions/checkout@v3
         with:
