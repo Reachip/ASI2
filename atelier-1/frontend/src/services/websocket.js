@@ -60,8 +60,8 @@ class WebSocketService {
       this._notifyListeners('updateConnectedUsers', filteredUsers);
     });
 
-    socket.on("newMessage", (msg) => {
-      this._notifyListeners('newMessage', msg);
+    socket.on("newMessage", (message) => {
+      this._notifyListeners('newMessage', message);
     });
 
     socket.on("notifyConversationHistory", (history) => {

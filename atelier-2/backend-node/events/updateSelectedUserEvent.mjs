@@ -9,7 +9,7 @@ const updateSelectedUserEvent = async (redis, io, data, userSocket) => {
     console.log(`User ${id} selects ${newSelectedId}; Previous selection: ${oldSelectedId}`);
 
     try {
-        if (oldSelectedId !== "all") {
+        if (oldSelectedId !== 0) {
             await deleteOldSelection(redis, io, oldSelectedId, id);
         } else {
             userSocket.leave("chat_room_global");
@@ -17,12 +17,12 @@ const updateSelectedUserEvent = async (redis, io, data, userSocket) => {
 
         let conversationHistory = null;
 
-        if (newSelectedId !== "all") {
+        if (newSelectedId !== 0) {
             await addNewSelection(redis, newSelectedId, id);
             await checkMutualSelection(redis, io, newSelectedId, id, userSocket, newSelectedUserSocketId);
             conversationHistory = await getConversationHistory(id, newSelectedId);
         } else {
-            conversationHistory = await getConversationHistory("0", "0");
+            conversationHistory = await getConversationHistory(0, 0);
             userSocket.join("chat_room_global");
         }
 

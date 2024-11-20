@@ -10,7 +10,7 @@ const sendMessageEvent = async (redis, io, socket, data) => {
     console.log(`sendMessageEvent: from: ${JSON.stringify(from)}; to: ${to}; content: ${content}; time: ${time}`);
 
     try {
-        if (to === "all") {
+        if (to == 0) {
             console.log(`Message to be sent to all users.`);
 
             try {
