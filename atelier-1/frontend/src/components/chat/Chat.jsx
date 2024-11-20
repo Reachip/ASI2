@@ -39,8 +39,8 @@ const ChatMessage = ({ message, isOwnMessage }) => (
   </Box>
 );
 
-const Chat = ({ currentUser, messages = [], onSendMessage, users = [], socket, userId }) => {
-  const [selectedUser, setSelectedUser] = useState('all');
+const Chat = ({ currentUser, messages = [], onSendMessage, users = [], socket }) => {
+  const [selectedUser, setSelectedUser] = useState(0); // Initialiser avec 0
   const [messageText, setMessageText] = useState('');
 
   const handleSend = () => {
@@ -64,41 +64,28 @@ const Chat = ({ currentUser, messages = [], onSendMessage, users = [], socket, u
     if (!event?.target?.value) return;
 
     const newValue = event.target.value;
-    console.log("updateSelectedUser :");
-    console.log("Value selection :", newValue);
-    console.log("Liste des utilisateurs connecté :", users);
-    console.log("Value Ancienne selection :", selectedUser);
 
-    const oldUsername = selectedUser === "all" ? "all" :
-      (users && users.length > 0) ?
-        users.find(user => user.userId === selectedUser)?.username :
-        "Unknown";
+    // Vérifier si la nouvelle valeur est valide
+    const isValidValue = users.some(user => user.id === newValue) || newValue === '0';
 
-    const newUsername = newValue === "all" ? "all" :
-      (users && users.length > 0) ?
-        users.find(user => user.userId === newValue)?.username :
-        "Unknown";
+    if (isValidValue) {
+      const oldSelectedUser = selectedUser !== 0 && users ? users.find(user => user.id === selectedUser) : null;
+      const newSelectedUser = newValue !== 0 && users ? users.find(user => user.id === newValue) : null;
 
-    console.log("Ancien utilisateur selectionné :", oldUsername);
-    console.log("Nouvel utilisateur selectionné :", newUsername);
+      await setSelectedUser(newValue);
 
-    const oldSelectedUser = selectedUser !== "all" && users ?
-      users.find(user => user.userId === selectedUser) : null;
-
-    const newSelectedUser = newValue !== "all" && users ?
-      users.find(user => user.userId === newValue) : null;
-
-    await setSelectedUser(newValue);
-
-    if (socket && socket.emit) {
-      socket.emit("updateSelectedUser", {
-        oldSelectedUserId: oldSelectedUser ? oldSelectedUser.userId : "all",
-        newSelectedUserId: newSelectedUser ? newSelectedUser.userId : "all",
-        userId: userId,
-        newSelectedUserSocketId: newSelectedUser ? newSelectedUser.socketId : null
-      });
+      if (socket && socket.emit) {
+        socket.emit("updateSelectedUser", {
+          oldSelectedId: oldSelectedUser ? oldSelectedUser.id : 0,
+          newSelectedId: newSelectedUser ? newSelectedUser.id : 0,
+          id: currentUser.id,
+          newSelectedUserSocketId: newSelectedUser ? newSelectedUser.socketId : null
+        });
+      } else {
+        console.warn("Socket not initialized");
+      }
     } else {
-      console.warn("Socket not initialized");
+      console.warn("Invalid selected user value:", newValue);
     }
   };
 
@@ -114,7 +101,7 @@ const Chat = ({ currentUser, messages = [], onSendMessage, users = [], socket, u
           onChange={updateSelectedUser}
           size="small"
         >
-          <MenuItem value="all">Global Chat</MenuItem>
+          <MenuItem value="0">Global Chat</MenuItem>
           {users.map((user) => (
             <MenuItem key={user.id} value={user.id}>
               {user.username}
