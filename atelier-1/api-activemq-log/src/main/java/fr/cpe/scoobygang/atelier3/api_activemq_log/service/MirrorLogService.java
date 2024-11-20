@@ -35,6 +35,7 @@ public class MirrorLogService {
     private LogEntry parseLine(String line) {
         try {
             // Format attendu: [timestamp] Queue: queueName - Message: messageContent
+
             String timestampStr = line.substring(1, line.indexOf("]"));
             String remaining = line.substring(line.indexOf("]") + 1);
 

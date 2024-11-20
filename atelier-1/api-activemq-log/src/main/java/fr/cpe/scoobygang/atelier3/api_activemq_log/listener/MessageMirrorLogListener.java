@@ -45,7 +45,6 @@ public class MessageMirrorLogListener {
         String destination = message.getJMSDestination().toString();
         String queueName = extractQueueName(destination);
 
-        // Récupérer le contenu du message
         String messageContent;
         if (message instanceof TextMessage) {
             messageContent = ((TextMessage) message).getText();
@@ -53,14 +52,12 @@ public class MessageMirrorLogListener {
             messageContent = message.toString();
         }
 
-        // Créer l'entrée de log avec timestamp
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         String logEntry = String.format("[%s] Queue: %s - Message: %s%n",
                 timestamp,
                 queueName,
                 messageContent);
 
-        // Logger dans le fichier et dans les logs applicatifs
         writeToLogFile(logEntry);
     }
 }
