@@ -48,7 +48,7 @@ const endTurnEvent = async (redis, io, socket, data) => {
 
     const response = new EndTurnResponse(gameId, userId);
 
-    return io.to("fight").emit("endTurnResponse", response);
+    return io.to("fight").emit("endTurnResponse", response.toJson());
 }
 
 export default endTurnEvent;

@@ -36,7 +36,7 @@ const setRewardAmountEvent = async (redis, io, socket, data) => {
 
     const response = new RewardAmountResponse(gameId, rewardAmount);
 
-    return io.to("fight").emit("rewardAmountResponse", response);
+    return io.to("fight").emit("rewardAmountResponse", response.toJson());
 }
 
 export default setRewardAmountEvent;

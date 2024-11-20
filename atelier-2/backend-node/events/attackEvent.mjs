@@ -85,7 +85,7 @@ const attackEvent = async (redis, io, socket, data) =>
     // Return AttackResponse :
     const attackResponse = new AttackResponse(userIdAttack, cardAttackId, cardIdToAttack, cardToAttack.cardCurrentHp, currentPlayer.actionPoint);
 
-    return io.to("fight").emit("attackResponse", attackResponse);
+    return io.to("fight").emit("attackResponse", attackResponse.toJson());
 }
 
 export default attackEvent;
