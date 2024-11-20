@@ -154,6 +154,8 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: Install colorToproperties dependency
+        run: mvn install:install-file -Dfile=src/main/resources/colorToproperties-1.1.2.jar -DgroupId=de.androidpit -DartifactId=colorToproperties -Dversion=1.1.2 -Dpackaging=jar -DgeneratePom=true
       - name: Build and analyze
         run: mvn -B verify
 
