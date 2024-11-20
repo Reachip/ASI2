@@ -19,3 +19,7 @@ export const TYPE_ROOM = {
     CHAT: "chat",
     FIGHT: "fight",
 };
+
+// Hash pour stocker les games en cours
+export const GAME_HASH = "game";
+
