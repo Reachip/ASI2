@@ -9,17 +9,16 @@ import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardReference;
 import fr.cpe.scoobygang.atelier3.api_backend.common.tools.DTOMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CardModelService {
 	private final CardModelRepository cardRepository;
 	private final CardReferenceService cardRefService;
-	private Random rand;
+	private final Random rng;
 
 	public CardModelService(CardModelRepository cardRepository,CardReferenceService cardRefService) {
-		this.rand=new Random();
+		this.rng = new Random();
 		// Dependencies injection by constructor
 		this.cardRepository=cardRepository;
 		this.cardRefService=cardRefService;
@@ -60,10 +59,10 @@ public class CardModelService {
 		for(int i=0;i<nbr;i++) {
 			CardReference currentCardRef=cardRefService.getRandCardRef();
 			CardModel currentCard=new CardModel(currentCardRef);
-			currentCard.setAttack(rand.nextFloat()*100);
-			currentCard.setDefence(rand.nextFloat()*100);
+			currentCard.setAttack(rng.nextFloat()*100);
+			currentCard.setDefence(rng.nextFloat()*100);
 			currentCard.setEnergy(100);
-			currentCard.setHp(rand.nextFloat()*100);
+			currentCard.setHp(rng.nextFloat()*100);
 			currentCard.setPrice(currentCard.computePrice());
 			//save new card before sending for user creation
 			//this.addCard(currentCard);

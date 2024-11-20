@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "pwd": "dev",
+    "account": 1234.56,
+    "lastName": "Dupont",
+    "surName": "Jean",
+    "username": "jdupont",
+    "email": "jean.dupont@example.com"
+  },
+  {
+    "id": 2,
+    "pwd": "dev",
+    "account": 2345.67,
+    "lastName": "Martin",
+    "surName": "Marie",
+    "username": "mmartin",
+    "email": "marie.martin@example.com"
+  },
+  {
+    "id": 3,
+    "pwd": "dev",
+    "account": 3456.78,
+    "lastName": "Durand",
+    "surName": "Paul",
+    "username": "pdurand",
+    "email": "paul.durand@example.com"
+  },
+  {
+    "id": 4,
+    "pwd": "dev",
+    "account": 4567.89,
+    "lastName": "Lefevre",
+    "surName": "Sophie",
+    "username": "slefevre",
+    "email": "sophie.lefevre@example.com"
+  },
+  {
+    "id": 5,
+    "pwd": "dev",
+    "account": 5678.90,
+    "lastName": "Rousseau",
+    "surName": "Pierre",
+    "username": "prousseau",
+    "email": "pierre.rousseau@example.com"
+  }
+]
