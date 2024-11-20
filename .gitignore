@@ -1,4 +1,8 @@
 .DS_Store
 
+# Fichiers de log
+activemq-messages.log
+mirror_messages.log
+
 # JetBrains
 .idea
