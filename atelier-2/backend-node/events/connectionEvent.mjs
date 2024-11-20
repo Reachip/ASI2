@@ -36,7 +36,7 @@ const connectionEvent = async (redis, io, socketId, id, username) => {
             }
 
             const conversationHistory = await getConversationHistory(0, 0);
-            await notifyConversationHistorique(io, userSocket, conversationHistory);
+            await notifyUser(io, userSocket, NOTIFY_CONVERSATION_HISTORY_EVENT,conversationHistory);
             console.log(`Conversation history sent to user ${id}.`);
         } catch (error) {
             console.error("Error handling global chat room or sending history:", error.message);
@@ -54,7 +54,7 @@ const connectionEvent = async (redis, io, socketId, id, username) => {
     }
 
     // Sauvegarder l'utilisateur dans la liste des utilisateurs connectés
-    await redis.hset(CONNECTED_USERS_HASH, userId, JSON.stringify({ username: username, userId: userId, socketId: socketId }));
+    await redis.hset(CONNECTED_USERS_HASH, id, JSON.stringify({ username: username, userId: id, socketId: socketId }));
 
     const userSocket = io.sockets.sockets.get(socketId)
     userSocket.join("chat_room_global");

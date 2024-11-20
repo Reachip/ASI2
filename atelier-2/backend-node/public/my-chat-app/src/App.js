@@ -119,7 +119,6 @@ const handlePlay = () => {
   console.log("Play: ");
   // Envoi du message au serveur
   socket.emit("play", userId);
-
 }
 
 

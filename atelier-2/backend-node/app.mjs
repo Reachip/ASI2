@@ -53,14 +53,7 @@ io.on("connection", async (socket) => {
   // Ajouter un utilisateur à la liste d'attente
   socket.on('play', async (userId) => {
     await playEvent(redis, io,userId, socket);
-  /*
-    await redis.rpush(WAITLIST_KEY, username);
-      const waitlist = await redis.lrange(WAITLIST_KEY, 0, -1);
-    io.emit('waitlistUpdated', waitlist);
-    console.log(`${username} ajouté à la liste d'attente.`);
-   */
   });
-
 
   socket.on("disconnecting", async () => {
     await disconnectEvent(redis, io, socket, id, username);

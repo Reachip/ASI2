@@ -1,4 +1,4 @@
-import {CONNECTED_USERS_HASH} from "./constants.mjs";
+import {CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH, WAITLIST_FIGHT_HASH} from "./constants.mjs";
 
 export const addInRedis = async (redis, hash, key, value) => {
     try {
@@ -106,7 +106,7 @@ export const getDetailsUserById = async (redis, userId) => {
 }
 
 export const logDetailsRedis = async (io,redis)=>{
-    console.log("Nombre d'utilisateurs connectés :",await redis.hlen("connectedUsers"));
+    console.log("Nombre d'utilisateurs connectés :",await redis.hlen(CONNECTED_USERS_HASH));
     console.log(`Nombre de rooms actives : ${io.sockets.adapter.rooms.size}`);
 };
 
@@ -120,8 +120,7 @@ export const logDetailsRedis = async (io,redis)=>{
  * @returns {Promise<void>} Resolves when the server initialization is complete.
  */
 export async function initServer(io, redis) {
-    await redis.del("waitingQueue");
-
+    await redis.del(WAITLIST_FIGHT_HASH);
     await redis.set("userCounter", 0);
     await redis.del(CONNECTED_USERS_HASH);
     await redis.del(SELECTED_USER_HASH);

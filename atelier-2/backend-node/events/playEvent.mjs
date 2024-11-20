@@ -6,14 +6,16 @@ import {
     WAITLIST_FIGHT_HASH
 } from "../utils/constants.mjs";
 import {notifyRoom, notifyUser} from "./notifyEvent.mjs";
-import {getDetailsUserById} from "../utils/redisUtils.mjs";
 import {createRoom} from "../utils/roomUtils.mjs";
+import {UserRepository} from "../repository/UserRepository.mjs";
+import {GameRepository} from "../repository/GameRepository.mjs";
+
+const userRepository = new UserRepository();
+const gameRepository = new GameRepository();
 
 export const playEvent = async (redis, io, userId, userSocket) => {
     try {
-
-        const response = await axios.get(`http://localhost:8080/api/user/${userId}/cards`);
-        const listCards = response.data.cardList;
+        const listCards = await userRepository.getUserCards(userId);
         console.log(`Liste des cartes de l'utilisateur (${userId} récupéré :`,listCards);
 
         const nbCard = listCards.length;
@@ -39,8 +41,19 @@ export const playEvent = async (redis, io, userId, userSocket) => {
                 const gameMaster = firstTwo[randomIndex];
 
                 console.log(`Le game master est l'utilisateur : ${gameMaster}`);
+                const userId1 = Math.min(firstTwo[0], firstTwo[1]);
+                const userId2 =  Math.max(firstTwo[0], firstTwo[1]);
 
-                notifyRoom(io,roomId,NOTIFY_ROOM_FIGHT_CREATED_EVENT,gameMaster);
+                const gameCreationRequest = {
+                    user1Id: userId1,
+                    user2Id: userId2,
+                };
+
+                const resultCreateGame = await gameRepository.createGame(gameCreationRequest)
+                    .then(createdGame => console.log("resultCreateGame : "+createdGame))
+                    .catch(error => console.error('Error creating game:'+error));
+
+                notifyRoom(io,roomId,NOTIFY_ROOM_FIGHT_CREATED_EVENT,{'gameMaster':gameMaster});
 
             } else {
                 console.log("Il y a moins de deux personnes dans la liste d'attente.");
