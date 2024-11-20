@@ -41,19 +41,19 @@ public class MessageService {
     }
 
     public void saveMessage(MessageActiveMQ messageActiveMQ){
-        Long fromUserId = messageActiveMQ.getFromUserId();
-        Long toUserId = messageActiveMQ.getToUserId();
+        Long fromId = messageActiveMQ.getFromId();
+        Long toId = messageActiveMQ.getToId();
 
         Long userId1 = 0L;
         Long userId2 = 0L;
         // 0 - 0 chat global
-        if (fromUserId == 0 || toUserId == 0) {
+        if (fromId == 0 || toId == 0) {
             userId1 = 0L;
             userId2 = 0L;
         }
         else{
-            userId1 = fromUserId.compareTo(toUserId) < 0 ? fromUserId : toUserId;
-            userId2 = fromUserId.compareTo(toUserId) < 0 ? toUserId : fromUserId;
+            userId1 = fromId.compareTo(toId) < 0 ? fromId : toId;
+            userId2 = fromId.compareTo(toId) < 0 ? toId : fromId;
         }
 
         Optional<Conversation> conversationOptional =  conversationRepository.findByUserId1AndUserId2(userId1, userId2);

@@ -55,7 +55,7 @@ const BuyCardsPage = () => {
   }, [cards]);
 
   const buyCard = async (card) => {
-    const response = await fetch('http://localhost:8088/api/store/buy', {
+    const response = await fetch('http://localhost:8088/store/buy', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

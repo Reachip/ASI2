@@ -12,34 +12,34 @@ import {
 import SendIcon from '@mui/icons-material/Send';
 
 const ChatMessage = ({ message, isOwnMessage }) => (
+  <Box
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: isOwnMessage ? 'flex-end' : 'flex-start',
+      mb: 1,
+      width: '100%',
+    }}
+  >
     <Box
-        sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: isOwnMessage ? 'flex-end' : 'flex-start',
-            mb: 1,
-            width: '100%',
-        }}
+      sx={{
+        maxWidth: '80%',
+        backgroundColor: isOwnMessage ? 'primary.main' : 'grey.300',
+        color: isOwnMessage ? 'white' : 'black',
+        borderRadius: 2,
+        p: 1,
+        px: 2,
+      }}
     >
-        <Box
-            sx={{
-                maxWidth: '80%',
-                backgroundColor: isOwnMessage ? 'primary.main' : 'grey.300',
-                color: isOwnMessage ? 'white' : 'black',
-                borderRadius: 2,
-                p: 1,
-                px: 2,
-            }}
-        >
-            <Typography variant="caption" display="block" sx={{ opacity: 0.8 }}>
-                {isOwnMessage ? "You" : message.sender} • {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </Typography>
-            <Typography variant="body2">{message.message}</Typography>
-        </Box>
+      <Typography variant="caption" display="block" sx={{ opacity: 0.8 }}>
+        {isOwnMessage ? "You" : message.sender.username} • {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+      </Typography>
+      <Typography variant="body2">{message.message}</Typography>
     </Box>
+  </Box>
 );
 
-const Chat = ({ currentUser, users = [], messages = [], onSendMessage, socket, userId, connectedUsers = [] }) => {
+const Chat = ({ currentUser, messages = [], onSendMessage, users = [], socket, userId }) => {
   const [selectedUser, setSelectedUser] = useState('all');
   const [messageText, setMessageText] = useState('');
 
@@ -62,37 +62,34 @@ const Chat = ({ currentUser, users = [], messages = [], onSendMessage, socket, u
 
   const updateSelectedUser = async (event) => {
     if (!event?.target?.value) return;
-    
+
     const newValue = event.target.value;
     console.log("updateSelectedUser :");
     console.log("Value selection :", newValue);
-    console.log("Liste des utilisateurs connecté :", connectedUsers);
+    console.log("Liste des utilisateurs connecté :", users);
     console.log("Value Ancienne selection :", selectedUser);
 
-    // Obtenir les noms d'utilisateur pour les logs avec vérification de l'existence de connectedUsers
-    const oldUsername = selectedUser === "all" ? "all" : 
-      (connectedUsers && connectedUsers.length > 0) ? 
-        connectedUsers.find(user => user.userId === selectedUser)?.username : 
+    const oldUsername = selectedUser === "all" ? "all" :
+      (users && users.length > 0) ?
+        users.find(user => user.userId === selectedUser)?.username :
         "Unknown";
-    
-    const newUsername = newValue === "all" ? "all" : 
-      (connectedUsers && connectedUsers.length > 0) ? 
-        connectedUsers.find(user => user.userId === newValue)?.username : 
+
+    const newUsername = newValue === "all" ? "all" :
+      (users && users.length > 0) ?
+        users.find(user => user.userId === newValue)?.username :
         "Unknown";
 
     console.log("Ancien utilisateur selectionné :", oldUsername);
     console.log("Nouvel utilisateur selectionné :", newUsername);
 
-    // Trouver les objets utilisateur complets avec vérification
-    const oldSelectedUser = selectedUser !== "all" && connectedUsers ? 
-      connectedUsers.find(user => user.userId === selectedUser) : null;
-    
-    const newSelectedUser = newValue !== "all" && connectedUsers ? 
-      connectedUsers.find(user => user.userId === newValue) : null;
+    const oldSelectedUser = selectedUser !== "all" && users ?
+      users.find(user => user.userId === selectedUser) : null;
+
+    const newSelectedUser = newValue !== "all" && users ?
+      users.find(user => user.userId === newValue) : null;
 
     await setSelectedUser(newValue);
 
-    // Vérifier que socket existe avant d'émettre
     if (socket && socket.emit) {
       socket.emit("updateSelectedUser", {
         oldSelectedUserId: oldSelectedUser ? oldSelectedUser.userId : "all",
@@ -139,7 +136,7 @@ const Chat = ({ currentUser, users = [], messages = [], onSendMessage, socket, u
           <ChatMessage
             key={index}
             message={message}
-            isOwnMessage={message.sender === currentUser}
+            isOwnMessage={message.sender.id === currentUser.id}
           />
         ))}
       </Box>

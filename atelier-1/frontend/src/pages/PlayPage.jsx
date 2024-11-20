@@ -5,18 +5,6 @@ import { selectAuth } from '../store/authSlice';
 import ChatPanel from '../components/chat/ChatPanel';
 import GameBoard from '../components/play/GameBoard';
 
-const sampleMessages = [
-    { id: 1, sender: "Eric Smith", message: "Hey, good luck for this game!", timestamp: new Date("2024-01-01T10:00:00").toISOString() },
-    { id: 2, sender: "test", message: "Thanks! May the best win 😊", timestamp: new Date("2024-01-01T10:00:30").toISOString() },
-    { id: 3, sender: "Eric Smith", message: "Nice card you played there!", timestamp: new Date("2024-01-01T10:01:00").toISOString() }
-];
-
-const sampleUsers = [
-    { username: "Eric Smith", id: 2 },
-    { username: "Kity Poulet", id: 3 },
-    { username: "Chuck Norris", id: 4 }
-];
-
 const opponentCards = [
     { id: 1, name: 'Dragon', img_src: 'https://r2.starryai.com/results/1018715876/210d992f-6c31-42e6-8256-c760ce1e5526.webp', description: 'A fierce dragon', hp: 25, energy: 25, defense: 10, attack: 20 },
     { id: 2, name: 'Phoenix', img_src: 'https://cdn.prod.website-files.com/632ac1a36830f75c7e5b16f0/64f115aafa4db6e7cb5d06ec_d7wb7qw1nmg5iAmD9Cb1W86MZkL6rJm36l09xBNTPKA.webp', description: 'A majestic phoenix', hp: 22, energy: 22, defense: 8, attack: 18 },
@@ -56,7 +44,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage }) => {
     return (
         <Box sx={{ display: 'flex', height: 'calc(100vh - 80px)', gap: 2, padding: 0 }}>
             <ChatPanel
-                currentUser={user.username}
+                currentUser={user}
                 messages={chatMessages}
                 users={filteredUsers}
                 onSendMessage={onSendMessage}

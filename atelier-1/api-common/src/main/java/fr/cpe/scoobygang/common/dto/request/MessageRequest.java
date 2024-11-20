@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class MessageRequest {
-    private String fromUserId;
-    private String toUserId;
+    private String fromId;
+    private String toId;
 }

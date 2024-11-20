@@ -18,9 +18,9 @@ public class Message implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String conversationId;
-    private Long fromUserId;
+    private Long fromId;
     private String fromUsername;
-    private Long toUserId;
+    private Long toId;
     private String toUsername;
     private String content;
     private LocalDateTime time;
@@ -29,9 +29,9 @@ public class Message implements Serializable {
     public String toString() {
         return "MessageActiveMQ{" +
                 "conversationId='" + conversationId + '\'' +
-                "fromUserId='" + fromUserId + '\'' +
+                "fromId='" + fromId + '\'' +
                 ", fromUsername='" + fromUsername + '\'' +
-                ", toUserId='" + toUserId + '\'' +
+                ", toId='" + toId + '\'' +
                 ", toUsername='" + toUsername + '\'' +
                 ", content='" + content + '\'' +
                 ", timestamp='" + time + '\'' +

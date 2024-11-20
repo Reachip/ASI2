@@ -4,7 +4,7 @@ export const loginUser = createAsyncThunk(
     'auth/login',
     async ({ username, password }, { rejectWithValue }) => {
         try {
-            const authResponse = await fetch('http://localhost:8088/api/auth', {
+            const authResponse = await fetch('http://localhost:8088/auth', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -18,7 +18,7 @@ export const loginUser = createAsyncThunk(
 
             const userId = await authResponse.json();
 
-            const userResponse = await fetch(`http://localhost:8088/api/user/${userId}`);
+            const userResponse = await fetch(`http://localhost:8088/user/${userId}`);
             if (!userResponse.ok) {
                 throw new Error('Failed to fetch user data');
             }
@@ -42,7 +42,7 @@ export const registerUser = createAsyncThunk(
     'auth/register',
     async (userData, { rejectWithValue }) => {
         try {
-            const registerResponse = await fetch('http://localhost:8088/api/user', {
+            const registerResponse = await fetch('http://localhost:8088/user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
