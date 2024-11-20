@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableDiscoveryClient
 @ComponentScan(basePackages = {
+		"fr.cpe.scoobygang.atelier3.api_orchestrator_microservice",
 		"fr.cpe.scoobygang.common.*",
-		"fr.cpe.scoobygang.atelier3.api_orchestrator_microservice.*"
 })
 @EnableJpaRepositories(basePackages = "fr.cpe.scoobygang.common.repository")
 @EntityScan("fr.cpe.scoobygang.common.activemq.model")
