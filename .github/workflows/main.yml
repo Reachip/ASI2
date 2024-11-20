@@ -10,6 +10,7 @@ on:
 jobs:
   api-activemq-log:
     name: API ActiveMQ Log
+    needs: api-common
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -43,6 +44,7 @@ jobs:
 
   api-backend:
     name: API Backend
+    needs: api-common
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -75,7 +77,7 @@ jobs:
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=api-backend
 
   api-common:
-    name: API Common
+    name: Build API Common
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -89,23 +91,15 @@ jobs:
         with:
           java-version: 20
           distribution: 'zulu'
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=api-common
+      - name: Build API Common
+        run: mvn clean install
+
 
   api-gateway:
     name: API Gateway
@@ -142,6 +136,7 @@ jobs:
 
   api-generation-image-microservice:
     name: API Generation Image Microservice
+    needs: api-common
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -175,6 +170,7 @@ jobs:
 
   api-generation-property-microservice:
     name: API Generation Property Microservice
+    needs: api-common
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -208,6 +204,7 @@ jobs:
 
   api-generation-text-microservice:
     name: API Generation Text Microservice
+    needs: api-common
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -241,6 +238,7 @@ jobs:
 
   api-orchestrator-microservice:
     name: API Orchestrator
+    needs: api-common
     runs-on: ubuntu-latest
     defaults:
       run:
