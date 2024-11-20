@@ -1,4 +1,4 @@
-import {CONNECTED_USERS_HASH} from "../utils/constants.mjs";
+import {CONNECTED_USERS_HASH, NOTIFY_ROOM_FIGHT_CREATED_EVENT} from "../utils/constants.mjs";
 
 export const updateConnectedUsers = async (io, redis) => {
     const connectedUsers  = await redis.hgetall(CONNECTED_USERS_HASH);
@@ -10,10 +10,14 @@ export const updateConnectedUsers = async (io, redis) => {
     io.emit("updateConnectedUsers", usersList);
 }
 
-export const notifyConversationHistorique = async (io, userSocket ,messages) => {
+export const notifyUser = async (io, userSocket , event, message) => {
 
     // Envoi à tous les clients connectés
-    userSocket.emit("notifyConversationHistory", messages);
+    userSocket.emit(event, message);
+}
+
+export const notifyRoom = (io, roomId, event, message) => {
+    io.to(roomId).emit(event,message);
 }
 
 export const notifyNewMessage = (socketUser, fromUsername, content, time) => {
@@ -24,3 +28,4 @@ export const notifyNewMessage = (socketUser, fromUsername, content, time) => {
     });
     console.log(`Message envoyé à l'utilisateur ${fromUsername}`);
 }
+

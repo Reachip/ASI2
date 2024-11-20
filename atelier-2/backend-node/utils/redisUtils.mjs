@@ -1,3 +1,5 @@
+import {CONNECTED_USERS_HASH} from "./constants.mjs";
+
 export const addInRedis = async (redis, hash, key, value) => {
     try {
         // Récupérer la valeur actuelle
@@ -97,6 +99,12 @@ export const getListFromRedis = async (redis, hash, key) => {
         return []; // En cas d'erreur, retourne une liste vide
     }
 };
+
+export const getDetailsUserById = async (redis, userId) => {
+    const user = await redis.hget(CONNECTED_USERS_HASH, userId);
+    return user;
+}
+
 
 export const logDetailsRedis = async (io,redis)=>{
     console.log("Nombre d'utilisateurs connectés :",await redis.hlen("connectedUsers"));

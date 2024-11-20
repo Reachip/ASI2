@@ -37,6 +37,16 @@ const ChatApp = () => {
   }, [socket]);
 
   useEffect(() => {
+    if (socket) {
+      socket.on("notifyRoomFightCreated", (gameMaster) => {
+       console.log("La room à été créée");
+        console.log(`Le game master est : user ${gameMaster} `);
+
+      });
+    }
+  }, [socket]);
+
+  useEffect(() => {
     console.log("selectedUser a été mis à jour :", selectedUser);
   }, [selectedUser]);
 
@@ -105,6 +115,13 @@ const ChatApp = () => {
     });
   }
 
+const handlePlay = () => {
+  console.log("Play: ");
+  // Envoi du message au serveur
+  socket.emit("play", userId);
+
+}
+
 
   // Fonction pour gérer l'envoi de message
   const handleSendMessage = () => {
@@ -127,62 +144,63 @@ const ChatApp = () => {
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      {/* Formulaire de sélection de l'utilisateur */}
-      <div>
-        <h2>Connexion de l'utilisateur</h2>
-        <input
-          type="text"
-          placeholder="ID de l'utilisateur"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Nom d'utilisateur"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <button onClick={handleConnect}>Se connecter</button>
-      </div>
+      <div style={{ padding: "2rem" }}>
+        {/* Formulaire de sélection de l'utilisateur */}
+        <div>
+          <h2>Connexion de l'utilisateur</h2>
+          <input
+              type="text"
+              placeholder="ID de l'utilisateur"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+          />
+          <input
+              type="text"
+              placeholder="Nom d'utilisateur"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+          />
+          <button onClick={handleConnect}>Se connecter</button>
+        </div>
 
-      {/* Liste déroulante pour sélectionner l'utilisateur destinataire */}
-      <div style={{ marginTop: "1rem" }}>
-        <label>Sélectionner un utilisateur :</label>
-        <select onChange={(e) => updateSelectedUser(e.target.value)}>
-          {/*<option value="">Choisir un utilisateur</option>*/}
-          <option value="all">Tous</option>
-          {connectedUsers.map((user) => (
-            <option key={user.userId} value={user.userId}>
-              {user.username}
-            </option>
+        {/* Liste déroulante pour sélectionner l'utilisateur destinataire */}
+        <div style={{ marginTop: "1rem" }}>
+          <label>Sélectionner un utilisateur :</label>
+          <select onChange={(e) => updateSelectedUser(e.target.value)}>
+            {/*<option value="">Choisir un utilisateur</option>*/}
+            <option value="all">Tous</option>
+            {connectedUsers.map((user) => (
+                <option key={user.userId } value={user.userId }>
+                  {user.username}
+                </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Zone d'affichage des messages */}
+        <div style={{ marginTop: "1rem", border: "1px solid #ccc", padding: "1rem", maxHeight: "300px", overflowY: "scroll" }}>
+          <h3>Messages</h3>
+          {messages.map((msg, index) => (
+              <div key={index} style={{ marginBottom: "0.5rem" }}>
+                [{msg.time}] <strong>{msg.from}</strong> : {msg.content}
+              </div>
           ))}
-        </select>
-      </div>
+        </div>
 
-      {/* Zone d'affichage des messages */}
-      <div style={{ marginTop: "1rem", border: "1px solid #ccc", padding: "1rem", maxHeight: "300px", overflowY: "scroll" }}>
-        <h3>Messages</h3>
-        {messages.map((msg, index) => (
-          <div key={index} style={{ marginBottom: "0.5rem" }}>
-            [{msg.time}] <strong>{msg.from}</strong> : {msg.content}
-          </div>
-        ))}
+        {/* Champ d'entrée pour les messages et bouton d'envoi */}
+        <div style={{ marginTop: "1rem" }}>
+<textarea
+    rows="2"
+    placeholder="Entrez votre message..."
+    value={message}
+    onChange={(e) => setMessage(e.target.value)}
+/>
+          <button onClick={handleSendMessage} style={{ marginTop: "0.5rem" }}>
+            Envoyer
+          </button>
+        </div>
+        <button onClick={handlePlay}>Play</button>
       </div>
-
-      {/* Champ d'entrée pour les messages et bouton d'envoi */}
-      <div style={{ marginTop: "1rem" }}>
-        <textarea
-          rows="2"
-          placeholder="Entrez votre message..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <button onClick={handleSendMessage} style={{ marginTop: "0.5rem" }}>
-          Envoyer
-        </button>
-      </div>
-    </div>
   );
 };
 

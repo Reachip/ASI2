@@ -1,8 +1,8 @@
 import {deleteRoom} from "../utils/roomUtils.mjs";
 import {addInRedis, deleteInRedis, existsInRedis, logDetailsRedis} from "../utils/redisUtils.mjs";
-import {SELECTED_USER_HASH, USER_ROOMS_HASH} from "../utils/constants.mjs";
+import {NOTIFY_CONVERSATION_HISTORY_EVENT, SELECTED_USER_HASH, USER_ROOMS_HASH} from "../utils/constants.mjs";
 import axios from 'axios';
-import {notifyConversationHistorique} from "./notifyEvent.mjs";
+import {notifyUser} from "./notifyEvent.mjs";
 
 const updateSelectedUserEvent = async (redis, io, data, userSocket) => {
     const { oldSelectedUserId, newSelectedUserId, userId, newSelectedUserSocketId } = data;
@@ -31,7 +31,7 @@ const updateSelectedUserEvent = async (redis, io, data, userSocket) => {
         userSocket.join("chat_room_global");
     }
 
-    await notifyConversationHistorique(io, userSocket, conversationHistory);
+    await notifyUser(io, userSocket, NOTIFY_CONVERSATION_HISTORY_EVENT ,conversationHistory);
     console.log(`Envoie de l'historique des message à l'utilisateur ${userId}  : ${conversationHistory}`);
 
 };

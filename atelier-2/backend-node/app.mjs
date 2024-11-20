@@ -7,8 +7,10 @@ import connectionEvent from "./events/connectionEvent.mjs";
 import updateSelectedUserEvent from "./events/updateSelectedUserEvent.mjs";
 import sendMessageEvent from "./events/sendMessageEvent.mjs";
 import disconnectEvent from "./events/disconnectEvent.mjs";
-import { CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH } from "./utils/constants.mjs";
-import { logDetailsRedis } from "./utils/redisUtils.mjs";
+import {CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH, WAITLIST_FIGHT_HASH} from "./utils/constants.mjs";
+import {logDetailsRedis} from "./utils/redisUtils.mjs";
+import {playEvent} from "./events/playEvent.mjs";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,6 +49,18 @@ io.on("connection", async (socket) => {
     await sendMessageEvent(redis, io, socket, data);
   });
 
+  // Ajouter un utilisateur à la liste d'attente
+  socket.on('play', async (userId) => {
+    await playEvent(redis, io,userId, socket);
+  /*
+    await redis.rpush(WAITLIST_KEY, username);
+      const waitlist = await redis.lrange(WAITLIST_KEY, 0, -1);
+    io.emit('waitlistUpdated', waitlist);
+    console.log(`${username} ajouté à la liste d'attente.`);
+   */
+  });
+
+
   socket.on("disconnecting", async () => {
     await disconnectEvent(redis, io, socket, userId, username);
   });
@@ -54,7 +68,7 @@ io.on("connection", async (socket) => {
 
 // Vider la file d'attente au démarrage
 async function initServer(io, redis) {
-  await redis.del("waitingQueue");
+  await redis.del(WAITLIST_FIGHT_HASH);
   await redis.set("userCounter", 0);
   await redis.del(CONNECTED_USERS_HASH);
   await redis.del(SELECTED_USER_HASH);
