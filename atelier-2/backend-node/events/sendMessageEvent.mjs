@@ -7,85 +7,78 @@ const saveMessageInstance = new SaveMessageActiveMq();
 
 const sendMessageEvent = async (redis, io, socket, data) => {
     const { from, to, content, time } = data;
-    console.log(`sendMessageEvent: from: ${JSON.stringify(from)}; to: ${to}; content: ${content}; time: ${time} `);
+    console.log(`sendMessageEvent: from: ${JSON.stringify(from)}; to: ${to}; content: ${content}; time: ${time}`);
 
-    if (to === "all") {
-        console.log(`Message à envoyer à tous les utilisaateurs `);
+    try {
+        if (to === "all") {
+            console.log(`Message to be sent to all users.`);
 
-        io.to("chat_room_global").emit("newMessage", {
-            from: from.username,
-            content,
-            time
-        });
-        console.log(`Message envoyé à la room chat_room_global`);
+            try {
+                io.to("chat_room_global").emit("newMessage", {
+                    from: { id: from.id, username: from.username },
+                    content,
+                    time
+                });
+                console.log(`Message sent to the global chat room.`);
+            } catch (error) {
+                console.error("Error sending message to global chat room:", error.message);
+            }
 
-        await saveMessage(from.id, from.username, "0", "0", content, time);
+            try {
+                await saveMessage(from.id, from.username, 0, 0, content, time);
+                console.log(`Global message saved successfully.`);
+            } catch (error) {
+                console.error("Error saving global message:", error.message);
+            }
+        } else {
+            const roomId = `chat_room_${Math.min(from.id, to)}_${Math.max(from.id, to)}`;
 
-    }
-    else {
-        const roomId = `chat_room_${Math.min(from.id, to.id)}_${Math.max(from.id, to.id)}`;
+            try {
+                if (await existsInRedis(redis, USER_ROOMS_HASH, from.id, roomId)) {
+                    io.to(roomId).emit("newMessage", {
+                        from: { id: from.id, username: from.username },
+                        content,
+                        time
+                    });
+                    console.log(`Message sent to room ${roomId}.`);
+                } else {
+                    notifyNewMessage(socket, from.id, from.username, content, time);
+                    console.log(`Message sent directly to user ${to}.`);
+                }
+            } catch (error) {
+                console.error(`Error sending message to room ${roomId} or user ${to}:`, error.message);
+            }
 
-        // Dans le cas ou les utilisateurs sont tous les deux dans une room
-        if (await existsInRedis(redis, USER_ROOMS_HASH, from.id, roomId)) {
-            // Envoie le message à tous les utilisateurs de la room
-            io.to(roomId).emit("newMessage", {
-                from: from.username,
-                content,
-                time
-            });
-            console.log(`Message envoyé à la room ${roomId}`);
+            try {
+                await saveMessage(from.id, from.username, to, to, content, time);
+                console.log(`Message to ${to} saved successfully.`);
+            } catch (error) {
+                console.error("Error saving message to specific user:", error.message);
+            }
         }
-        else {
-            // Si la room n'existe pas, envoie le message uniquement à l'utilisateur qui a émis l'événement
-            notifyNewMessage(socket, from.username, content, time);
-        }
-
-        await saveMessage(from.id, from.username, to.id, to.username, content, time);
+    } catch (error) {
+        console.error("Error in sendMessageEvent:", error.message);
     }
 };
 
-const saveMessage = async (fromUserId, fromUsername, toUserId, toUsername, content, time) => {
+const saveMessage = async (fromId, fromUsername, toId, toUsername, content, time) => {
     const message = {
-        fromUserId: fromUserId,
+        fromId: fromId,
         fromUsername: fromUsername,
-        toUserId: toUserId,
+        toId: toId,
         toUsername: toUsername,
         content: content,
         time: time
     };
 
-    // Affichage du message avant envoi
-    console.log("Message avant envoi:", JSON.stringify(message));
-    await saveMessageInstance.sendMessage(message);
-}
-
-
+    try {
+        console.log("Message before sending:", JSON.stringify(message));
+        await saveMessageInstance.sendMessage(message);
+        console.log("Message saved successfully via ActiveMQ.");
+    } catch (error) {
+        console.error("Error saving message via ActiveMQ:", error.message);
+        throw error;
+    }
+};
 
 export default sendMessageEvent;
-
-/*
-const sendToAllUsers = async (io, redis, socket, from, content, time) => {
-    const listUserSelectedSender = await getListFromRedis(redis, SELECTED_USER_HASH,from.id);
-    console.log(`Liste des personnes ayant sélectionné l'émetteur (${from.id}) :${listUserSelectedSender}`);
-
-    const listConnectedUser = await redis.hgetall(CONNECTED_USERS_HASH);
-    // Transforme les valeurs du hash en une liste d'objets utilisateur
-    const parsedUsers = Object.values(listConnectedUser).map((userString) => JSON.parse(userString));
-    const listConnectedUserFiltered = parsedUsers.filter(user => user.userId !== from.id)
-    console.log(`Liste des personnes connectées :${JSON.stringify(listConnectedUserFiltered)}`);
-
-    listConnectedUserFiltered.map(async (connectedUser) => {
-        console.log(`connectedUser ${JSON.stringify(connectedUser)}`);
-
-        if (listUserSelectedSender.includes(connectedUser.userId)){
-            const toUserSocket = io.sockets.sockets.get(connectedUser.socketId );
-
-            notifyNewMessage(toUserSocket, from.username, content, time);
-        }
-
-        await saveMessage(from.id, from.username, connectedUser.id, connectedUser.username, content, time);
-
-    });
-    notifyNewMessage(socket, from.username, content, time);
-}
-*/

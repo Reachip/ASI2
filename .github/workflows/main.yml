@@ -1,0 +1,234 @@
+name: Build, Run & SonarCloud
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  api-activemq-log:
+    name: API ActiveMQ Log
+    needs: api-common
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: atelier-1/api-activemq-log
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 20
+        uses: actions/setup-java@v3
+        with:
+          java-version: 20
+          distribution: 'zulu'
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        run: mvn -B verify
+
+  api-backend:
+    name: API Backend
+    needs: api-common
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: atelier-1/api-backend
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 20
+        uses: actions/setup-java@v3
+        with:
+          java-version: 20
+          distribution: 'zulu'
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        run: mvn -B verify
+
+  api-common:
+    name: Build API Common
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: atelier-1/api-common
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 20
+        uses: actions/setup-java@v3
+        with:
+          java-version: 20
+          distribution: 'zulu'
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build API Common
+        run: mvn clean install
+
+
+  api-gateway:
+    name: API Gateway
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: atelier-1/api-gateway
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 20
+        uses: actions/setup-java@v3
+        with:
+          java-version: 20
+          distribution: 'zulu'
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        run: mvn -B verify
+
+  api-generation-image-microservice:
+    name: API Generation Image Microservice
+    needs: api-common
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: atelier-1/api-generation-image-microservice
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 20
+        uses: actions/setup-java@v3
+        with:
+          java-version: 20
+          distribution: 'zulu'
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        run: mvn -B verify
+
+  api-generation-property-microservice:
+    name: API Generation Property Microservice
+    needs: api-common
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: atelier-1/api-generation-property-microservice
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 20
+        uses: actions/setup-java@v3
+        with:
+          java-version: 20
+          distribution: 'zulu'
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        run: mvn -B verify
+
+  api-generation-text-microservice:
+    name: API Generation Text Microservice
+    needs: api-common
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: atelier-1/api-generation-text-microservice
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 20
+        uses: actions/setup-java@v3
+        with:
+          java-version: 20
+          distribution: 'zulu'
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        run: mvn -B verify
+
+  api-orchestrator-microservice:
+    name: API Orchestrator
+    needs: api-common
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: atelier-1/api-orchestrator-microservice
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 20
+        uses: actions/setup-java@v3
+        with:
+          java-version: 20
+          distribution: 'zulu'
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        run: mvn -B verify
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: atelier-1/frontend
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: npm i
+      - name: Build
+        run: npm run build

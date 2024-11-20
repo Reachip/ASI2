@@ -38,9 +38,9 @@ public class DTOMapper {
 
 	public static Message fromMessageActiveMQToMessage(MessageActiveMQ messageActiveMQ) {
 		Message message = new Message();
-		message.setFromUserId(messageActiveMQ.getFromUserId());
+		message.setFromId(messageActiveMQ.getFromId());
 		message.setFromUsername(messageActiveMQ.getFromUsername());
-		message.setToUserId(messageActiveMQ.getToUserId());
+		message.setToId(messageActiveMQ.getToId());
 		message.setToUsername(messageActiveMQ.getToUsername());
 		message.setContent(messageActiveMQ.getContent());
 		message.setTime(messageActiveMQ.getTime());

@@ -36,12 +36,11 @@ const redis = new Redis();
 await initServer(io, redis);
 
 io.on("connection", async (socket) => {
-  const { userId, username } = socket.handshake.query;
 
-  if (!username)
-    return console.log("Error: username is required.");
+  let { id, username } = socket.handshake.query;
+  if (!id) return console.log("Error: user id is required.");
 
-  await connectionEvent(redis, io, socket.id, userId, username);
+  await connectionEvent(redis, io, socket.id, id, username);
 
   socket.on("updateSelectedUser", async (data) => {
     await updateSelectedUserEvent(redis, io, data, socket);
@@ -64,7 +63,7 @@ io.on("connection", async (socket) => {
 
 
   socket.on("disconnecting", async () => {
-    await disconnectEvent(redis, io, socket, userId, username);
+    await disconnectEvent(redis, io, socket, id, username);
   });
 
   socket.on("setRewardAmount", async (data) => {

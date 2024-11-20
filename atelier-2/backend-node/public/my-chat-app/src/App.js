@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 
 const ChatApp = () => {
   // État pour gérer les informations de l'utilisateur
-  const [userId, setUserId] = useState("");
+  const [id, setId] = useState("");
   const [username, setUsername] = useState("");
 
   // Liste d'utilisateurs connecté
@@ -18,8 +18,8 @@ const ChatApp = () => {
   useEffect(() => {
     if (socket) {
       socket.on("updateConnectedUsers", (users) => {
-        // Filtrer l'utilisateur actuel en comparant les `userId`
-        const filteredUsers = users.filter(user => user.userId !== userId);
+        // Filtrer l'utilisateur actuel en comparant les `id`
+        const filteredUsers = users.filter(user => user.id !== id);
         console.log("Données reçues (filtrées) :", filteredUsers);
         console.log("selectedUser :", selectedUser);
         // Mettre à jour la liste sans inclure l'utilisateur actuel
@@ -28,9 +28,9 @@ const ChatApp = () => {
         } else {
           setConnectedUsers([]);  // Aucune autre connexion active
         }
-        console.log("id trouvé ?  :", filteredUsers.find(user => user.userId === selectedUser));
+        console.log("id trouvé ?  :", filteredUsers.find(user => user.id === selectedUser));
         // Si on ne retrouve pas l'utilisateur avec qui on communiquait
-        if (!filteredUsers.find(user => user.userId === selectedUser)) setSelectedUser("all");
+        if (!filteredUsers.find(user => user.id === selectedUser)) setSelectedUser("all");
 
       });
     }
@@ -70,10 +70,10 @@ const ChatApp = () => {
 
   // Connexion au serveur WebSocket
   const handleConnect = () => {
-    if (userId && username) {
+    if (id && username) {
       const newSocket = io.connect("http://localhost:3002", {
         query: {
-          userId: userId,
+          id: id,
           username: username
         }
       });
@@ -93,24 +93,24 @@ const ChatApp = () => {
     console.log("Liste des utilisateurs connecté  :" + connectedUsers);
     console.log("Value Ancienne selection  :" + selectedUser);
 
-    console.log("Ancient utilisateur selectionné :" + (selectedUser === "all" ? "all" : connectedUsers.find(user => user.userId === selectedUser).username));
-    console.log("Nouveau utilisateur selectionné :" + (newValue === "all" ? "all" : connectedUsers.find(user => user.userId === newValue).username));
+    console.log("Ancient utilisateur selectionné :" + (selectedUser === "all" ? "all" : connectedUsers.find(user => user.id === selectedUser).username));
+    console.log("Nouveau utilisateur selectionné :" + (newValue === "all" ? "all" : connectedUsers.find(user => user.id === newValue).username));
 
     // Dans le cas ou la precedente selection est all
     let oldSelectedUser = null;
-    if (selectedUser !== "all") oldSelectedUser = connectedUsers.find(user => user.userId === selectedUser);
+    if (selectedUser !== "all") oldSelectedUser = connectedUsers.find(user => user.id === selectedUser);
 
     // Dans le cas ou la nouvelle selection est all
     let newSelectedUser = null;
-    if (newValue !== "all") newSelectedUser = connectedUsers.find(user => user.userId === newValue);
+    if (newValue !== "all") newSelectedUser = connectedUsers.find(user => user.id === newValue);
 
     await setSelectedUser(newValue);
 
     // Mise à jour de l'utilisateur selectionné
     socket.emit("updateSelectedUser", {
-      oldSelectedUserId: oldSelectedUser ? oldSelectedUser.userId : "all",
-      newSelectedUserId: newSelectedUser ? newSelectedUser.userId : "all",
-      userId: userId,
+      oldSelectedId: oldSelectedUser ? oldSelectedUser.id : "all",
+      newSelectedId: newSelectedUser ? newSelectedUser.id : "all",
+      id: id,
       newSelectedUserSocketId: newSelectedUser ? newSelectedUser.socketId : null
     });
   }
@@ -128,8 +128,8 @@ const handlePlay = () => {
     if (message && socket) {
       console.log("selectedUser : " + selectedUser);
       const newMessage = {
-        from: { id: userId, username: username }, // Contient les deux informations nécessaires
-        to: selectedUser !== "all" ? { id: selectedUser, username: connectedUsers.find(user => user.userId === selectedUser).username } : "all",
+        from: { id: id, username: username }, // Contient les deux informations nécessaires
+        to: selectedUser !== "all" ? { id: selectedUser, username: connectedUsers.find(user => user.id === selectedUser).username } : "all",
         content: message,
         time: new Date()
       };
