@@ -1,4 +1,5 @@
 import { GAME_HASH } from "../utils/constants.mjs";
+import { EndTurnResponse } from "../dto/endTurnResponse.mjs";
 
 /**
  * Handles the event to end a player's turn in a game.
@@ -45,7 +46,9 @@ const endTurnEvent = async (redis, io, socket, data) => {
 
     await redis.hset(GAME_HASH, gameId, JSON.stringify(gameData));
 
-    io.to(gameId).emit("turnEnded", { userId });
+    const response = new EndTurnResponse(gameId, userId);
+
+    return io.to("fight").emit("endTurnResponse", response.toJson());
 }
 
 export default endTurnEvent;

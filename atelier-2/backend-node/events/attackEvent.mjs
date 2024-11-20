@@ -1,4 +1,5 @@
 import { GAME_HASH } from "../utils/constants.mjs";
+import { AttackResponse } from "../dto/attackResponse.mjs";
 
 /**
  * Handles the event for a player attacking with a card in a game.
@@ -15,7 +16,8 @@ import { GAME_HASH } from "../utils/constants.mjs";
  * @param {string} data.cardAttackId - The identifier of the card being used to attack.
  * @returns {Promise<void>} Resolves when the attack logic has been processed successfully.
  */
-const attackEvent = async (redis, io, socket, data) => {
+const attackEvent = async (redis, io, socket, data) => 
+{
     if (data === undefined || data === null)
     {
         return console.log("Error: gameId, userIdAttack, cardIdToAttack and cardAttackId are required.");
@@ -79,6 +81,11 @@ const attackEvent = async (redis, io, socket, data) => {
 
     // Update game data :
     await redis.hset(GAME_HASH, gameId, JSON.stringify(gameData));
+
+    // Return AttackResponse :
+    const attackResponse = new AttackResponse(userIdAttack, cardAttackId, cardIdToAttack, cardToAttack.cardCurrentHp, currentPlayer.actionPoint);
+
+    return io.to("fight").emit("attackResponse", attackResponse.toJson());
 }
 
 export default attackEvent;
