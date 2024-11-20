@@ -60,9 +60,9 @@ public class GameTransactionReceiver implements Receiver {
             userRepository.saveAll(List.of(user1, user2));
 
             logger.info("Updated account for user1Id: {} and user2Id: {}", gameTransaction.getUser1Id(), gameTransaction.getUser2Id());
-        } catch (Exception e) {
-            logger.error("Error processing game transaction: ", e);
-            throw e;
+        } catch (Exception why) {
+            logger.error("Error processing game transaction: ", why);
+            throw why;
         }
 
     }
