@@ -11,7 +11,7 @@ import attackEvent from './events/attackEvent.mjs';
 import endTurnEvent from './events/endTurnEvent.mjs';
 import setRewardAmountEvent from './events/setRewardAmountEvent.mjs';
 import { CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH } from "./utils/constants.mjs";
-import { logDetailsRedis } from "./utils/redisUtils.mjs";
+import {initServer} from "./utils/redisUtils.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,16 +29,16 @@ const server = app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
 
-const io = new Server(server, {
-  cors: { origin: "http://localhost:3000", methods: ["GET", "POST"], credentials: true }
-});
+const io = new Server(server, {cors: { origin: "http://localhost:3000", methods: ["GET", "POST"], credentials: true }});
 const redis = new Redis();
 
 await initServer(io, redis);
 
 io.on("connection", async (socket) => {
-  let { userId, username } = socket.handshake.query;
-  if (!username) return console.log("Error: username is required.");
+  const { userId, username } = socket.handshake.query;
+
+  if (!username)
+    return console.log("Error: username is required.");
 
   await connectionEvent(redis, io, socket.id, userId, username);
 
@@ -66,15 +66,3 @@ io.on("connection", async (socket) => {
     await endTurnEvent(redis, io, socket, data);
   });
 });
-
-// Vider la file d'attente au démarrage
-async function initServer(io, redis) {
-  await redis.del("waitingQueue");
-  await redis.set("userCounter", 0);
-  await redis.del(CONNECTED_USERS_HASH);
-  await redis.del(SELECTED_USER_HASH);
-  await redis.del(USER_ROOMS_HASH);
-
-  await logDetailsRedis(io, redis);
-  console.log("init Server completed");
-}
