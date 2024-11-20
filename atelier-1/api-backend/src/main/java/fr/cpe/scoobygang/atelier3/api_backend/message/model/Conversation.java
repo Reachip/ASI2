@@ -15,8 +15,8 @@ public class Conversation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId1;
-    private String userId2;
+    private Long userId1;
+    private Long userId2;
 
     @Override
     public String toString() {

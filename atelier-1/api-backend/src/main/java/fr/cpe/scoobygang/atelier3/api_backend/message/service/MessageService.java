@@ -27,10 +27,10 @@ public class MessageService {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageHistoryReceiver.class);
 
-    public List<Message> getConversationHistory(String userId1, String userId2) {
+    public List<Message> getConversationHistory(Long userId1, Long userId2) {
         // Comparer les deux identifiants pour assurer que le plus petit ID est en premier
-        String minId = userId1.compareTo(userId2) < 0 ? userId1 : userId2;
-        String maxId = userId1.compareTo(userId2) < 0 ? userId2 : userId1;
+        Long minId = userId1.compareTo(userId2) < 0 ? userId1 : userId2;
+        Long maxId = userId1.compareTo(userId2) < 0 ? userId2 : userId1;
 
         // Récupérer la conversation en utilisant les identifiants ordonnés
         Optional<Conversation> conversation = conversationRepository.findByUserId1AndUserId2(minId, maxId);
@@ -41,15 +41,15 @@ public class MessageService {
     }
 
     public void saveMessage(MessageActiveMQ messageActiveMQ){
-        String fromUserId = messageActiveMQ.getFromUserId();
-        String toUserId = messageActiveMQ.getToUserId();
+        Long fromUserId = messageActiveMQ.getFromUserId();
+        Long toUserId = messageActiveMQ.getToUserId();
 
-        String userId1 = null;
-        String userId2 = null ;
+        Long userId1 = 0L;
+        Long userId2 = 0L;
         // 0 - 0 chat global
-        if ("0".equals(fromUserId) || "0".equals(toUserId)) {
-            userId1 = "0";
-            userId2 = "0";
+        if (fromUserId == 0 || toUserId == 0) {
+            userId1 = 0L;
+            userId2 = 0L;
         }
         else{
             userId1 = fromUserId.compareTo(toUserId) < 0 ? fromUserId : toUserId;

@@ -16,7 +16,7 @@ public class MessageRestController {
     private MessageService messageService;
 
     @RequestMapping(method = RequestMethod.GET, value = "/messages")
-    private List<Message> getConversationHistory(@RequestParam String userId1, @RequestParam String userId2) {
+    private List<Message> getConversationHistory(@RequestParam Long userId1, @RequestParam Long userId2) {
         return messageService.getConversationHistory(userId1,userId2);
     }
 

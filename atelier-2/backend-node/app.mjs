@@ -2,13 +2,13 @@ import express from 'express';
 import Redis from 'ioredis';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import {Server} from "socket.io";
+import { Server } from "socket.io";
 import connectionEvent from "./events/connectionEvent.mjs";
 import updateSelectedUserEvent from "./events/updateSelectedUserEvent.mjs";
 import sendMessageEvent from "./events/sendMessageEvent.mjs";
 import disconnectEvent from "./events/disconnectEvent.mjs";
-import {CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH} from "./utils/constants.mjs";
-import {logDetailsRedis} from "./utils/redisUtils.mjs";
+import { CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH } from "./utils/constants.mjs";
+import { logDetailsRedis } from "./utils/redisUtils.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

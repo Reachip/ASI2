@@ -39,8 +39,8 @@ const ChatMessage = ({ message, isOwnMessage }) => (
     </Box>
 );
 
-const Chat = ({ currentUser, users = [], messages = [], onSendMessage }) => {
-  const [selectedUser, setSelectedUser] = useState('global');
+const Chat = ({ currentUser, users = [], messages = [], onSendMessage, socket, userId, connectedUsers = [] }) => {
+  const [selectedUser, setSelectedUser] = useState('all');
   const [messageText, setMessageText] = useState('');
 
   const handleSend = () => {
@@ -60,6 +60,51 @@ const Chat = ({ currentUser, users = [], messages = [], onSendMessage }) => {
     }
   };
 
+  const updateSelectedUser = async (event) => {
+    if (!event?.target?.value) return;
+    
+    const newValue = event.target.value;
+    console.log("updateSelectedUser :");
+    console.log("Value selection :", newValue);
+    console.log("Liste des utilisateurs connecté :", connectedUsers);
+    console.log("Value Ancienne selection :", selectedUser);
+
+    // Obtenir les noms d'utilisateur pour les logs avec vérification de l'existence de connectedUsers
+    const oldUsername = selectedUser === "all" ? "all" : 
+      (connectedUsers && connectedUsers.length > 0) ? 
+        connectedUsers.find(user => user.userId === selectedUser)?.username : 
+        "Unknown";
+    
+    const newUsername = newValue === "all" ? "all" : 
+      (connectedUsers && connectedUsers.length > 0) ? 
+        connectedUsers.find(user => user.userId === newValue)?.username : 
+        "Unknown";
+
+    console.log("Ancien utilisateur selectionné :", oldUsername);
+    console.log("Nouvel utilisateur selectionné :", newUsername);
+
+    // Trouver les objets utilisateur complets avec vérification
+    const oldSelectedUser = selectedUser !== "all" && connectedUsers ? 
+      connectedUsers.find(user => user.userId === selectedUser) : null;
+    
+    const newSelectedUser = newValue !== "all" && connectedUsers ? 
+      connectedUsers.find(user => user.userId === newValue) : null;
+
+    await setSelectedUser(newValue);
+
+    // Vérifier que socket existe avant d'émettre
+    if (socket && socket.emit) {
+      socket.emit("updateSelectedUser", {
+        oldSelectedUserId: oldSelectedUser ? oldSelectedUser.userId : "all",
+        newSelectedUserId: newSelectedUser ? newSelectedUser.userId : "all",
+        userId: userId,
+        newSelectedUserSocketId: newSelectedUser ? newSelectedUser.socketId : null
+      });
+    } else {
+      console.warn("Socket not initialized");
+    }
+  };
+
   return (
     <Paper sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
@@ -69,12 +114,12 @@ const Chat = ({ currentUser, users = [], messages = [], onSendMessage }) => {
         <Select
           fullWidth
           value={selectedUser}
-          onChange={(e) => setSelectedUser(e.target.value)}
+          onChange={updateSelectedUser}
           size="small"
         >
-          <MenuItem value="global">Global Chat</MenuItem>
+          <MenuItem value="all">Global Chat</MenuItem>
           {users.map((user) => (
-            <MenuItem key={user.id} value={user.id}>
+            <MenuItem key={user.userId} value={user.userId}>
               {user.username}
             </MenuItem>
           ))}
