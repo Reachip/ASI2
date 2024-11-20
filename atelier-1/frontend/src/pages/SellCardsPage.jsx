@@ -52,9 +52,13 @@ const SellCardsPage = () => {
 
   const handleSell = async (card) => {
     let result = await sellCard(card);
-    if (result) {
+    if (result)
+    {
       setSelectedCard(null);
       loadCards();
+
+      setCurrentMessage(`You have successfully sent the card ${card.name}.`);
+      setOpen(true);
     }
   };
 
