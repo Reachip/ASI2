@@ -13,11 +13,11 @@ import io.swagger.v3.oas.annotations.info.Info;
 @SpringBootApplication
 @EnableDiscoveryClient
 @ComponentScan(basePackages = {
+        "fr.cpe.scoobygang.atelier3.api_backend",
         "fr.cpe.scoobygang.common.*",
-        "fr.cpe.scoobygang.atelier3.api_backend.*"
 })
 @OpenAPIDefinition(info = @Info(title = "Card Market Rest Api", version = "1.0", description = "Information about the Card Market APi and how to interact with"))
-// doc here localhost:8080/swagger-ui.html
+// doc here localhost:8088/swagger-ui.html
 public class ApiBackendMonolithicApplication {
 
     public static void main(String[] args) {

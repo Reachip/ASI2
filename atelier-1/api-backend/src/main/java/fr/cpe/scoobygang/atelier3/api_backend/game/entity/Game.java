@@ -27,6 +27,10 @@ public class Game implements Serializable {
     @JoinColumn(name = "user2_id")
     private UserModel user2;
 
+    @ManyToOne
+    @JoinColumn(name = "game_master_id")
+    private UserModel gameMaster;
+
     @OneToOne(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private GameDeck deck1;
 
@@ -39,5 +43,9 @@ public class Game implements Serializable {
     public void initializeDecks() {
         this.deck1 = new GameDeck(this, user1);
         this.deck2 = new GameDeck(this, user2);
+    }
+
+    public boolean isValidGameMaster() {
+        return gameMaster != null && (gameMaster.equals(user1) || gameMaster.equals(user2));
     }
 }
