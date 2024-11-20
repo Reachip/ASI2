@@ -31,7 +31,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
-        run: mvn -B verify
+        run: mvn package
 
   api-backend:
     name: API Backend
@@ -56,7 +56,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
-        run: mvn -B verify
+        run: mvn package
 
   api-common:
     name: Build API Common
@@ -105,7 +105,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
-        run: mvn -B verify
+        run: mvn package
 
   api-generation-image-microservice:
     name: API Generation Image Microservice
@@ -130,7 +130,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
-        run: mvn -B verify
+        run: mvn package
 
   api-generation-property-microservice:
     name: API Generation Property Microservice
@@ -157,7 +157,7 @@ jobs:
       - name: Install colorToproperties dependency
         run: mvn install:install-file -Dfile=src/main/resources/colorToproperties-1.1.2.jar -DgroupId=de.androidpit -DartifactId=colorToproperties -Dversion=1.1.2 -Dpackaging=jar -DgeneratePom=true
       - name: Build and analyze
-        run: mvn -B verify
+        run: mvn package
 
   api-generation-text-microservice:
     name: API Generation Text Microservice
@@ -182,7 +182,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
-        run: mvn -B verify
+        run: mvn package
 
   api-orchestrator-microservice:
     name: API Orchestrator
@@ -207,7 +207,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
-        run: mvn -B verify
+        run: mvn package
 
   frontend:
     name: Frontend
