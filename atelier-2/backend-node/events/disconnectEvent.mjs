@@ -3,6 +3,18 @@ import { updateConnectedUsers } from "./notifyEvent.mjs";
 import { deleteRoom } from "../utils/roomUtils.mjs";
 import { CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH } from "../utils/constants.mjs";
 
+/**
+ * Gère la déconnexion d'un utilisateur et effectue les nettoyages nécessaires.
+ *
+ * @function disconnectEvent
+ * @async
+ * @param {Object} redis - Instance de Redis pour la gestion des connexions et des relations.
+ * @param {Object} io - Instance de Socket.IO pour interagir avec les salles et notifier les utilisateurs.
+ * @param {string} socketId - Identifiant du socket de l'utilisateur déconnecté.
+ * @param {number} id - ID de l'utilisateur déconnecté.
+ * @param {string} username - Nom d'utilisateur de l'utilisateur déconnecté.
+ * @throws {Error} Si une erreur survient lors du traitement de la déconnexion.
+ */
 const disconnectEvent = async (redis, io, socketId, id, username) => {
     console.log("User disconnected:", id, username, socketId);
 

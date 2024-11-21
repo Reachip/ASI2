@@ -1,5 +1,5 @@
 import { addInRedis, logDetailsRedis } from "../utils/redisUtils.mjs";
-import { notifyConversationHistorique, updateConnectedUsers } from "./notifyEvent.mjs";
+import { notifyConversationHistory, updateConnectedUsers } from "./notifyEvent.mjs";
 import { CONNECTED_USERS_HASH } from "../utils/constants.mjs";
 import { getConversationHistory } from "./updateSelectedUserEvent.mjs";
 
@@ -36,7 +36,7 @@ const connectionEvent = async (redis, io, socketId, id, username) => {
             }
 
             const conversationHistory = await getConversationHistory(0, 0);
-            await notifyConversationHistorique(io, userSocket, conversationHistory);
+            await notifyConversationHistory(io, userSocket, conversationHistory);
             console.log(`Conversation history sent to user ${id}.`);
         } catch (error) {
             console.error("Error handling global chat room or sending history:", error.message);

@@ -1,5 +1,14 @@
 import { CONNECTED_USERS_HASH } from "../utils/constants.mjs";
 
+/**
+ * Met à jour la liste des utilisateurs connectés en temps réel.
+ *
+ * @function updateConnectedUsers
+ * @async
+ * @param {Object} io - Instance de Socket.IO pour émettre des événements.
+ * @param {Object} redis - Instance de Redis pour récupérer les données des utilisateurs connectés.
+ * @throws {Error} Si une erreur survient lors de la récupération ou du traitement des utilisateurs connectés.
+ */
 export const updateConnectedUsers = async (io, redis) => {
     try {
         const connectedUsers = await redis.hgetall(CONNECTED_USERS_HASH);
@@ -15,7 +24,17 @@ export const updateConnectedUsers = async (io, redis) => {
     }
 };
 
-export const notifyConversationHistorique = async (io, userSocket, messages) => {
+/**
+ * Notifie un utilisateur d’un historique de conversation.
+ *
+ * @function notifyConversationHistory
+ * @async
+ * @param {Object} io - Instance de Socket.IO pour émettre des événements (non utilisé ici, mais inclus pour cohérence).
+ * @param {Object} userSocket - Instance de Socket.IO associée à l'utilisateur.
+ * @param {Array} messages - Liste des messages historiques à transmettre.
+ * @throws {Error} Si une erreur survient lors de l'émission de l'événement.
+ */
+export const notifyConversationHistory = async (io, userSocket, messages) => {
     try {
         userSocket.emit("notifyConversationHistory", messages);
     } catch (error) {
@@ -23,6 +42,17 @@ export const notifyConversationHistorique = async (io, userSocket, messages) => 
     }
 };
 
+/**
+ * Notifie un utilisateur d'un nouveau message reçu.
+ *
+ * @function notifyNewMessage
+ * @param {Object} socketUser - Instance de Socket.IO associée à l'utilisateur destinataire.
+ * @param {number} fromId - ID de l'expéditeur du message (type long, équivalent à un entier 64 bits).
+ * @param {string} fromUsername - Nom d'utilisateur de l'expéditeur.
+ * @param {string} content - Contenu du message envoyé.
+ * @param {Date} time - Horodatage du message.
+ * @throws {Error} Si une erreur survient lors de l'émission de l'événement.
+ */
 export const notifyNewMessage = (socketUser, fromId, fromUsername, content, time) => {
     try {
         socketUser.emit('newMessage', {
