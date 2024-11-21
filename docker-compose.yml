@@ -1,6 +1,5 @@
 version: '3'
 services:
-
   postgres:
     image: postgres:latest
     container_name: postgres
@@ -60,9 +59,14 @@ services:
 
   frontend:
     build:
-      context: ./atelier-1/frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./atelier-1/frontend/Dockerfile
     container_name: react-app
+    depends_on:
+      - discovery
+      - api-gateway
+      - postgres
+      - activemq
     ports:
       - "80:80"
     restart: always
@@ -79,10 +83,12 @@ services:
 
   api-activemq-log:
     build:
-      context: ./atelier-1/api-activemq-log
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./atelier-1/api-activemq-log/Dockerfile
     container_name: api-activemq-log
     depends_on:
+      - discovery
+      - api-gateway
       - postgres
       - activemq
     networks:
@@ -91,75 +97,90 @@ services:
 
   api-backend:
     build:
-      context: ./atelier-1/api-backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./atelier-1/api-backend/Dockerfile
     container_name: api-backend
     depends_on:
+      - discovery
+      - api-gateway
       - postgres
-    networks:
-      - shared-net
-    restart: always
-
-  api-common:
-    build:
-      context: ./atelier-1/api-common
-      dockerfile: Dockerfile
-    container_name: api-common
+      - activemq
     networks:
       - shared-net
     restart: always
 
   api-gateway:
     build:
-      context: ./atelier-1/api-gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./atelier-1/api-generation-image-microservice/Dockerfile
     container_name: api-gateway
+    networks:
+      - shared-net
+    restart: always
     depends_on:
-      - api-common
+      - discovery
+
+  discovery:
+    build:
+      context: .
+      dockerfile: ./atelier-1/discovery/Dockerfile
+    container_name: discovery
     networks:
       - shared-net
     restart: always
 
   api-generation-image-microservice:
     build:
-      context: ./atelier-1/api-generation-image-microservice
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./atelier-1/api-generation-image-microservice/Dockerfile
     container_name: api-generation-image-microservice
     depends_on:
-      - api-common
+      - discovery
+      - api-gateway
+      - postgres
+      - activemq
     networks:
       - shared-net
     restart: always
 
   api-generation-property-microservice:
     build:
-      context: ./atelier-1/api-generation-property-microservice
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./atelier-1/api-generation-property-microservice/Dockerfile
     container_name: api-generation-property-microservice
     depends_on:
-      - api-common
+      - discovery
+      - api-gateway
+      - postgres
+      - activemq
     networks:
       - shared-net
     restart: always
 
   api-generation-text-microservice:
     build:
-      context: ./atelier-1/api-generation-text-microservice
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./atelier-1/api-generation-text-microservice/Dockerfile
     container_name: api-generation-text-microservice
     depends_on:
-      - api-common
+      - discovery
+      - api-gateway
+      - postgres
+      - activemq
     networks:
       - shared-net
     restart: always
 
   api-orchestrator-microservice:
     build:
-      context: ./atelier-1/api-orchestrator-microservice
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./atelier-1/api-orchestrator-microservice/Dockerfile
     container_name: api-orchestrator-microservice
     depends_on:
-      - api-common
+      - discovery
+      - api-gateway
+      - postgres
+      - activemq
     networks:
       - shared-net
     restart: always

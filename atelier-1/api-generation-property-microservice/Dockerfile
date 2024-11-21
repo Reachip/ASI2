@@ -1,14 +1,14 @@
 FROM maven:3.8.4-openjdk-17-slim AS build
 LABEL authors="mejri"
 
-COPY api-common /home/api-common
+COPY atelier-1/api-common /home/api-common
 RUN mvn -f /home/api-common/pom.xml clean install
 
-COPY api-generation-property-microservice/src /home/app/src
-COPY api-generation-property-microservice/pom.xml /home/app
+COPY atelier-1/api-generation-property-microservice/src /home/app/src
+COPY atelier-1/api-generation-property-microservice/pom.xml /home/app
 
 # Ajout du fichier jar et exécution de la commande install:install-file
-COPY api-generation-property-microservice/src/main/resources/colorToproperties-1.1.2.jar /home/app/src/main/resources/colorToproperties-1.1.2.jar
+COPY atelier-1/api-generation-property-microservice/src/main/resources/colorToproperties-1.1.2.jar /home/app/src/main/resources/colorToproperties-1.1.2.jar
 RUN mvn install:install-file -Dfile=/home/app/src/main/resources/colorToproperties-1.1.2.jar -DgroupId=de.androidpit -DartifactId=colorToproperties -Dversion=1.1.2 -Dpackaging=jar -DgeneratePom=true
 
 # Compilation et création du package

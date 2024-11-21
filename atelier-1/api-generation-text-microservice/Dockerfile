@@ -1,11 +1,11 @@
 FROM maven:3.8.4-openjdk-17-slim AS build
 LABEL authors="mejri"
 
-COPY api-common /home/api-common
+COPY atelier-1/api-common /home/api-common
 RUN mvn -f /home/api-common/pom.xml clean install
 
-COPY api-generation-text-microservice/src /home/app/src
-COPY api-generation-text-microservice/pom.xml /home/app
+COPY atelier-1/api-generation-text-microservice/src /home/app/src
+COPY atelier-1/api-generation-text-microservice/pom.xml /home/app
 RUN mvn -f /home/app/pom.xml clean package
 
 FROM openjdk:17-slim

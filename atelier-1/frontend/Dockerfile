@@ -2,7 +2,7 @@ FROM node:14 as build
 
 WORKDIR /app
 
-COPY . .
+COPY atelier-1/frontend .
 
 RUN npm i
 

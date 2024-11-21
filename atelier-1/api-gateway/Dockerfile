@@ -1,8 +1,8 @@
 FROM maven:3.8.4-openjdk-17-slim AS build
 LABEL authors="mejri"
 
-COPY api-gateway/src /home/app/src
-COPY api-gateway/pom.xml /home/app
+COPY atelier-1/api-gateway/src /home/app/src
+COPY atelier-1/api-gateway/pom.xml /home/app
 RUN mvn -f /home/app/pom.xml clean package
 
 FROM openjdk:17-slim
