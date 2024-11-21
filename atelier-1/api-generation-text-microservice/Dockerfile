@@ -1,23 +1,15 @@
-# Utilisez l'image officielle Maven pour construire l'application
-FROM maven:3.8.4-openjdk-17 AS build
-WORKDIR /app
+FROM maven:3.8.4-openjdk-17-slim AS build
+LABEL authors="mejri"
 
-# Copiez les fichiers de configuration Maven
-COPY ./api-card-microservice/pom.xml api-card-microservice/
-COPY ./api-common/pom.xml api-common/
+COPY api-common /home/api-common
+RUN mvn -f /home/api-common/pom.xml clean install
 
-# Copiez les sources du projet
-COPY ./api-card-microservice/src api-card-microservice/src
-COPY ./api-common/src api-common/src
+COPY api-generation-text-microservice/src /home/app/src
+COPY api-generation-text-microservice/pom.xml /home/app
+RUN mvn -f /home/app/pom.xml clean package
 
-# Construisez et installez api-common
-RUN mvn -f api-common/pom.xml clean install -DskipTests
+FROM openjdk:17-slim
+COPY --from=build /home/app/target/api-generation-text-microservice-0.0.1-SNAPSHOT.jar /usr/local/lib/api-generation-text-microservice.jar
 
-# Construisez l'application avec Maven, incluant le package api-common
-RUN mvn -pl api-common -f api-card-microservice/pom.xml clean package -DskipTests
-
-# Utilisez l'image officielle OpenJDK pour exécuter l'application
-FROM openjdk:17-jdk-slim
-VOLUME /tmp
-COPY --from=build /app/api-card-microservice/target/api-card-microservice-0.0.1-SNAPSHOT.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+EXPOSE 8089
+ENTRYPOINT ["java","-Dspring.profiles.active=docker","-jar","/usr/local/lib/api-generation-text-microservice.jar"]
