@@ -15,8 +15,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedCards, setSelectedCards] = useState([]);
     const [playerCards, setPlayerCards] = useState([]);
-    const [selectedOpponentCard, setSelectedOpponentCard] = useState(null);
-    const [selectedPlayerCard, setSelectedPlayerCard] = useState(null);
+    const [gameInfo, setGameInfo] = useState(null);
     const [isSearching, setIsSearching] = useState(false);
 
     const currentPlayer = { id: user.id, username: user.username, actionPoints: 3, isCurrentPlayer: true };
@@ -34,44 +33,13 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         fetchPlayerCards();
     }, [fetchPlayerCards]);
 
-    // Données de test :
     const opponentCards = useMemo(() => [
-        { "id": 68, "name": "Griffin", "img_src": "https://t3.ftcdn.net/jpg/05/84/03/80/360_F_584038065_bTAe8Ly8ZBejUYsJZVJFgYVYGCwbXRtN.jpg", "description": "A magical winged lion", "hp": 21, "energy": 25, "defense": 8, "attack": 15 },
-        { "id": 69, "name": "Lich", "img_src": "https://t4.ftcdn.net/jpg/05/83/64/15/360_F_583641514_Lq6e2rbkErV2DUUSG8bX6jBTZaLVSd3s.jpg", "description": "A powerful undead sorcerer", "hp": 23, "energy": 30, "defense": 10, "attack": 22 },
-        { "id": 70, "name": "Dwarf", "img_src": "https://img.stablecog.com/insecure/1920w/aHR0cHM6Ly9iLnN0YWJsZWNvZy5jb20vOGNkZTM2NzktMzhmMi00MjhjLWIyYWMtNmEwYjhhOTM3OTljLmpwZWc.webp", "description": "A stout and hardy warrior", "hp": 24, "energy": 20, "defense": 11, "attack": 16 },
-        { "id": 71, "name": "Kitsune", "img_src": "https://neural.love/cdn/thumbnails/1ed4c99a-a6f9-6dc8-9f44-1f2c3e42b3d5/180f090a-bfe0-5487-9c0b-972d4b186dc9.webp?Expires=1767225599&Signature=b0Wvge1IAhKKntZ1OVd3QjUzt481WsCLlc3EKn~2Q5uiFMBi~N9lTGkgUW9rifcytGJtjcO3XMjOlXEW~yc5fhUL6e~7OvK5JqvHM7uSGvJ-MDgwmqC2wD568rzsq8EH4nsfjqXlYHeSLGvDa4eakUmw-GjiDxrLBtxi7923x8QCidwACb1rYXSIwQjaLr-0AuQqnXOMpLVjbZpRw0FeOkXHuGFarSnj917UuHm6TQS1N~yxigb6gDGDzi2W8Ujsm1Az5Zz7M1KzBeTN0j0gWO3nwXja2~nHsnnMb~Mkd6RB~DHOWQlhZFeAh-uGJ9P7Y3xCvLcHiQL2FOZwfsJLvA__&Key-Pair-Id=K2RFTOXRBNSROX", "description": "A cunning fox spirit", "hp": 20, "energy": 24, "defense": 8, "attack": 14 },
-        { "id": 72, "name": "Treant", "img_src": "https://images.nightcafe.studio/jobs/SIIcGFtJ2LjojmN6iOoe/SIIcGFtJ2LjojmN6iOoe--1--q2s6i.jpg?tr=w-1600,c-at_max", "description": "A massive tree guardian", "hp": 35, "energy": 18, "defense": 15, "attack": 18 }
+        // Données fictives à remplacer par les données de `gameInfo` lorsqu'elles sont disponibles
     ], []);
-
-    const opponent = { id: 999999, username: 'Eric Smith', actionPoints: 3, isCurrentPlayer: false };
-
-    const handleOpponentCardSelect = (card) => {
-        setSelectedOpponentCard(card);
-    };
-
-    const handlePlayerCardSelect = (card) => {
-        setSelectedPlayerCard(card);
-    };
 
     const handleStartGame = () => {
         setDialogOpen(true);
     };
-
-    const startGame = useCallback(() => {
-        setDialogOpen(false);
-        setGameStarted(true);
-        setSelectedPlayerCard(selectedCards[0]);
-        setSelectedOpponentCard(opponentCards[0]);
-    }, [selectedCards, opponentCards]);
-
-    useEffect(() => {
-        if (nodeSocket) {
-            nodeSocket.on("notifyRoomFightCreated", (msg) => {
-                console.log("notifyRoomFightCreated: " + JSON.stringify(msg));
-                startGame();
-            });
-        }
-    }, [nodeSocket, startGame]);
 
     const handleCloseDialog = () => {
         if (!isSearching) {
@@ -83,7 +51,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         setIsSearching(true);
         nodeSocket.emit("play", {
             id: currentPlayer.id,
-            cards: selectedCards.map((card) => card.id)
+            cards: selectedCards.map((card) => card.id),
         });
     };
 
@@ -92,7 +60,23 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         nodeSocket.emit("playCancel", { id: currentPlayer.id });
     };
 
-    const filteredUsers = connectedUsers.filter(u => u.username !== user.username);
+    useEffect(() => {
+        if (nodeSocket) {
+            nodeSocket.on("notifyRoomFightCreated", (msg) => {
+                console.log("notifyRoomFightCreated: " + JSON.stringify(msg));
+                setGameInfo(msg); // Stocke les infos du jeu dans l'état
+                setGameStarted(true); // Passe à l'écran de jeu
+                setDialogOpen(false); // Ferme la popup
+                setIsSearching(false); // Arrête la recherche
+            });
+        }
+
+        return () => {
+            if (nodeSocket) {
+                nodeSocket.off("notifyRoomFightCreated");
+            }
+        };
+    }, [nodeSocket]);
 
     const dialogActions = isSearching ? (
         <Button
@@ -123,7 +107,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
             <ChatPanel
                 currentUser={user}
                 messages={chatMessages}
-                users={filteredUsers}
+                users={connectedUsers.filter(u => u.username !== user.username)}
                 onSendMessage={onSendMessage}
                 socket={nodeSocket}
             />
@@ -159,14 +143,10 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                 </Box>
             ) : (
                 <GameBoard
-                    opponent={opponent}
-                    currentPlayer={currentPlayer}
-                    opponentCards={opponentCards}
+                    opponent={gameInfo?.player2}
+                    currentPlayer={gameInfo?.player1}
+                    opponentCards={gameInfo?.player2?.cards || []}
                     playerCards={selectedCards}
-                    selectedOpponentCard={selectedOpponentCard}
-                    selectedPlayerCard={selectedPlayerCard}
-                    onOpponentCardSelect={handleOpponentCardSelect}
-                    onPlayerCardSelect={handlePlayerCardSelect}
                 />
             )}
 
