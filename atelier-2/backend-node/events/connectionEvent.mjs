@@ -1,8 +1,4 @@
-import { addInRedis, logDetailsRedis } from "../utils/redisUtils.mjs";
-import { notifyConversationHistory, updateConnectedUsers } from "./notifyEvent.mjs";
-import { CONNECTED_USERS_HASH } from "../utils/constants.mjs";
-import { getConversationHistory } from "./updateSelectedUserEvent.mjs";
-import {addInRedis, logDetailsRedis} from "../utils/redisUtils.mjs";
+import { logDetailsRedis } from "../utils/redisUtils.mjs";
 import {notifyUser, updateConnectedUsers} from "./notifyEvent.mjs";
 import {CONNECTED_USERS_HASH, NOTIFY_CONVERSATION_HISTORY_EVENT} from "../utils/constants.mjs";
 import {getConversationHistory} from "./updateSelectedUserEvent.mjs";
@@ -62,7 +58,7 @@ const connectionEvent = async (redis, io, socketId, id, username) => {
 
     const userSocket = io.sockets.sockets.get(socketId)
     userSocket.join("chat_room_global");
-    const conversationHistory =  await getConversationHistory("0","0");
+    const conversationHistory =  await getConversationHistory(0, 0);
     await notifyUser(io, userSocket, NOTIFY_CONVERSATION_HISTORY_EVENT, conversationHistory);
 
     await logDetailsRedis(io,redis);

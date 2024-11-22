@@ -33,10 +33,7 @@ const updateSelectedUserEvent = async (redis, io, data, userSocket) => {
             userSocket.leave("chat_room_global");
         }
 
-        let conversationHistory = null;
-
-        await notifyUser(io, userSocket, NOTIFY_CONVERSATION_HISTORY_EVENT ,conversationHistory);
-        console.log(`Envoie de l'historique des message à l'utilisateur ${userId}  : ${conversationHistory}`);
+        let conversationHistory;
 
         if (newSelectedId !== 0) {
             await addNewSelection(redis, newSelectedId, id);
@@ -46,6 +43,9 @@ const updateSelectedUserEvent = async (redis, io, data, userSocket) => {
             conversationHistory = await getConversationHistory(0, 0);
             userSocket.join("chat_room_global");
         }
+
+        await notifyUser(io, userSocket, NOTIFY_CONVERSATION_HISTORY_EVENT, conversationHistory);
+        console.log(`Envoie de l'historique des message à l'utilisateur ${id}  : ${conversationHistory}`);
 
         await notifyConversationHistory(io, userSocket, conversationHistory);
         console.log(`Sent message history to user ${id}`);
