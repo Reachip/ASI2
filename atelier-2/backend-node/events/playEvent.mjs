@@ -10,10 +10,13 @@ import {UserRepository} from "../repository/UserRepository.mjs";
 import {GameRepository} from "../repository/GameRepository.mjs";
 import {getDetailsUserById} from "../utils/redisUtils.mjs";
 import RetryPlayQueue from "../service/RetryPlayQueue.mjs";
-import {GameModelService} from "../service/GameModelService.mjs";
+import {GameService} from "../service/GameService.mjs";
+import {CardService} from "../service/CardService.mjs";
+import {CardGame} from "../dto/CardGame.mjs";
 
 const userRepository = new UserRepository();
 const gameRepository = new GameRepository();
+const cardService = new CardService();
 
 export const playEvent = async (redis, io, data) => {
     try {
@@ -81,11 +84,22 @@ export const playEvent = async (redis, io, data) => {
         const gameCreationRequest = {user1Id: userId1, user2Id: userId2};
 
         await gameRepository.createGame(gameCreationRequest)
-            .then(createdGame => {
+            .then(async (createdGame) => {
                 console.log("Id de la game : " + JSON.stringify(createdGame));
 
-                const gameModelService = new GameModelService(redis);
-                gameModelService.createGameModel(createdGame, roomId,  firstPlayer, secondPlayer, randomValue);
+                // Récupère les cartes et crée des instances de CardGame
+                const listCardsFirstPlayer = await cardService.getCardsById(firstPlayer.cards);
+                const listCardsSecondPlayer = await cardService.getCardsById(secondPlayer.cards);
+
+                // Transforme les listes en instances de CardGame
+                const cardGamesFirstPlayer = listCardsFirstPlayer.map((card) => new CardGame(card));
+                const cardGamesSecondPlayer = listCardsSecondPlayer.map((card) => new CardGame(card));
+
+                firstPlayer.cards = cardGamesFirstPlayer;
+                secondPlayer.cards = cardGamesSecondPlayer;
+
+                const gameService = new GameService(redis);
+                await gameService.createGame(createdGame, roomId,  firstPlayer, secondPlayer, randomValue);
 
                 const payload = {
                     'gameId': createdGame,
