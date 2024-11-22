@@ -43,5 +43,14 @@
     "surName": "Pierre",
     "username": "prousseau",
     "email": "pierre.rousseau@example.com"
+  },
+  {
+    "id": 6,
+    "pwd": "dev",
+    "account": 5678.90,
+    "lastName": "dev",
+    "surName": "dev",
+    "username": "dev",
+    "email": "dev@example.com"
   }
 ]
