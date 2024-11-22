@@ -1,6 +1,6 @@
 import {
     NOTIFY_NOT_ENOUGH_CARD_EVENT,
-    NOTIFY_ROOM_FIGHT_CREATED_EVENT,
+    NOTIFY_ROOM_FIGHT_CREATED_EVENT, NOTIFY_ROOM_PLAY_ERROR,
     TYPE_ROOM,
     WAITLIST_FIGHT_HASH
 } from "../utils/constants.mjs";
@@ -19,13 +19,15 @@ export const playEvent = async (redis, io, data) => {
         const { id, cards } = data;
         console.warn("cards =", cards)
 
-        const listCards = await userRepository.getUserCards(id);
-        console.log(`Liste des cartes de l'utilisateur (${id} récupéré :`, listCards);
+        const listCards = await userRepository.getUserCards(id);console.log(`Liste des cartes de l'utilisateur (${id} récupéré :`, listCards);
+
+        if (!cards.every(userCard => listCards.map(card => card.id).includes(userCard))) {
+            console.error("L'utilisateur ne peut pas jouer avec ces cartes")
+        }
 
         const listLength = await redis.llen(WAITLIST_FIGHT_HASH);
-        const nbCard = listCards.length;
 
-        if (nbCard >= 5 && listLength >= 2) {
+        if (cards.length >= 5 && listLength >= 2) {
             console.log(`L'utilisateur ${id} possède bien au moins 5 cartes : ${nbCard}`)
             await redis.rpush(WAITLIST_FIGHT_HASH, id);
 
