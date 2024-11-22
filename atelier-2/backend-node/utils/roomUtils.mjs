@@ -12,7 +12,7 @@ export const deleteRoom = (io, roomId) => {
     }
 };
 
-export const createRoom = (io, type, userId1, userId2,userSocket1, userSocket2 ) => {
+export const createRoom = (io, type, userId1, userId2, userSocket1, userSocket2 ) => {
     // Crée un identifiant de room unique basé sur les IDs des deux utilisateurs
     const roomId = `${type}_room_${Math.min(userId1, userId2)}_${Math.max(userId1, userId2)}`;
 
