@@ -12,14 +12,14 @@ class NodeWebSocketService {
 
         const socket = io("http://localhost:3002", {
             query: {
-                id: user.id,
+                userId: user.id,
                 username: user.username
             }
         });
 
         socket.on("connect", () => {
-            console.log("Node Socket.IO connection established");
             this.socket = socket;
+            console.log('Node Socket.IO connection established:', socket);
             webSocketListenerService.notifyListeners('nodeConnect', socket);
         });
 
