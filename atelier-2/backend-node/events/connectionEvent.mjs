@@ -1,7 +1,7 @@
-import { addInRedis, logDetailsRedis } from "../utils/redisUtils.mjs";
-import { notifyConversationHistory, updateConnectedUsers } from "./notifyEvent.mjs";
-import { CONNECTED_USERS_HASH } from "../utils/constants.mjs";
-import { getConversationHistory } from "./updateSelectedUserEvent.mjs";
+import { logDetailsRedis } from "../utils/redisUtils.mjs";
+import {notifyUser, updateConnectedUsers} from "./notifyEvent.mjs";
+import {CONNECTED_USERS_HASH, NOTIFY_CONVERSATION_HISTORY_EVENT} from "../utils/constants.mjs";
+import {getConversationHistory} from "./updateSelectedUserEvent.mjs";
 
 const connectionEvent = async (redis, io, socketId, id, username) => {
     console.log("Connected user:", id, username, socketId);
@@ -36,7 +36,7 @@ const connectionEvent = async (redis, io, socketId, id, username) => {
             }
 
             const conversationHistory = await getConversationHistory(0, 0);
-            await notifyConversationHistory(io, userSocket, conversationHistory);
+            await notifyUser(io, userSocket, NOTIFY_CONVERSATION_HISTORY_EVENT,conversationHistory);
             console.log(`Conversation history sent to user ${id}.`);
         } catch (error) {
             console.error("Error handling global chat room or sending history:", error.message);
@@ -52,6 +52,17 @@ const connectionEvent = async (redis, io, socketId, id, username) => {
     } catch (error) {
         console.error("Error in connectionEvent:", error.message);
     }
+
+    // Sauvegarder l'utilisateur dans la liste des utilisateurs connectés
+    await redis.hset(CONNECTED_USERS_HASH, id, JSON.stringify({ username: username, id: id, socketId: socketId }));
+
+    const userSocket = io.sockets.sockets.get(socketId)
+    userSocket.join("chat_room_global");
+    const conversationHistory =  await getConversationHistory(0, 0);
+    await notifyUser(io, userSocket, NOTIFY_CONVERSATION_HISTORY_EVENT, conversationHistory);
+
+    await logDetailsRedis(io,redis);
+    await updateConnectedUsers(io,redis);
 };
 
 export default connectionEvent;

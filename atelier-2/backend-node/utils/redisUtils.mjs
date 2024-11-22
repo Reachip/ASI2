@@ -1,3 +1,5 @@
+import {CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH, WAITLIST_FIGHT_HASH} from "./constants.mjs";
+
 export const addInRedis = async (redis, hash, key, value) => {
     try {
         // Récupérer la valeur actuelle
@@ -98,7 +100,34 @@ export const getListFromRedis = async (redis, hash, key) => {
     }
 };
 
+export const getDetailsUserById = async (redis, id) => {
+    const user = await redis.hget(CONNECTED_USERS_HASH, id);
+    return user;
+}
+
 export const logDetailsRedis = async (io,redis)=>{
-    console.log("Nombre d'utilisateurs connectés :",await redis.hlen("connectedUsers"));
+    console.log("Nombre d'utilisateurs connectés :",await redis.hlen(CONNECTED_USERS_HASH));
     console.log(`Nombre de rooms actives : ${io.sockets.adapter.rooms.size}`);
 };
+
+/**
+ * Initializes the server by clearing specific Redis keys and resetting counters.
+ *
+ * @async
+ * @function initServer
+ * @param {Object} io - The Socket.IO server instance for emitting events.
+ * @param {Object} redis - The Redis client instance used for interacting with the database.
+ * @returns {Promise<void>} Resolves when the server initialization is complete.
+ */
+export async function initServer(io, redis) {
+    await redis.del(WAITLIST_FIGHT_HASH);
+    await redis.set("userCounter", 0);
+    await redis.del(CONNECTED_USERS_HASH);
+    await redis.del(SELECTED_USER_HASH);
+    await redis.del(USER_ROOMS_HASH);
+
+    // Log details from Redis
+    await logDetailsRedis(io, redis);
+
+    console.log("init Server completed");
+}

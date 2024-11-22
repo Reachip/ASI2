@@ -1,4 +1,5 @@
-import { CONNECTED_USERS_HASH } from "../utils/constants.mjs";
+import {CONNECTED_USERS_HASH, NOTIFY_ROOM_FIGHT_CREATED_EVENT} from "../utils/constants.mjs";
+
 
 /**
  * Met à jour la liste des utilisateurs connectés en temps réel.
@@ -41,6 +42,15 @@ export const notifyConversationHistory = async (io, userSocket, messages) => {
         console.error("Error notifying conversation history:", error.message);
     }
 };
+export const notifyUser = async (io, userSocket , event, message) => {
+
+    // Envoi à tous les clients connectés
+    userSocket.emit(event, message);
+}
+
+export const notifyRoom = (io, roomId, event, message) => {
+    io.to(roomId).emit(event,message);
+}
 
 /**
  * Notifie un utilisateur d'un nouveau message reçu.

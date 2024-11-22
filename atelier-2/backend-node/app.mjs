@@ -7,8 +7,12 @@ import connectionEvent from "./events/connectionEvent.mjs";
 import updateSelectedUserEvent from "./events/updateSelectedUserEvent.mjs";
 import sendMessageEvent from "./events/sendMessageEvent.mjs";
 import disconnectEvent from "./events/disconnectEvent.mjs";
-import { CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH } from "./utils/constants.mjs";
-import { logDetailsRedis } from "./utils/redisUtils.mjs";
+import {playEvent} from "./events/playEvent.mjs";
+import attackEvent from './events/attackEvent.mjs';
+import endTurnEvent from './events/endTurnEvent.mjs';
+import setRewardAmountEvent from './events/setRewardAmountEvent.mjs';
+import {initServer} from "./utils/redisUtils.mjs";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,14 +30,13 @@ const server = app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
 
-const io = new Server(server, {
-  cors: { origin: "http://localhost:3000", methods: ["GET", "POST"], credentials: true }
-});
+const io = new Server(server, {cors: { origin: "http://localhost:3000", methods: ["GET", "POST"], credentials: true }});
 const redis = new Redis();
 
 await initServer(io, redis);
 
 io.on("connection", async (socket) => {
+
   let { id, username } = socket.handshake.query;
   if (!id) return console.log("Error: user id is required.");
 
@@ -47,18 +50,24 @@ io.on("connection", async (socket) => {
     await sendMessageEvent(redis, io, socket, data);
   });
 
+  // Ajouter un utilisateur à la liste d'attente
+  socket.on('play', async (id) => {
+    await playEvent(redis, io, id, socket);
+  });
+
   socket.on("disconnecting", async () => {
     await disconnectEvent(redis, io, socket, id, username);
   });
+
+  socket.on("setRewardAmount", async (data) => {
+    await setRewardAmountEvent(redis, io, socket, data);
+  });
+
+  socket.on("attack", async (data) => {
+    await attackEvent(redis, io, socket, data);
+  });
+
+  socket.on("endTurn", async (data) => {
+    await endTurnEvent(redis, io, socket, data);
+  });
 });
-
-async function initServer(io, redis) {
-  await redis.del("waitingQueue");
-  await redis.set("userCounter", 0);
-  await redis.del(CONNECTED_USERS_HASH);
-  await redis.del(SELECTED_USER_HASH);
-  await redis.del(USER_ROOMS_HASH);
-
-  await logDetailsRedis(io, redis);
-  console.log("init Server completed");
-}

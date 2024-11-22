@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box } from '@mui/material';
+import {Box, Button} from '@mui/material';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '../store/authSlice';
 import ChatPanel from '../components/chat/ChatPanel';
@@ -39,6 +39,13 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         setSelectedPlayerCard(card);
     };
 
+    const handlePlay = () => {
+        console.log("Play: ");
+        // Envoi du message au serveur
+        nodeSocket.emit("play");
+    }
+
+
     const filteredUsers = connectedUsers.filter(u => u.username !== user.username);
 
     return (
@@ -60,6 +67,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                 onOpponentCardSelect={handleOpponentCardSelect}
                 onPlayerCardSelect={handlePlayerCardSelect}
             />
+            <button  onClick={handlePlay} >Play</button>
         </Box>
     );
 };
