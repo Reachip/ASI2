@@ -3,7 +3,7 @@ export class GameRepository {
      * Initialise le repository avec l'URL de base.
      */
     constructor() {
-        this.url = 'http://localhost:8080/api/game/';
+        this.url = 'http://localhost:8088/game/';
     }
 
     /**

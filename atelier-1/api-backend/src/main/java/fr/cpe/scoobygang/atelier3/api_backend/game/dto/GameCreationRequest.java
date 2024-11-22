@@ -8,8 +8,4 @@ import java.util.Set;
 public class GameCreationRequest {
     private Integer user1Id;
     private Integer user2Id;
-    private Integer gameMasterId;
-
-    private Set<Integer> deck1CardIds;
-    private Set<Integer> deck2CardIds;
 }

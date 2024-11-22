@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {Box, Button} from '@mui/material';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '../store/authSlice';
@@ -39,10 +39,22 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         setSelectedPlayerCard(card);
     };
 
+    useEffect(() => {
+        if (nodeSocket) {
+            nodeSocket.on("notifyRoomFightCreated", (msg) => {
+                console.log("notifyRoomFightCreated: " + JSON.stringify(msg));
+            });
+        }
+    }, [nodeSocket]);
+
+
     const handlePlay = () => {
         console.log("Play: ");
+        console.log(nodeSocket);
+        console.log("User: ");
+        console.log(user.id);
         // Envoi du message au serveur
-        nodeSocket.emit("play");
+        nodeSocket.emit("play",user.id);
     }
 
 
