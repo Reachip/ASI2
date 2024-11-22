@@ -1,5 +1,4 @@
 import {
-    GAME_HASH,
     NOTIFY_NOT_ENOUGH_CARD_EVENT,
     NOTIFY_ROOM_FIGHT_CREATED_EVENT, NOTIFY_ROOM_PLAY_CANCEL,
     TYPE_ROOM,
@@ -9,15 +8,12 @@ import {notifyRoom, notifyUser} from "./notifyEvent.mjs";
 import {createRoom} from "../utils/roomUtils.mjs";
 import {UserRepository} from "../repository/UserRepository.mjs";
 import {GameRepository} from "../repository/GameRepository.mjs";
-import { GameModel } from "../RedisModel/GameModel.mjs";
 import {getDetailsUserById} from "../utils/redisUtils.mjs";
 import RetryPlayQueue from "../service/RetryPlayQueue.mjs";
 import {GameModelService} from "../service/GameModelService.mjs";
 
 const userRepository = new UserRepository();
 const gameRepository = new GameRepository();
-
-const gameModelService = new GameModelService();
 
 export const playEvent = async (redis, io, data) => {
     try {
@@ -70,8 +66,9 @@ export const playEvent = async (redis, io, data) => {
         console.log(`detailsUser1 : ${detailsUser1}`);
         console.log(`detailsUser2 : ${detailsUser2}`);
 
-        const userSocket1 = await io.in(detailsUser1.socketId).fetchSockets();
-        const userSocket2 = await io.in(detailsUser2.socketId).fetchSockets();
+        const userSocket1 = await io.sockets.sockets.get(detailsUser1.socketId);
+        const userSocket2 = await io.sockets.sockets.get(detailsUser2.socketId);
+
 
         const roomId = createRoom(io, TYPE_ROOM.FIGHT, firstPlayer.id, secondPlayer.id, userSocket1, userSocket2);
 
@@ -87,13 +84,16 @@ export const playEvent = async (redis, io, data) => {
             .then(createdGame => {
                 console.log("Id de la game : " + JSON.stringify(createdGame));
 
+                const gameModelService = new GameModelService(redis);
                 gameModelService.createGameModel(createdGame, roomId,  firstPlayer, secondPlayer, randomValue);
 
-                notifyRoom(io, roomId, NOTIFY_ROOM_FIGHT_CREATED_EVENT, {
+                const payload = {
                     'gameId': createdGame,
-                });
-
-
+                    'player1': firstPlayer,
+                    'player2': secondPlayer,
+                    'userTurn': randomValue,
+                }
+                notifyRoom(io, roomId, NOTIFY_ROOM_FIGHT_CREATED_EVENT, payload);
             })
             .catch(error => console.error('Error creating game:' + error));
     } catch (error) {
