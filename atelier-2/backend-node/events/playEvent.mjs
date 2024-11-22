@@ -79,10 +79,15 @@ export const playEvent = async (redis, io, data) => {
 
         await gameRepository.createGame(gameCreationRequest)
             .then(createdGame => {
-                console.log("Id de la game : " + JSON.stringify(createdGame));
-                notifyRoom(io, roomId, NOTIFY_ROOM_FIGHT_CREATED_EVENT, {
+                console.log("Id de la game : " + JSON.stringify(createdGame))
+
+                const payload = {
                     'gameId': createdGame,
-                });
+                    'player1': firstPlayer,
+                    'player2': secondPlayer,
+                }
+
+                notifyRoom(io, roomId, NOTIFY_ROOM_FIGHT_CREATED_EVENT, payload);
             })
             .catch(error => console.error('Error creating game:' + error));
     } catch (error) {
