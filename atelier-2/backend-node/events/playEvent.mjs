@@ -18,6 +18,7 @@ const gameRepository = new GameRepository();
 export const playEvent = async (redis, io, data) => {
     try {
         const { id, cards } = data;
+
         const listCards = await userRepository.getUserCards(id);
         console.log(`Liste des cartes de l'utilisateur (${id} récupérée :`, listCards);
 
@@ -34,9 +35,9 @@ export const playEvent = async (redis, io, data) => {
         const retryPlayQueue = new RetryPlayQueue(redis, id)
         await retryPlayQueue.init()
 
-        let listLength = await redis.llen(WAITLIST_FIGHT_HASH);
+        await redis.rpush(WAITLIST_FIGHT_HASH, JSON.stringify(data));
 
-        while (listLength < 2) {
+        while (await redis.llen(WAITLIST_FIGHT_HASH) < 2) {
             const retryFlag = await retryPlayQueue.get()
 
             if (retryFlag !== 'true') {
@@ -46,28 +47,21 @@ export const playEvent = async (redis, io, data) => {
 
             console.log("Moins de deux joueurs dans la liste d'attente. Nouvelle tentative dans 500ms...");
             await new Promise(resolve => setTimeout(resolve, 500)); // Attente de 500ms
-            listLength = await redis.llen(WAITLIST_FIGHT_HASH);
         }
 
         await retryPlayQueue.delete()
 
         console.log(`L'utilisateur ${id} possède bien au moins 5 cartes : ${cards.length}`);
-        await redis.rpush(WAITLIST_FIGHT_HASH, id);
 
-        console.log(`Ajout de l'utilisateur ${id} dans la liste d'attente`);
         console.log("Il y a au moins deux personnes dans la liste d'attente.");
 
-        const firstTwo = await redis.lrange(WAITLIST_FIGHT_HASH, 0, 1);
-        const adversary = parseInt(firstTwo[0], 10) === data.id ? firstTwo[1] : parseInt(firstTwo[0], 10);
-
-        console.log("mdr", adversary);
-
+        const [firstPlayer, secondPlayer] = (await redis.lrange(WAITLIST_FIGHT_HASH, 0, 1)).map(player => JSON.parse(player));
         await redis.ltrim(WAITLIST_FIGHT_HASH, 2, -1);
 
-        console.log("Les deux premières personnes sont :", firstTwo);
+        console.log("Les deux premières personnes sont :", firstPlayer, secondPlayer);
 
-        const detailsUser1 = await getDetailsUserById(redis, firstTwo[0]);
-        const detailsUser2 = await getDetailsUserById(redis, firstTwo[1]);
+        const detailsUser1 = await getDetailsUserById(redis, firstPlayer.id);
+        const detailsUser2 = await getDetailsUserById(redis, secondPlayer.id);
 
         console.log(`detailsUser1 : ${detailsUser1}`);
         console.log(`detailsUser2 : ${detailsUser2}`);
@@ -75,22 +69,13 @@ export const playEvent = async (redis, io, data) => {
         const userSocket1 = await io.in(detailsUser1.socketId).fetchSockets();
         const userSocket2 = await io.in(detailsUser2.socketId).fetchSockets();
 
-        console.log(`userSocket1 : ${userSocket1}`);
+        const roomId = createRoom(io, TYPE_ROOM.FIGHT, firstPlayer.id, secondPlayer.id, userSocket1, userSocket2);
 
-        const roomId = createRoom(io, TYPE_ROOM.FIGHT, firstTwo[0], firstTwo[1], userSocket1, userSocket2);
+        const randomIndex = Math.floor(Math.random() * 2);
 
-        const randomIndex = Math.floor(Math.random() * firstTwo.length);
-        const gameMaster = firstTwo[randomIndex];
+        const [ userId1, userId2] = [Math.min(firstPlayer.id, secondPlayer.id), Math.max(firstPlayer.id, secondPlayer.id)];
 
-        console.log(`Le game master est l'utilisateur : ${gameMaster}`);
-
-        const userId1 = Math.min(firstTwo[0], firstTwo[1]);
-        const userId2 = Math.max(firstTwo[0], firstTwo[1]);
-
-        const gameCreationRequest = {
-            user1Id: userId1,
-            user2Id: userId2,
-        };
+        const gameCreationRequest = {user1Id: userId1, user2Id: userId2};
 
         await gameRepository.createGame(gameCreationRequest)
             .then(createdGame => {

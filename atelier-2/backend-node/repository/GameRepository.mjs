@@ -33,9 +33,6 @@ export class GameRepository {
      * @param {Object} gameCreationRequest - Les informations nécessaires pour créer un jeu.
      * @param {number} gameCreationRequest.user1Id - ID du premier joueur.
      * @param {number} gameCreationRequest.user2Id - ID du second joueur.
-     * @param {number} gameCreationRequest.gameMasterId - ID du maître de jeu (doit être un des joueurs).
-     * @param {number[]} gameCreationRequest.deck1CardIds - IDs des cartes sélectionnées par le joueur 1.
-     * @param {number[]} gameCreationRequest.deck2CardIds - IDs des cartes sélectionnées par le joueur 2.
      * @returns {Promise<Object>} Un objet contenant les détails du jeu créé.
      * @throws {Error} Si la requête échoue ou si le payload est invalide.
      *

@@ -101,8 +101,7 @@ export const getListFromRedis = async (redis, hash, key) => {
 };
 
 export const getDetailsUserById = async (redis, id) => {
-    const user = await redis.hget(CONNECTED_USERS_HASH, id);
-    return user;
+    return JSON.parse(await redis.hget(CONNECTED_USERS_HASH, id));
 }
 
 export const logDetailsRedis = async (io,redis)=>{
