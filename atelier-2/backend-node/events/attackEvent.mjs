@@ -37,8 +37,7 @@ const attackEvent = async (redis, io, socket, data) =>
     const gameData = JSON.parse(game);
 
     // Get current player :
-    const currentPlayer = gameData.userGameMaster.userId === userIdAttack ? gameData.userGameMaster : gameData.user2;
-
+    const currentPlayer = gameData.currentUserTurn;
     if (!currentPlayer)
     {
         return console.log("Error: Current player not found.");

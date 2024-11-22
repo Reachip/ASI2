@@ -27,40 +27,30 @@ export const playEvent = async (redis, io, data) => {
 
         if (nbCard >= 5 && listLength >= 2) {
             console.log(`L'utilisateur ${id} possède bien au moins 5 cartes : ${nbCard}`)
-            await redis.rpush(WAITLIST_FIGHT_HASH, id);
+            await redis.rpush(WAITLIST_FIGHT_HASH, );
 
             console.log(`Ajout de l'utilisateur ${id} dans la liste d'attente`);
             console.log("Il y a au moins deux personnes dans la liste d'attente.");
 
             const firstTwo = await redis.lrange(WAITLIST_FIGHT_HASH, 0, 1);
-            const adversary = parseInt(firstTwo[0]) === data.id ? firstTwo[1] : parseInt(firstTwo[0])
-
-            console.log("mdr", adversary)
+            const adversaryId = parseInt(firstTwo[0]) === data.id ? firstTwo[1] : parseInt(firstTwo[0])
+            console.log("adversaryId id :", adversaryId)
 
             await redis.ltrim(WAITLIST_FIGHT_HASH, 2, -1);
-
             console.log("Les deux premières personnes sont :", firstTwo);
 
-            const detailsUser1 = await getDetailsUserById(redis, firstTwo[0]);
-            const detailsUser2 = await getDetailsUserById(redis, firstTwo[1]);
+            const detailsAdversary = await getDetailsUserById(redis, adversaryId);
+            console.log(`detailsAdversary : ${detailsAdversary}`);
 
-            console.log(`detailsUser1 : ${detailsUser1}`);
-            console.log(`detailsUser2 : ${detailsUser2}`);
+            const userSocket = await io.in(detailsAdversary.socketId).fetchSockets();
+            console.log(`userSocket : ${userSocket}`);
+            const adversarySocket = await io.in(detailsAdversary.socketId).fetchSockets();
+            console.log(`adversarySocket : ${adversarySocket}`);
 
-            const userSocket1 = await io.in(detailsUser1.socketId).fetchSockets();
-            const userSocket2 = await io.in(detailsUser2.socketId).fetchSockets();
+            const roomId = createRoom(io, TYPE_ROOM.FIGHT, id, adversaryId, userSocket, adversarySocket);
 
-            console.log(`userSocket1 : ${userSocket1}`);
-
-            const roomId = createRoom(io, TYPE_ROOM.FIGHT, firstTwo[0], firstTwo[1], userSocket1, userSocket2);
-
-            const randomIndex = Math.floor(Math.random() * firstTwo.length);
-            const gameMaster = firstTwo[randomIndex];
-
-            console.log(`Le game master est l'utilisateur : ${gameMaster}`);
-
-            const userId1 = Math.min(firstTwo[0], firstTwo[1]);
-            const userId2 = Math.max(firstTwo[0], firstTwo[1]);
+            const userId1 = Math.min(id, adversaryId);
+            const userId2 =  Math.max(id, adversaryId);
 
             const gameCreationRequest = {
                 user1Id: userId1,
@@ -73,6 +63,9 @@ export const playEvent = async (redis, io, data) => {
                     notifyRoom(io, roomId, NOTIFY_ROOM_FIGHT_CREATED_EVENT, {
                         'gameId': createdGame,
                     });
+
+                    new GameModel(createdGame, 100, userId1 , userId2);
+
                 })
                 .catch(error => console.error('Error creating game:' + error));
         } else {

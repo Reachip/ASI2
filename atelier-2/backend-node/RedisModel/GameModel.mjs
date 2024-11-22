@@ -1,17 +1,19 @@
 export class GameModel
 {
-    constructor(gameId, rewardAmount, userGameMasterId, user2Id, actionPoint=3)
+    constructor(gameId, rewardAmount, user1Id, user2Id,listCards1, listCards2,userTurn = 1,actionPoint=1)
     {
         this.gameId = gameId;
         this.rewardAmount = rewardAmount;
-        this.userGameMaster = {
-            userId: userGameMasterId,
-            cards: [],
+        this.user1 = {
+            isTurn: userTurn === 1,
+            userId: user1Id,
+            cards: listCards1,
             actionPoint: actionPoint
         };
         this.user2 = {
+            isTurn: userTurn === 2,
             userId: user2Id,
-            cards: [],
+            cards: listCards2,
             actionPoint: actionPoint
         };
     }
@@ -21,7 +23,6 @@ export class GameModel
         return JSON.stringify(this);
     }
 }
-
 
 /* Format of the gameData object in Redis:
 
