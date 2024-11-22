@@ -41,7 +41,7 @@ const Layout = ({ children, subtitle }) => {
         chatMessages,
         connectedUsers,
         onSendMessage: sendChatMessage,
-        userId: user?.id,
+        id: user?.id,
         username: user?.username
       });
     }

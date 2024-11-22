@@ -51,8 +51,8 @@ io.on("connection", async (socket) => {
   });
 
   // Ajouter un utilisateur à la liste d'attente
-  socket.on('play', async (userId) => {
-    await playEvent(redis, io,userId, socket);
+  socket.on('play', async (id) => {
+    await playEvent(redis, io, id, socket);
   });
 
   socket.on("disconnecting", async () => {

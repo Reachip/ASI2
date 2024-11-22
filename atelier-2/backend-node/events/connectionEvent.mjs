@@ -54,7 +54,7 @@ const connectionEvent = async (redis, io, socketId, id, username) => {
     }
 
     // Sauvegarder l'utilisateur dans la liste des utilisateurs connectés
-    await redis.hset(CONNECTED_USERS_HASH, id, JSON.stringify({ username: username, userId: id, socketId: socketId }));
+    await redis.hset(CONNECTED_USERS_HASH, id, JSON.stringify({ username: username, id: id, socketId: socketId }));
 
     const userSocket = io.sockets.sockets.get(socketId)
     userSocket.join("chat_room_global");

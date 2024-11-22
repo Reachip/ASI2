@@ -14,16 +14,16 @@ import { GameModel } from "../RedisModel/GameModel.mjs";
 const userRepository = new UserRepository();
 const gameRepository = new GameRepository();
 
-export const playEvent = async (redis, io, userId, userSocket) => {
+export const playEvent = async (redis, io, id, userSocket) => {
     try {
-        const listCards = await userRepository.getUserCards(userId);
-        console.log(`Liste des cartes de l'utilisateur (${userId} récupéré :`,listCards);
+        const listCards = await userRepository.getUserCards(id);
+        console.log(`Liste des cartes de l'utilisateur (${id} récupéré :`, listCards);
 
         const nbCard = listCards.length;
         if (nbCard >= 5){
-            console.log(`L'utilisateur ${userId} possede bien au moins 5 cartes : ${nbCard}`)
-            await redis.rpush(WAITLIST_FIGHT_HASH, userId);
-            console.log(`Ajout de l'utilisateur ${userId} dans la liste d'attente`);
+            console.log(`L'utilisateur ${id} possède bien au moins 5 cartes : ${nbCard}`)
+            await redis.rpush(WAITLIST_FIGHT_HASH, id);
+            console.log(`Ajout de l'utilisateur ${id} dans la liste d'attente`);
 
             const listLength = await redis.llen(WAITLIST_FIGHT_HASH);
             if (listLength >= 2) {
@@ -68,7 +68,7 @@ export const playEvent = async (redis, io, userId, userSocket) => {
 
         }
         else {
-            console.log(`L'utilisateur ${userId} ne possede pas au moins 5 cartes : ${nbCard}`)
+            console.log(`L'utilisateur ${id} ne possede pas au moins 5 cartes : ${nbCard}`)
 
             await notifyUser(io, userSocket, NOTIFY_NOT_ENOUGH_CARD_EVENT, "");
         }
