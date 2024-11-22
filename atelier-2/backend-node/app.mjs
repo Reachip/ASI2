@@ -8,6 +8,7 @@ import updateSelectedUserEvent from "./events/updateSelectedUserEvent.mjs";
 import sendMessageEvent from "./events/sendMessageEvent.mjs";
 import disconnectEvent from "./events/disconnectEvent.mjs";
 import {playEvent} from "./events/playEvent.mjs";
+import {playCancelEvent} from "./events/playCancelEvent.mjs";
 import attackEvent from './events/attackEvent.mjs';
 import endTurnEvent from './events/endTurnEvent.mjs';
 import setRewardAmountEvent from './events/setRewardAmountEvent.mjs';
@@ -53,6 +54,10 @@ io.on("connection", async (socket) => {
   // Ajouter un utilisateur à la liste d'attente
   socket.on('play', async (data) => {
     await playEvent(redis, io, data, socket);
+  });
+
+  socket.on('playCancel', async (data) => {
+    await playCancelEvent(redis, io, data, socket);
   });
 
   socket.on("disconnecting", async () => {
