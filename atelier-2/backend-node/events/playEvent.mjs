@@ -37,12 +37,11 @@ export const playEvent = async (redis, io, data) => {
         let listLength = await redis.llen(WAITLIST_FIGHT_HASH);
 
         while (listLength < 2) {
-            // Vérifier si le retryFlag est toujours actif
             const retryFlag = await redis.get(retryFlagKey);
 
             if (retryFlag !== 'true') {
                 console.log(`Le retryFlag pour l'utilisateur ${id} est passé à false. Arrêt de la boucle.`);
-                return; // Sortir de la fonction si retryFlag est désactivé
+                return;
             }
 
             console.log("Moins de deux joueurs dans la liste d'attente. Nouvelle tentative dans 500ms...");
