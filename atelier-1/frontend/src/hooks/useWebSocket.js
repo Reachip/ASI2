@@ -47,6 +47,7 @@ export const useWebSocket = (user) => {
     }, []);
 
     const handleConversationHistory = useCallback((history) => {
+        console.log("history", history);
         const formattedHistory = history.map(message => ({
             id: Date.now(),
             sender: { id: message.from.id, username: message.from.username },

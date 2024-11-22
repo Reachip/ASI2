@@ -6,3 +6,20 @@ export const USER_ROOMS_HASH = "userRooms";
 
 // Hash pour stocker les utilisateurs sélectionnés (relation de sélection)
 export const SELECTED_USER_HASH = "selectedUser";
+
+export const WAITLIST_FIGHT_HASH = "waitingQueueFight";
+
+export const NOTIFY_CONVERSATION_HISTORY_EVENT= "notifyConversationHistory";
+
+export const NOTIFY_NOT_ENOUGH_CARD_EVENT= "notifyNotEnoughCard";
+
+export const NOTIFY_ROOM_FIGHT_CREATED_EVENT= "notifyRoomFightCreated";
+
+export const TYPE_ROOM = {
+    CHAT: "chat",
+    FIGHT: "fight",
+};
+
+// Hash pour stocker les games en cours
+export const GAME_HASH = "game";
+
