@@ -1,14 +1,19 @@
 package fr.cpe.scoobygang.atelier3.api_backend.card.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public class CardBasics {
+	@Column(columnDefinition = "TEXT")
 	private String name;
+	@Column(columnDefinition = "TEXT")
 	private String description;
 	private String family;
 	private String affinity;
+	@Column(columnDefinition = "TEXT")
 	private String imgUrl;
+	@Column(columnDefinition = "TEXT")
 	private String smallImgUrl;
 
 	public CardBasics() {

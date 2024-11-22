@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { websocketService } from '../services/websocket';
+import { springWebSocketService } from '../services/SpringWebSocketService';
+import { nodeWebSocketService } from '../services/NodeWebSocketService';
+import { webSocketListenerService } from '../services/WebSocketListenerService';
 
 export const useWebSocket = (user) => {
     const [springSocket, setSpringSocket] = useState(null);
@@ -60,8 +62,8 @@ export const useWebSocket = (user) => {
         let cleanupFunctions = [];
 
         // Initialize sockets
-        const cleanupSpring = websocketService.initializeSpringSockets(user);
-        const cleanupNode = websocketService.initializeNodeSockets(user);
+        const cleanupSpring = springWebSocketService.initialize(user);
+        const cleanupNode = nodeWebSocketService.initialize(user);
 
         // Add listeners
         const listeners = [
@@ -75,7 +77,7 @@ export const useWebSocket = (user) => {
 
         // Register all listeners and store their cleanup functions
         listeners.forEach(([event, handler]) => {
-            const cleanup = websocketService.addListener(event, handler);
+            const cleanup = webSocketListenerService.addListener(event, handler);
             cleanupFunctions.push(cleanup);
         });
 
@@ -93,7 +95,7 @@ export const useWebSocket = (user) => {
     ]);
 
     const sendChatMessage = useCallback((message) => {
-        websocketService.sendChatMessage(message, user);
+        nodeWebSocketService.sendChatMessage(message, user);
     }, [user]);
 
     return {

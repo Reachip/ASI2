@@ -65,7 +65,6 @@ const Chat = ({ currentUser, messages = [], onSendMessage, users = [], socket })
 
     const newValue = event.target.value;
 
-    // Vérifier si la nouvelle valeur est valide
     const isValidValue = users.some(user => user.id === newValue) || newValue === '0';
 
     if (isValidValue) {
@@ -96,6 +95,7 @@ const Chat = ({ currentUser, messages = [], onSendMessage, users = [], socket })
           CHAT
         </Typography>
         <Select
+          defaultValue=""
           fullWidth
           value={selectedUser}
           onChange={updateSelectedUser}
