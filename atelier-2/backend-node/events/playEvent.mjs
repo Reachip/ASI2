@@ -9,6 +9,7 @@ import {notifyRoom, notifyUser} from "./notifyEvent.mjs";
 import {createRoom} from "../utils/roomUtils.mjs";
 import {UserRepository} from "../repository/UserRepository.mjs";
 import {GameRepository} from "../repository/GameRepository.mjs";
+import { GameModel } from "../RedisModel/GameModel.mjs";
 
 const userRepository = new UserRepository();
 const gameRepository = new GameRepository();
@@ -22,7 +23,7 @@ export const playEvent = async (redis, io, userId, userSocket) => {
         if (nbCard >= 5){
             console.log(`L'utilisateur ${userId} possede bien au moins 5 cartes : ${nbCard}`)
             await redis.rpush(WAITLIST_FIGHT_HASH, userId);
-            console.log(`Ajout de l'utilisateur ${userId} dans la liste d'attente`)
+            console.log(`Ajout de l'utilisateur ${userId} dans la liste d'attente`);
 
             const listLength = await redis.llen(WAITLIST_FIGHT_HASH);
             if (listLength >= 2) {
@@ -50,7 +51,13 @@ export const playEvent = async (redis, io, userId, userSocket) => {
                 };
 
                 const resultCreateGame = await gameRepository.createGame(gameCreationRequest)
-                    .then(createdGame => console.log("resultCreateGame : "+createdGame))
+                    .then(createdGame => {
+                            console.log("resultCreateGame : "+createdGame);
+                            // Création de la game dans Redis
+                            const game = new GameModel(createdGame);
+                            redis.hset("game", roomId, game.toJson());
+                        }
+                    )
                     .catch(error => console.error('Error creating game:'+error));
 
                 notifyRoom(io,roomId,NOTIFY_ROOM_FIGHT_CREATED_EVENT,{'gameMaster':gameMaster});
