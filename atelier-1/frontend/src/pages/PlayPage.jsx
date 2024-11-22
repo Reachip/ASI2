@@ -90,7 +90,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
 
     const handleCancelSearch = () => {
         setIsSearching(false);
-        nodeSocket.emit("playCancel");
+        nodeSocket.emit("playCancel", { id: currentPlayer.id });
     };
 
     const filteredUsers = connectedUsers.filter(u => u.username !== user.username);
