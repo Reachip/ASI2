@@ -51,6 +51,10 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         setSelectedPlayerCard(card);
     };
 
+    const handleStartGame = () => {
+        setDialogOpen(true);
+    };
+
     useEffect(() => {
         if (nodeSocket) {
             nodeSocket.on("notifyRoomFightCreated", (msg) => {
@@ -62,10 +66,39 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
 
     const handlePlay = () => {
         console.log("Play: ");
+        console.log(nodeSocket);
+        console.log("User: ");
+        console.log(user.id);
         // Envoi du message au serveur
-        nodeSocket.emit("play");
+        nodeSocket.emit("play",user.id);
     }
 
+    const handleCloseDialog = () => {
+        if (!isSearching) {
+            setDialogOpen(false);
+        }
+    };
+
+    const handleStartBattle = () => {
+        setIsSearching(true);
+
+        // Déclencher la recherche d'adversaire
+        console.log("Searching for opponent...");
+        nodeSocket.emit("searchOpponent");
+
+        // TODO: Décommenter cette partie quand la logique de recherche d'adversaire sera implémentée
+        // setDialogOpen(false);
+        // setGameStarted(true);
+        // setSelectedPlayerCard(selectedCards[0]);
+        // setSelectedOpponentCard(opponentCards[0]);
+        // console.log("Play: ");
+        // nodeSocket.emit("play");
+    };
+
+    const handleCancelSearch = () => {
+        setIsSearching(false);
+        nodeSocket.emit("cancelSearch"); // À implémenter côté serveur
+    };
 
     const filteredUsers = connectedUsers.filter(u => u.username !== user.username);
 
