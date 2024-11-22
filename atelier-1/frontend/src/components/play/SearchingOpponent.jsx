@@ -1,7 +1,8 @@
 import React from 'react';
-import { Box, Typography, CircularProgress } from '@mui/material';
+import { Box, Typography, CircularProgress, Grid } from '@mui/material';
+import Card from '../cards/Card';
 
-const SearchingOpponent = () => {
+const SearchingOpponent = ({ selectedCards }) => {
     return (
         <Box
             sx={{
@@ -11,14 +12,13 @@ const SearchingOpponent = () => {
                 alignItems: 'center',
                 gap: 4,
                 p: 4,
-                minHeight: '400px', // Garantit une hauteur minimale similaire à la grille de cartes
+                minHeight: '400px',
             }}
         >
-            {/* Espace réservé pour le futur GIF */}
             <Box
                 sx={{
-                    width: 200,
-                    height: 200,
+                    width: 150,
+                    height: 150,
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -33,6 +33,18 @@ const SearchingOpponent = () => {
             <Typography variant="body1" color="text.secondary" textAlign="center">
                 Veuillez patienter pendant que nous trouvons le challenger idéal
             </Typography>
+
+            <Grid container spacing={2} justifyContent="center">
+                {selectedCards.map((card) => (
+                    <Grid item key={card.id}>
+                        <Card
+                            card={card}
+                            isSelected={false}
+                            onClick={() => { }}
+                        />
+                    </Grid>
+                ))}
+            </Grid>
         </Box>
     );
 };
