@@ -177,7 +177,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                 actions={dialogActions}
             >
                 {isSearching ? (
-                    <SearchingOpponent />
+                    <SearchingOpponent selectedCards={selectedCards} />
                 ) : (
                     <CardsGrid
                         cards={playerCards}
