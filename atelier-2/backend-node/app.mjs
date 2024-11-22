@@ -21,11 +21,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 3002; // React port
 
-app.use(express.static(path.join(__dirname, 'public', 'my-chat-app', 'build')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'my-chat-app', 'build', 'index.html'));
-});
+app.disable('x-powered-by');
 
 const server = app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
