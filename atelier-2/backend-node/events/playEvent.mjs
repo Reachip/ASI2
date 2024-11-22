@@ -10,6 +10,7 @@ import {UserRepository} from "../repository/UserRepository.mjs";
 import {GameRepository} from "../repository/GameRepository.mjs";
 import { GameModel } from "../RedisModel/GameModel.mjs";
 import {getDetailsUserById} from "../utils/redisUtils.mjs";
+import RetryPlayQueue from "../service/RetryPlayQueue.mjs";
 
 const userRepository = new UserRepository();
 const gameRepository = new GameRepository();
@@ -30,14 +31,13 @@ export const playEvent = async (redis, io, data) => {
             return;
         }
 
-        // Initialisation du retryFlag dans Redis
-        const retryFlagKey = `retryFlag:${id}`;
-        await redis.set(retryFlagKey, true); // Mise à true par défaut
+        const retryPlayQueue = new RetryPlayQueue(redis, id)
+        await retryPlayQueue.init()
 
         let listLength = await redis.llen(WAITLIST_FIGHT_HASH);
 
         while (listLength < 2) {
-            const retryFlag = await redis.get(retryFlagKey);
+            const retryFlag = await retryPlayQueue.get()
 
             if (retryFlag !== 'true') {
                 console.log(`Le retryFlag pour l'utilisateur ${id} est passé à false. Arrêt de la boucle.`);
@@ -48,6 +48,8 @@ export const playEvent = async (redis, io, data) => {
             await new Promise(resolve => setTimeout(resolve, 500)); // Attente de 500ms
             listLength = await redis.llen(WAITLIST_FIGHT_HASH);
         }
+
+        await retryPlayQueue.delete()
 
         console.log(`L'utilisateur ${id} possède bien au moins 5 cartes : ${cards.length}`);
         await redis.rpush(WAITLIST_FIGHT_HASH, id);
