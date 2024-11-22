@@ -56,7 +56,7 @@ export const playEvent = async (redis, io, data) => {
         console.log("Il y a au moins deux personnes dans la liste d'attente.");
 
         const firstTwo = await redis.lrange(WAITLIST_FIGHT_HASH, 0, 1);
-        const adversary = parseInt(firstTwo[0]) === data.id ? firstTwo[1] : parseInt(firstTwo[0]);
+        const adversary = parseInt(firstTwo[0], 10) === data.id ? firstTwo[1] : parseInt(firstTwo[0], 10);
 
         console.log("mdr", adversary);
 
