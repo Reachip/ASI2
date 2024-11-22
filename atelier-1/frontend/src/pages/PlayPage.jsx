@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '../store/authSlice';
@@ -51,36 +51,21 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         setSelectedPlayerCard(card);
     };
 
-    const handleStartGame = () => {
-        setDialogOpen(true);
-    };
-
-    const handleCloseDialog = () => {
-        if (!isSearching) {
-            setDialogOpen(false);
+    useEffect(() => {
+        if (nodeSocket) {
+            nodeSocket.on("notifyRoomFightCreated", (msg) => {
+                console.log("notifyRoomFightCreated: " + JSON.stringify(msg));
+            });
         }
-    };
+    }, [nodeSocket]);
 
-    const handleStartBattle = () => {
-        setIsSearching(true);
 
-        // Déclencher la recherche d'adversaire
-        console.log("Searching for opponent...");
-        nodeSocket.emit("searchOpponent");
+    const handlePlay = () => {
+        console.log("Play: ");
+        // Envoi du message au serveur
+        nodeSocket.emit("play");
+    }
 
-        // TODO: Décommenter cette partie quand la logique de recherche d'adversaire sera implémentée
-        // setDialogOpen(false);
-        // setGameStarted(true);
-        // setSelectedPlayerCard(selectedCards[0]);
-        // setSelectedOpponentCard(opponentCards[0]);
-        // console.log("Play: ");
-        // nodeSocket.emit("play");
-    };
-
-    const handleCancelSearch = () => {
-        setIsSearching(false);
-        nodeSocket.emit("cancelSearch"); // À implémenter côté serveur
-    };
 
     const filteredUsers = connectedUsers.filter(u => u.username !== user.username);
 

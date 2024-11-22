@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
     NOTIFY_NOT_ENOUGH_CARD_EVENT,
     NOTIFY_ROOM_FIGHT_CREATED_EVENT,
@@ -10,6 +9,7 @@ import {createRoom} from "../utils/roomUtils.mjs";
 import {UserRepository} from "../repository/UserRepository.mjs";
 import {GameRepository} from "../repository/GameRepository.mjs";
 import { GameModel } from "../RedisModel/GameModel.mjs";
+import {getDetailsUserById} from "../utils/redisUtils.mjs";
 
 const userRepository = new UserRepository();
 const gameRepository = new GameRepository();
@@ -33,8 +33,16 @@ export const playEvent = async (redis, io, id, userSocket) => {
                 await redis.ltrim(WAITLIST_FIGHT_HASH, 2, -1); // Supprime les deux premiers
                 console.log("Les deux premières personnes sont :", firstTwo);
 
-                const userSocket1 = await io.sockets.sockets.get(firstTwo[0]);
-                const userSocket2 = await  io.sockets.sockets.get(firstTwo[1]);
+                const detailsUser1 = await getDetailsUserById(redis, firstTwo[0]);
+                const detailsUser2 = await getDetailsUserById(redis, firstTwo[1]);
+
+                console.log(`detailsUser1 : ${detailsUser1}`);
+                console.log(`detailsUser2 : ${detailsUser2}`);
+
+                const userSocket1 = await io.in(detailsUser1.socketId).fetchSockets();
+                const userSocket2 = await io.in(detailsUser2.socketId).fetchSockets();
+
+                console.log(`userSocket1 : ${userSocket1}`);
 
                 const roomId = createRoom(io,TYPE_ROOM.FIGHT,firstTwo[0],firstTwo[1], userSocket1, userSocket2);
 
@@ -50,17 +58,12 @@ export const playEvent = async (redis, io, id, userSocket) => {
                     user2Id: userId2,
                 };
 
-                const resultCreateGame = await gameRepository.createGame(gameCreationRequest)
-                    .then(createdGame => {
-                            console.log("resultCreateGame : "+createdGame);
-                            // Création de la game dans Redis
-                            const game = new GameModel(createdGame);
-                            redis.hset("game", roomId, game.toJson());
-                        }
-                    )
+                await gameRepository.createGame(gameCreationRequest)
+                    .then(createdGame =>{
+                        console.log("Id de la game : "+JSON.stringify(createdGame));
+                        notifyRoom(io,roomId,NOTIFY_ROOM_FIGHT_CREATED_EVENT,{'gameMaster': parseInt(gameMaster), 'gameId':createdGame});
+                    })
                     .catch(error => console.error('Error creating game:'+error));
-
-                notifyRoom(io,roomId,NOTIFY_ROOM_FIGHT_CREATED_EVENT,{'gameMaster':gameMaster});
 
             } else {
                 console.log("Il y a moins de deux personnes dans la liste d'attente.");
