@@ -23,7 +23,7 @@ const CardPreview = ({ card, label, color = 'primary', onAction }) => {
                     </Box>
                 </Box>
                 <Box sx={{ flex: 1, bgcolor: 'grey.200', margin: 1, borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                    <img src={card.img_src} alt={`${card.name}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={card.imgUrl} alt={`${card.name}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </Box>
                 <Box sx={{ px: 1, py: 0.5 }}>
                     <Typography variant="caption">{card.description}</Typography>

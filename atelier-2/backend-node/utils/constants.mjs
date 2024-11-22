@@ -15,6 +15,8 @@ export const NOTIFY_NOT_ENOUGH_CARD_EVENT= "notifyNotEnoughCard";
 
 export const NOTIFY_ROOM_FIGHT_CREATED_EVENT= "notifyRoomFightCreated";
 
+export const NOTIFY_ROOM_PLAY_CANCEL= "notifyPlayError";
+
 export const TYPE_ROOM = {
     CHAT: "chat",
     FIGHT: "fight",

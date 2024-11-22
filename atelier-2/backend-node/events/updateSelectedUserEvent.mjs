@@ -22,7 +22,7 @@ import {notifyUser} from "./notifyEvent.mjs";
  */
 const updateSelectedUserEvent = async (redis, io, data, userSocket) => {
     let { oldSelectedId, newSelectedId, id, newSelectedUserSocketId } = data;
-    newSelectedId = parseInt(newSelectedId);
+    newSelectedId = parseInt(newSelectedId, 10);
 
     console.log(`User ${id} selects ${newSelectedId}; Previous selection: ${oldSelectedId}`);
 

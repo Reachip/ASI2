@@ -31,7 +31,7 @@ const Card = ({ card, isSelected, onClick }) => {
         )}
         <CardMedia
           component="img"
-          image={card.img_src}
+          image={card.imgUrl}
           alt={card.name}
           sx={{ height: '100%' }}
         />
