@@ -1,9 +1,10 @@
 import React from 'react';
 import { Card as MuiCard, CardMedia, Typography, Box } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const Card = ({ card, isSelected, onClick }) => {
   return (
-    <MuiCard 
+    <MuiCard
       onClick={onClick}
       sx={{
         cursor: 'pointer',
@@ -11,9 +12,23 @@ const Card = ({ card, isSelected, onClick }) => {
         transition: 'transform 0.2s',
         height: '150px',
         width: '120px',
+        position: 'relative'
       }}
     >
       <Box sx={{ position: 'relative', height: '100%' }}>
+        {isSelected && (
+          <CheckCircleIcon
+            sx={{
+              position: 'absolute',
+              top: 8,
+              left: 8,
+              color: 'success.main',
+              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              borderRadius: '50%',
+              zIndex: 1,
+            }}
+          />
+        )}
         <CardMedia
           component="img"
           image={card.img_src}
