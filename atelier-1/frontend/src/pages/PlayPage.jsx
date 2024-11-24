@@ -143,10 +143,10 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                 </Box>
             ) : (
                 <GameBoard
-                    opponent={gameInfo?.player2}
-                    currentPlayer={gameInfo?.player1}
-                    opponentCards={gameInfo?.player2?.cards || []}
-                    playerCards={selectedCards}
+                    opponent={gameInfo && (user.id === gameInfo.player1.id ? gameInfo.player2 : gameInfo.player1)}
+                    currentPlayer={gameInfo && (user.id === gameInfo.player1.id ? gameInfo.player1 : gameInfo.player2)}
+                    opponentCards={gameInfo && (user.id === gameInfo.player1.id ? gameInfo.player2.cards : gameInfo.player1.cards)}
+                    playerCards={gameInfo && (user.id === gameInfo.player1.id ? gameInfo.player1.cards : gameInfo.player2.cards)}
                 />
             )}
 
