@@ -69,9 +69,11 @@ export const playEvent = async (redis, io, data) => {
         console.log(`detailsUser1 : ${detailsUser1}`);
         console.log(`detailsUser2 : ${detailsUser2}`);
 
+        firstPlayer.username = detailsUser1.username;
+        secondPlayer.username = detailsUser2.username;
+
         const userSocket1 = await io.sockets.sockets.get(detailsUser1.socketId);
         const userSocket2 = await io.sockets.sockets.get(detailsUser2.socketId);
-
 
         const roomId = createRoom(io, TYPE_ROOM.FIGHT, firstPlayer.id, secondPlayer.id, userSocket1, userSocket2);
 
