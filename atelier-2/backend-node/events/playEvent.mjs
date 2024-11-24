@@ -78,10 +78,8 @@ export const playEvent = async (redis, io, data) => {
         const roomId = createRoom(io, TYPE_ROOM.FIGHT, firstPlayer.id, secondPlayer.id, userSocket1, userSocket2);
 
         const randomValue = Math.floor(Math.random() * 2) + 1;
-        console.log(randomValue); // Résultat : 1 ou 2
 
-
-        const [ userId1, userId2] = [Math.min(firstPlayer.id, secondPlayer.id), Math.max(firstPlayer.id, secondPlayer.id)];
+        const [userId1, userId2] = [Math.min(firstPlayer.id, secondPlayer.id), Math.max(firstPlayer.id, secondPlayer.id)];
 
         const gameCreationRequest = {user1Id: userId1, user2Id: userId2};
 
@@ -101,13 +99,13 @@ export const playEvent = async (redis, io, data) => {
                 secondPlayer.cards = cardGamesSecondPlayer;
 
                 const gameService = new GameService(redis);
-                await gameService.createGame(createdGame, roomId,  firstPlayer, secondPlayer, randomValue);
+                await gameService.createGame(createdGame, roomId,  firstPlayer, secondPlayer, randomValue == 1 ? firstPlayer.id : secondPlayer.id);
 
                 const payload = {
                     'gameId': createdGame,
                     'player1': firstPlayer,
                     'player2': secondPlayer,
-                    'userTurn': randomValue,
+                    'userTurn': randomValue == 1 ? firstPlayer.id : secondPlayer.id,
                 }
                 notifyRoom(io, roomId, NOTIFY_ROOM_FIGHT_CREATED_EVENT, payload);
             })

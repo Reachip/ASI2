@@ -20,7 +20,7 @@ const TurnNotification = ({ playerName, isVisible, onHide }) => {
             maxWidth="xs"
         >
             <Typography variant="h6" align="center" sx={{ py: 2 }}>
-                Au tour de {playerName} !
+                {playerName ? `It's ${playerName}'s turn!` : "It's your turn!"}
             </Typography>
         </PopupDialog>
     );

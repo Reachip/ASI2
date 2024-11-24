@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { Box, Button, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
@@ -37,10 +37,6 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
     useEffect(() => {
         fetchPlayerCards();
     }, [fetchPlayerCards]);
-
-    const opponentCards = useMemo(() => [
-        // Données fictives à remplacer par les données de `gameInfo` lorsqu'elles sont disponibles
-    ], []);
 
     const handleStartGame = () => {
         setDialogOpen(true);
@@ -129,8 +125,9 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
     };
 
     useEffect(() => {
-        if (gameInfo && gameInfo.userTurn !== lastTurn) {
-            setLastTurn(gameInfo.userTurn);
+        const currentTurn = gameInfo?.userTurn;
+        if (currentTurn !== undefined && currentTurn !== lastTurn) {
+            setLastTurn(currentTurn);
             setShowTurnNotification(true);
         }
     }, [gameInfo?.userTurn, lastTurn]);
@@ -186,7 +183,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                     onOpponentCardSelect={handleOpponentCardSelect}
                     onAttack={handleAttack}
                     isPlayerTurn={gameInfo && gameInfo.userTurn === user.id}
-                    currentPlayerName={gameInfo?.userTurn === user.id ? "you" : (user.id === gameInfo.player1.id ? gameInfo.player2.username : gameInfo.player1.username)}
+                    currentPlayerName={gameInfo?.userTurn === user.id ? null : (user.id === gameInfo.player1.id ? gameInfo.player2.username : gameInfo.player1.username)}
                 />
             )}
 
@@ -210,8 +207,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
 
             {gameStarted && gameInfo && (
                 <TurnNotification
-                    playerName={gameInfo.userTurn === user.id ? "you" :
-                        (user.id === gameInfo.player1.id ? gameInfo.player2.username : gameInfo.player1.username)}
+                    playerName={gameInfo.userTurn === user.id ? null : (user.id === gameInfo.player1.id ? gameInfo.player2.username : gameInfo.player1.username)}
                     isVisible={showTurnNotification}
                     onHide={() => setShowTurnNotification(false)}
                 />
