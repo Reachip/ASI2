@@ -27,7 +27,7 @@ const ControlPanel = ({ onAttack, canAttack, currentPlayerName, isPlayerTurn }) 
             variant="h6" 
             color={isPlayerTurn ? "primary" : "text.secondary"}
         >
-            Tour de {currentPlayerName}
+            {isPlayerTurn ? `It's your turn!` : `It's ${currentPlayerName}'s turn!`}
         </Typography>
     </Box>
 );
