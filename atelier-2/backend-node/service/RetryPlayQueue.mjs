@@ -12,6 +12,10 @@ export default class RetryPlayQueue {
         return await this.redis.get(this.flag);
     }
 
+    async shouldStopSearchingPlayer() {
+        return Boolean(await this.redis.get(this.flag)) === false;
+    }
+
     async delete() {
         await this.redis.del(this.flag);
     }

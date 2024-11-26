@@ -40,7 +40,7 @@ export const playEvent = async (redis, io, data) => {
 
         await redis.rpush(WAITLIST_FIGHT_HASH, JSON.stringify(data));
 
-        while (await redis.llen(WAITLIST_FIGHT_HASH) < 2) {
+        while (await retryPlayQueue.shouldStopSearchingPlayer() || await redis.llen(WAITLIST_FIGHT_HASH) < 2) {
             const retryFlag = await retryPlayQueue.get()
 
             if (retryFlag !== 'true') {
@@ -55,11 +55,14 @@ export const playEvent = async (redis, io, data) => {
         await retryPlayQueue.delete()
 
         console.log(`L'utilisateur ${id} possède bien au moins 5 cartes : ${cards.length}`);
-
         console.log("Il y a au moins deux personnes dans la liste d'attente.");
 
         const [firstPlayer, secondPlayer] = (await redis.lrange(WAITLIST_FIGHT_HASH, 0, 1)).map(player => JSON.parse(player));
         await redis.ltrim(WAITLIST_FIGHT_HASH, 2, -1);
+
+        [new RetryPlayQueue(redis, firstPlayer.id), new RetryPlayQueue(redis, secondPlayer.id)].forEach(retryPlayQueue => {
+            retryPlayQueue.delete()
+        })
 
         console.log("Les deux premières personnes sont :", firstPlayer, secondPlayer);
 
