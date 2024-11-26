@@ -47,7 +47,31 @@ export class GameService {
         const gameModel = await this.redis.hget(GAME_HASH, idGame);
         console.log(`GameModel récupéré : ${JSON.stringify(gameModel)}`);
 
-        return gameModel;
+        return JSON.parse(gameModel);
     }
+
+    async getGameIdByUserIdInRedis(userId){
+        console.log(`getGameIdByUserIdInRedis dans redis : userId=${userId}`);
+        const keys = await this.redis.keys(GAME_HASH);
+
+        for (const key of keys) {
+            const gameData = JSON.parse(await this.redis.get(key));
+            if (
+                (gameData.user1 && gameData.user1.userId === userId) ||
+                (gameData.user2 && gameData.user2.userId === userId)
+            ) {
+                return gameData.gameId;
+            }
+        }
+        return null;
+    }
+
+
+
+    async updateGameInRedis(idGame, gameModel){
+        console.log(`setGameModel dans redis : idGame=${idGame}, gameModel=${JSON.stringify(gameModel)}`);
+        await this.redis.hset(GAME_HASH,idGame, gameModel);
+    }
+
 
 }
