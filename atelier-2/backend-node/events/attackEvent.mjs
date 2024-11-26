@@ -1,5 +1,7 @@
-import { GAME_HASH } from "../utils/constants.mjs";
+import {GAME_HASH, NOTIFY_ATTACK_RESPONSE, NOTIFY_END_FIGHT} from "../utils/constants.mjs";
 import { AttackResponse } from "../dto/attackResponse.mjs";
+import {notifyRoom} from "./notifyEvent.mjs";
+import {GameService} from "../service/GameService.mjs";
 
 /**
  * Handles the event for a player attacking with a card in a game.
@@ -16,75 +18,115 @@ import { AttackResponse } from "../dto/attackResponse.mjs";
  * @param {string} data.cardAttackId - The identifier of the card being used to attack.
  * @returns {Promise<void>} Resolves when the attack logic has been processed successfully.
  */
+
 const attackEvent = async (redis, io, socket, data) => 
 {
+    const gameService = new GameService(redis);
+
     if (data === undefined || data === null)
     {
         return console.log("Error: gameId, userIdAttack, cardIdToAttack and cardAttackId are required.");
     }
 
-    const gameId = data.gameId;
     const userIdAttack = data.userIdAttack;
     const cardIdToAttack = data.cardIdToAttack;
     const cardAttackId = data.cardAttackId;
 
-    const game = await redis.hget(GAME_HASH, gameId);
-    if (!game)
+    const gameData = await gameService.getGameIdByUserIdInRedis(userIdAttack);
+    if (!gameData)
     {
         return console.log("Error: Game not found.");
     }
 
-    const gameData = JSON.parse(game);
+    const [currentPlayer, opponentPlayer] = getCurrentAndOpponentPlayer(gameData);
 
-    // Get current player :
-    const currentPlayer = gameData.currentUserTurn;
-    if (!currentPlayer)
-    {
-        return console.log("Error: Current player not found.");
+    try {
+        validateTurnAndActionPoints(currentPlayer, userIdAttack);
+
+        const cardAttack = findCard(currentPlayer.cards, cardAttackId);
+        const cardToAttack = findCard(opponentPlayer.cards, cardIdToAttack);
+
+        const remainingHp = processAttack(cardAttack, cardToAttack);
+
+        const userTurn = updateActionPoint(currentPlayer, opponentPlayer);
+
+        await gameService.setGameInRedis(gameData.gameId, gameData);
+
+        if (areAllCardsOutOfPv(opponentPlayer.cards)){
+            console.log(`Le joueur ${currentPlayer.id} à gagner contre ${opponentPlayer.id}`)
+
+            notifyRoom(io, gameData.roomId,NOTIFY_END_FIGHT, {'winner': currentPlayer.id});
+        }
+        else {
+            const attackResponse = new AttackResponse(currentPlayer.id, opponentPlayer.id, currentPlayer.actionPoint, cardIdToAttack, remainingHp, userTurn);
+
+            notifyRoom(io, gameData.roomId,NOTIFY_ATTACK_RESPONSE, attackResponse.toJson());
+        }
+
+    } catch (error) {
+        return console.log(`Error: ${error.message}`);
+    }
+}
+
+
+function getCurrentAndOpponentPlayer(gameData) {
+    if (gameData.user1.isTurn) {
+        return [gameData.user1, gameData.user2];
+    } else {
+        return [gameData.user2, gameData.user1];
+    }
+}
+
+function validateTurnAndActionPoints(currentPlayer, userIdAttack) {
+    if (currentPlayer.userId !== userIdAttack) {
+        throw new Error("It is not the turn of this player.");
+    }
+    if (currentPlayer.actionPoint <= 0) {
+        throw new Error("Not enough action points.");
+    }
+}
+
+/**
+ * Recherche une carte par son ID dans une collection de cartes.
+ *
+ * @param {Array} cards - Liste des cartes.
+ * @param {string} cardId - ID de la carte à rechercher.
+ * @returns {Object} - La carte trouvée.
+ * @throws {Error} - Si la carte n'est pas trouvée.
+ */
+function findCard(cards, cardId) {
+    const card = cards.find(card => card.id === cardId);
+
+    if (!card) {
+        throw new Error(`Card with ID "${cardId}" not found.`);
     }
 
-    if (currentPlayer.actionPoint <= 0)
-    {
-        return console.log("Error: Not enough action point.");
+    return card;
+}
+
+function processAttack (cardAttack, cardToAttack){
+    if (cardToAttack.hp === 0){
+        throw new Error("Error: you can't attack this card");
     }
+    const damage = Math.max(0, cardAttack.attack - cardToAttack.defense);
+    const hp = Math.max(0, cardToAttack.hp - damage);
+    cardToAttack.hp = hp;
+    return hp;
+}
 
-    // Get opponent player :
-    const opponentPlayer = gameData.userGameMaster.userId === userIdAttack ? gameData.user2 : gameData.userGameMaster;
-
-    if (!opponentPlayer)
-    {
-        return console.log("Error: Opponent player not found.");
-    }
-
-    // Get current card :
-    const cardAttack = currentPlayer.cards.find(card => card.cardId === cardAttackId);
-
-    if (!cardAttack)
-    {
-        return console.log("Error: Card attack not found.");
-    }
-
-    // Get opponent card to attack :
-    const cardToAttack = opponentPlayer.cards.find(card => card.cardId === cardIdToAttack);
-
-    if (!cardToAttack)
-    {
-        return console.log("Error: Card to attack not found.");
-    }
-
-    // Attack : cardHp = cardHp - (cardAttack - cardDefense) (minimum 0)
-    cardToAttack.cardCurrentHp = Math.max(0, cardToAttack.cardCurrentHp - (cardAttack.cardAttack - cardToAttack.cardDefense));
-
-    // Update action point :
+function updateActionPoint(currentPlayer, opponentPlayer){
     currentPlayer.actionPoint--;
+    if (currentPlayer.actionPoint <= 0) {
+        currentPlayer.isTurn = false;
+        opponentPlayer.isTurn = true;
 
-    // Update game data :
-    await redis.hset(GAME_HASH, gameId, JSON.stringify(gameData));
+        return opponentPlayer.id
+    }
+    else return currentPlayer.id
+}
 
-    // Return AttackResponse :
-    const attackResponse = new AttackResponse(userIdAttack, cardAttackId, cardIdToAttack, cardToAttack.cardCurrentHp, currentPlayer.actionPoint);
-
-    return io.to("fight").emit("attackResponse", attackResponse.toJson());
+function areAllCardsOutOfPv(cards) {
+    return cards.every(card => card.hp <= 0);
 }
 
 export default attackEvent;

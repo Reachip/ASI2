@@ -8,7 +8,7 @@ import GameBoard from '../components/play/GameBoard';
 import PopupDialog from '../components/layout/PopupDialog';
 import CardsGrid from '../components/cards/CardsGrid';
 import SearchingOpponent from '../components/play/SearchingOpponent';
-import TurnNotification from '../components/play/TurnNotification';
+import GameNotification from '../components/play/GameNotification'; // Import the GameNotification component
 
 const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) => {
     const { user } = useSelector(selectAuth);
@@ -20,8 +20,8 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
     const [isSearching, setIsSearching] = useState(false);
     const [selectedPlayerCard, setSelectedPlayerCard] = useState(null);
     const [selectedOpponentCard, setSelectedOpponentCard] = useState(null);
-    const [showTurnNotification, setShowTurnNotification] = useState(false);
     const [lastTurn, setLastTurn] = useState(null);
+    const [gameNotification, setGameNotification] = useState({ type: null, isVisible: false });
 
     const currentPlayer = { id: user.id, username: user.username, actionPoints: 3, isCurrentPlayer: true };
 
@@ -70,14 +70,59 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                 setDialogOpen(false); // Ferme la popup
                 setIsSearching(false); // Arrête la recherche
             });
+
+            nodeSocket.on("attackResponse", (msg) => {
+                console.log("attackResponse: " + JSON.stringify(msg));
+                // Mettre à jour l'état du jeu en fonction de la réponse de l'attaque
+                setGameInfo((prevGameInfo) => {
+                    const updatedGameInfo = { ...prevGameInfo };
+                    updatedGameInfo.userTurn = msg.userTurn;
+                    updatedGameInfo.player1.actionPoints = msg.userIdAttack === updatedGameInfo.player1.id ? msg.actionPoints : updatedGameInfo.player1.actionPoints;
+                    updatedGameInfo.player2.actionPoints = msg.userIdAttack === updatedGameInfo.player2.id ? msg.actionPoints : updatedGameInfo.player2.actionPoints;
+
+                    // Mettre à jour les HP des cartes
+                    const opponentCards = msg.userIdAttack === updatedGameInfo.player1.id ? updatedGameInfo.player2.cards : updatedGameInfo.player1.cards;
+                    const updatedOpponentCards = opponentCards.map(card =>
+                        card.id === msg.cardIdToAttack ? { ...card, hp: msg.remainingHp } : card
+                    );
+
+                    if (msg.userIdAttack === updatedGameInfo.player1.id) {
+                        updatedGameInfo.player2.cards = updatedOpponentCards;
+                    } else {
+                        updatedGameInfo.player1.cards = updatedOpponentCards;
+                    }
+
+                    return updatedGameInfo;
+                });
+            });
+
+            nodeSocket.on("endFight", (msg) => {
+                console.log("endFight: " + JSON.stringify(msg));
+                // Mettre à jour l'état du jeu pour indiquer la fin du combat
+                setGameInfo((prevGameInfo) => {
+                    const updatedGameInfo = { ...prevGameInfo };
+                    updatedGameInfo.winner = msg.winner;
+                    return updatedGameInfo;
+                });
+                setGameStarted(false); // Revenir à l'écran de sélection des cartes
+
+                // Afficher la notification de fin de combat
+                if (msg.winner === user.id) {
+                    setGameNotification({ type: 'winner', isVisible: true });
+                } else {
+                    setGameNotification({ type: 'loser', isVisible: true });
+                }
+            });
         }
 
         return () => {
             if (nodeSocket) {
                 nodeSocket.off("notifyRoomFightCreated");
+                nodeSocket.off("attackResponse");
+                nodeSocket.off("endFight");
             }
         };
-    }, [nodeSocket]);
+    }, [nodeSocket, user.id]);
 
     const dialogActions = isSearching ? (
         <Button
@@ -128,7 +173,6 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         const currentTurn = gameInfo?.userTurn;
         if (currentTurn !== undefined && currentTurn !== lastTurn) {
             setLastTurn(currentTurn);
-            setShowTurnNotification(true);
         }
     }, [gameInfo?.userTurn, lastTurn]);
 
@@ -206,10 +250,11 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
             </PopupDialog>
 
             {gameStarted && gameInfo && (
-                <TurnNotification
+                <GameNotification
+                    type={gameNotification.type}
+                    isVisible={gameNotification.isVisible}
+                    onHide={() => setGameNotification({ ...gameNotification, isVisible: false })}
                     playerName={gameInfo.userTurn === user.id ? null : (user.id === gameInfo.player1.id ? gameInfo.player2.username : gameInfo.player1.username)}
-                    isVisible={showTurnNotification}
-                    onHide={() => setShowTurnNotification(false)}
                 />
             )}
         </Box>
