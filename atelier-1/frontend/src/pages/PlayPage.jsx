@@ -160,9 +160,8 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         if (!selectedPlayerCard || !selectedOpponentCard || !gameInfo || gameInfo.userTurn !== user.id) return;
 
         nodeSocket.emit('attack', {
-            userIdAttack: currentPlayer.id,
-            cardIdToAttack: selectedOpponentCard.id,
-            cardAttackId: selectedPlayerCard.id
+            cardPlayerId: selectedPlayerCard.id,
+            cardOpponentId: selectedOpponentCard.id
         });
 
         setSelectedPlayerCard(null);
