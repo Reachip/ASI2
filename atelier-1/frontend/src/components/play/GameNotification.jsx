@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Typography } from '@mui/material';
 import PopupDialog from '../layout/PopupDialog';
 
-const TurnNotification = ({ playerName, isVisible, onHide }) => {
+const GameNotification = ({ type, isVisible, onHide, playerName = null }) => {
     useEffect(() => {
         if (isVisible) {
             const timer = setTimeout(() => {
@@ -13,6 +13,19 @@ const TurnNotification = ({ playerName, isVisible, onHide }) => {
         }
     }, [isVisible, onHide]);
 
+    const getMessage = () => {
+        switch (type) {
+            case 'turn':
+                return playerName ? `It's ${playerName}'s turn!` : "It's your turn!";
+            case 'winner':
+                return "You win! 🎉";
+            case 'loser':
+                return "You lose! 😢";
+            default:
+                return "Notification";
+        }
+    };
+
     return (
         <PopupDialog
             open={isVisible}
@@ -20,10 +33,10 @@ const TurnNotification = ({ playerName, isVisible, onHide }) => {
             maxWidth="xs"
         >
             <Typography variant="h6" align="center" sx={{ py: 2 }}>
-                {playerName ? `It's ${playerName}'s turn!` : "It's your turn!"}
+                {getMessage()}
             </Typography>
         </PopupDialog>
     );
 };
 
-export default TurnNotification;
+export default GameNotification;
