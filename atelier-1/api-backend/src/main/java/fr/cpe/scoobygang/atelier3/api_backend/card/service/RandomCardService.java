@@ -7,9 +7,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -51,8 +53,29 @@ public class RandomCardService {
     }
 
     public List<CardModel> generateRandomCards(int count) {
-        return IntStream.range(0, count)
-                .mapToObj(i -> generateRandomCard())
+        Set<Map<String, Object>> selectedCards = new HashSet<>();
+        List<CardModel> randomCards = IntStream.range(0, count)
+                .mapToObj(i -> {
+                    Map<String, Object> randomCard;
+                    do {
+                        randomCard = cardData.get(random.nextInt(cardData.size()));
+                    } while (!selectedCards.add(randomCard));
+                    return randomCard;
+                })
+                .map(cardData -> new CardModel(
+                        (String) cardData.get("name"),
+                        (String) cardData.get("description"),
+                        "Unknown",
+                        "Unknown",
+                        ((Number) cardData.get("energy")).floatValue(),
+                        ((Number) cardData.get("hp")).floatValue(),
+                        ((Number) cardData.get("defense")).floatValue(),
+                        ((Number) cardData.get("attack")).floatValue(),
+                        (String) cardData.get("img_src"),
+                        null,
+                        0f
+                ))
                 .collect(Collectors.toList());
+        return randomCards;
     }
 }
