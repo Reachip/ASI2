@@ -27,7 +27,9 @@ const attackEvent = async (redis, io, socket, data) => {
     console.log('[AttackEvent] Retrieved game:', game);
 
     const lifecycle = new GameLifecycle(game, cardPlayerId, cardOpponentId, redis)
+
     await lifecycle.updateActionPoint()
+    await lifecycle.attack()
 
     const isFinished = await lifecycle.isFinish()
     console.log('[AttackEvent] Game finished status:', isFinished);
