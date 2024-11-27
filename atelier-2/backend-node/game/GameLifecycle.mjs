@@ -46,10 +46,10 @@ class GameLifecycle {
         const game = this.game.get()
 
         if (game.user1.isTurn) {
-            return {current: game.user1, oppenent: game.user2}
+            return {current: game.user1, opponent: game.user2}
         }
 
-        return {current: game.user2, oppenent: game.user1}
+        return {current: game.user2, opponent: game.user1}
     }
 
     async attack() {
@@ -76,6 +76,8 @@ class GameLifecycle {
         if (currentPlayer.actionPoint <= 0) {
             await this.game.setTurn(this.getOpponentPlayer().userId)
             console.debug(this.game.get())
+        } else {
+            await this.game.setTurn(this.getCurrentPlayer().userId)
         }
     }
 
@@ -88,8 +90,8 @@ class GameLifecycle {
     }
 
     getOpponentPlayer() {
-        const {_, oppenent} = this._getCurrentAndOpponentPlayer()
-        return oppenent
+        const {_, opponent} = this._getCurrentAndOpponentPlayer()
+        return opponent
     }
 
     getCurrentPlayer() {
