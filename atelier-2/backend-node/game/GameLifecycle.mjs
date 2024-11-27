@@ -57,12 +57,12 @@ class GameLifecycle {
             throw new Error("Error: you can't attack this card");
         }
 
-        attackLabel.pvAvant = cardAttack.hp
+        attackLabel.initialHp = cardAttack.hp
 
         const damage = Math.max(0, cardAttack.attack - cardToAttack.defence)
         cardToAttack.hp = Math.max(0, cardToAttack.hp - damage);
 
-        attackLabel.pvApres = cardAttack.hp
+        attackLabel.finalHp = cardAttack.hp
 
         attackLabel.cardToAttack = cardToAttack
         attackLabel.cardAttack = cardAttack
