@@ -56,8 +56,8 @@ export class GameService {
         const getGame = async (key) => {
             const games = Object.values(await this.redis.hgetall(key))
             return games.map(game => JSON.parse(game));
-
         }
+
         const games = (await Promise.all(keys.map(getGame)))
             .concat()
             .flat()

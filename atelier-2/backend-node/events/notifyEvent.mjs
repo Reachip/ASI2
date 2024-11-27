@@ -51,7 +51,7 @@ export const notifyUser = async (io, userSocket , event, message) => {
 
 export const notifyRoom = (io, roomId, event, message) => {
     io.to(roomId).emit(event,message);
-    console.log(`Notification de la room : ${roomId}, event: ${event}, message: ${JSON.stringify(message)}`);
+    console.log(`Notification de la room : ${roomId}, event: ${event}`);
 }
 
 /**
