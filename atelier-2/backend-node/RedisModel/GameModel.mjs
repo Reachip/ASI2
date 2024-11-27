@@ -1,22 +1,21 @@
 export class GameModel
 {
-    constructor(gameId, roomId, rewardAmount, player1, player2, userTurn = 1,actionPoint=1)
+    constructor(gameId, roomId, rewardAmount, player1, player2, userTurn, actionPoint=1)
     {
         this.gameId = gameId;
         this.rewardAmount = rewardAmount;
         this.roomId = roomId;
         this.user1 = {
-            isTurn: userTurn === 1,
             userId: player1.id,
             cards: player1.cards,
             actionPoint: actionPoint
         };
         this.user2 = {
-            isTurn: userTurn === 2,
             userId: player2.id,
             cards: player2.cards,
             actionPoint: actionPoint
         };
+        this.userTurn = userTurn;
     }
 
     toJson()

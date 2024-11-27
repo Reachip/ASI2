@@ -102,13 +102,13 @@ export const playEvent = async (redis, io, data) => {
                 secondPlayer.cards = cardGamesSecondPlayer;
 
                 const gameService = new GameService(redis);
-                await gameService.createGame(createdGame, roomId,  firstPlayer, secondPlayer, randomValue == 1 ? firstPlayer.id : secondPlayer.id);
+                await gameService.createGame(createdGame, roomId, firstPlayer, secondPlayer, randomValue == 1 ? firstPlayer.id : secondPlayer.id);
 
                 const payload = {
                     'gameId': createdGame,
                     'player1': firstPlayer,
                     'player2': secondPlayer,
-                    'userTurn': randomValue == 1 ? firstPlayer.id : secondPlayer.id,
+                    'userTurn': randomValue == 1 ? firstPlayer.id : secondPlayer.id
                 }
                 notifyRoom(io, roomId, NOTIFY_ROOM_FIGHT_CREATED_EVENT, payload);
             })

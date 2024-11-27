@@ -31,13 +31,7 @@ class GameUpdater {
 
     async setTurn(playerId) {
         console.log('[GameUpdater] Setting turn for player:', playerId);
-        this.game.user1.isTurn = this.game.user1.userId === playerId;
-        this.game.user2.isTurn = this.game.user2.userId === playerId;
-
-        console.log('[GameUpdater] Turn status:', {
-            user1: { id: this.game.user1.userId, isTurn: this.game.user1.isTurn },
-            user2: { id: this.game.user2.userId, isTurn: this.game.user2.isTurn }
-        });
+        this.game.userTurn = playerId;
 
         await this.service.setGameInRedis(this.game.gameId, this.game);
     }
