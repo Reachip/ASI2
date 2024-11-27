@@ -1,14 +1,14 @@
 import {
     NOTIFY_NOT_ENOUGH_CARD_EVENT,
     NOTIFY_ROOM_FIGHT_CREATED_EVENT, NOTIFY_ROOM_PLAY_CANCEL,
-    TYPE_ROOM,
+    TYPE_ROOM, USER_ROOMS_HASH,
     WAITLIST_FIGHT_HASH
 } from "../utils/constants.mjs";
 import {notifyRoom, notifyUser} from "./notifyEvent.mjs";
 import {createRoom} from "../utils/roomUtils.mjs";
 import {UserRepository} from "../repository/UserRepository.mjs";
 import {GameRepository} from "../repository/GameRepository.mjs";
-import {getDetailsUserById} from "../utils/redisUtils.mjs";
+import {addInRedis, getDetailsUserById, logDetailsRedis} from "../utils/redisUtils.mjs";
 import RetryPlayQueue from "../service/RetryPlayQueue.mjs";
 import {GameService} from "../service/GameService.mjs";
 import {CardService} from "../service/CardService.mjs";
@@ -79,6 +79,10 @@ export const playEvent = async (redis, io, data) => {
         const userSocket2 = await io.sockets.sockets.get(detailsUser2.socketId);
 
         const roomId = createRoom(io, TYPE_ROOM.FIGHT, firstPlayer.id, secondPlayer.id, userSocket1, userSocket2);
+        await logDetailsRedis(io,redis);
+
+        await addInRedis(redis, USER_ROOMS_HASH, firstPlayer.id, roomId);
+        await addInRedis(redis, USER_ROOMS_HASH, secondPlayer.id, roomId);
 
         const randomValue = Math.floor(Math.random() * 2) + 1;
 
@@ -102,13 +106,13 @@ export const playEvent = async (redis, io, data) => {
                 secondPlayer.cards = cardGamesSecondPlayer;
 
                 const gameService = new GameService(redis);
-                await gameService.createGame(createdGame, roomId,  firstPlayer, secondPlayer, randomValue == 1 ? firstPlayer.id : secondPlayer.id);
+                await gameService.createGame(createdGame, roomId, firstPlayer, secondPlayer, randomValue == 1 ? firstPlayer.id : secondPlayer.id);
 
                 const payload = {
                     'gameId': createdGame,
                     'player1': firstPlayer,
                     'player2': secondPlayer,
-                    'userTurn': randomValue == 1 ? firstPlayer.id : secondPlayer.id,
+                    'userTurn': randomValue == 1 ? firstPlayer.id : secondPlayer.id
                 }
                 notifyRoom(io, roomId, NOTIFY_ROOM_FIGHT_CREATED_EVENT, payload);
             })

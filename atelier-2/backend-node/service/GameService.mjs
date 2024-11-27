@@ -49,6 +49,23 @@ export class GameService {
         return JSON.parse(gameModel);
     }
 
+    async getGameIdByUserIdInRedis(userId) {
+        console.log(`getGameIdByUserIdInRedis dans redis : userId=${userId}`);
+
+        const keys = await this.redis.hgetall(GAME_HASH);
+
+        for (const [key, value] of Object.entries(keys)) {
+            const gameData = JSON.parse(value);
+            // Vérifier si l'utilisateur correspond à user1 ou user2
+            if (
+                (gameData.user1 && gameData.user1.userId === parseInt(userId)) ||
+                (gameData.user2 && gameData.user2.userId === parseInt(userId))
+            ) {
+                return key;
+            }
+        }
+        return null;
+    }
 
     async getGameIdByCardIdInRedis(cardPlayerId, cardOpponentId){
         const keys = await this.redis.keys(GAME_HASH);
@@ -69,4 +86,16 @@ export class GameService {
         }
         return null;
     }
+
+
+    async deleteGameInRedisByUserId(userId){
+        const gameId = await this.getGameIdByUserIdInRedis(userId);
+        console.log(`Id de la game ${gameId} à supprimer de Redis`);
+
+        await this.redis.hdel(GAME_HASH,gameId);
+        console.log(`Game ${gameId} supprimé de Redis`);
+        const test = await this.redis.hgetall(GAME_HASH);
+        console.log("test : "+JSON.stringify(test));
+    }
+
 }
