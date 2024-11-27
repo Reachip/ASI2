@@ -29,7 +29,7 @@ const attackEvent = async (redis, io, socket, data) =>
 
     await lifecycle.updateActionPoint()
 
-    if (await lifecycle.isFinish()) {
+    if (lifecycle.isFinish()) {
         const currentPlayer = lifecycle.getCurrentPlayer()
         notifyRoom(io, game.roomId,NOTIFY_END_FIGHT, {winner: currentPlayer.id, game: lifecycle.getGame()});
     }

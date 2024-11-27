@@ -62,7 +62,7 @@ class GameLifecycle {
 
         const damage = Math.max(0,  cardAttack.attack - cardToAttack.defence);
 
-        this.cardToAttack.hp = Math.max(0, cardToAttack.hp - damage);
+        cardToAttack.hp = Math.max(0, cardToAttack.hp - damage);
         await this.game.setCard(cardToAttack.id, cardToAttack)
     }
 
@@ -70,29 +70,24 @@ class GameLifecycle {
         const currentPlayer = this.getCurrentPlayer()
         const remainingPoint = currentPlayer.actionPoint--;
 
-        await this.game.setActionPoint(currentPlayer.id, remainingPoint)
+        await this.game.setActionPoint(currentPlayer.userId, remainingPoint)
         console.debug(this.game.get())
 
-        if (this.currentPlayer.actionPoint <= 0) {
-            await this.game.setTurn(this.getOppenentPlayer().id)
+        if (currentPlayer.actionPoint <= 0) {
+            await this.game.setTurn(this.getOpponentPlayer().userId)
             console.debug(this.game.get())
         }
     }
 
-    async isFinish() {
-        if (this._getOpponentCards().every(card => card.hp <= 0)) {
-            console.log(`Le joueur ${this.opponentPlayer.id} à gagné contre ${this.opponentPlayer.id}`)
-            return true
-        }
-
-        return false
+    isFinish() {
+        return this._getOpponentCards().every(card => card.hp <= 0)
     }
 
     getGame() {
         return this.game.get()
     }
 
-    getOppenentPlayer() {
+    getOpponentPlayer() {
         const {_, oppenent} = this._getCurrentAndOpponentPlayer()
         return oppenent
     }
