@@ -1,6 +1,5 @@
 import { GameModel } from "../RedisModel/GameModel.mjs";
 import { GAME_HASH } from "../utils/constants.mjs";
-import {json} from "express";
 
 export class GameService {
 
@@ -49,22 +48,6 @@ export class GameService {
         console.log(`GameModel récupéré : ${JSON.stringify(gameModel)}`);
 
         return JSON.parse(gameModel);
-    }
-
-    async getGameIdByUserIdInRedis(userId){
-        console.log(`getGameIdByUserIdInRedis dans redis : userId=${userId}`);
-        const keys = await this.redis.keys(GAME_HASH);
-
-        for (const key of keys) {
-            const gameData = JSON.parse(await this.redis.get(key));
-            if (
-                (gameData.user1 && gameData.user1.userId === userId) ||
-                (gameData.user2 && gameData.user2.userId === userId)
-            ) {
-                return gameData.gameId;
-            }
-        }
-        return null;
     }
 
 
