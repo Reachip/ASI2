@@ -19,7 +19,7 @@ public class CardModelService {
 		this.cardRepository = cardRepository;
 		this.randomCardService = randomCardService;
 	}
-	
+
 	public List<CardModel> getAllCardModel() {
 		List<CardModel> cardList = new ArrayList<>();
 		cardRepository.findAll().forEach(cardList::add);
@@ -27,36 +27,28 @@ public class CardModelService {
 	}
 
 	public CardDTO addCard(CardModel cardModel) {
-
-
-
-		CardModel cDb=cardRepository.save(cardModel);
+		CardModel cDb = cardRepository.save(cardModel);
 		return DTOMapper.fromCardModelToCardDTO(cDb);
 	}
 
 	public CardDTO updateCard(CardModel cardModel) {
-		CardModel cDb=cardRepository.save(cardModel);
+		CardModel cDb = cardRepository.save(cardModel);
 		return DTOMapper.fromCardModelToCardDTO(cDb);
 	}
+
 	public Optional<CardModel> getCard(Integer id) {
 		return cardRepository.findById(id);
 	}
-	
+
 	public void deleteCardModel(Integer id) {
 		cardRepository.deleteById(id);
 	}
-	
-	public List<CardModel> getRandCard(int nbr){
-		List<CardModel> cardList=new ArrayList<>();
-		for(int i=0;i<nbr;i++) {
-			cardList.add(randomCardService.generateRandomCard());
-		}
-		return cardList;
+
+	public List<CardModel> getRandCard(int nbr) {
+		return randomCardService.generateRandomCards(nbr);
 	}
 
-
-	public List<CardModel> getAllCardToSell(){
+	public List<CardModel> getAllCardToSell() {
 		return this.cardRepository.findByUser(null);
 	}
 }
-
