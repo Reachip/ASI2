@@ -32,7 +32,7 @@ export class GameService {
      * @param {Object} gameModel - Le modèle de jeu à enregistrer dans Redis.
      */
     async setGameInRedis(idGame, gameModel) {
-        console.log(`setGameModel dans redis : idGame=${idGame}, gameModel=${JSON.stringify(gameModel)}`);
+        console.log("[GameService] Set or update game in Redis");
         await this.redis.hset(GAME_HASH, idGame, JSON.stringify(gameModel));
     }
 
@@ -43,9 +43,8 @@ export class GameService {
      * @returns {Object} - Le modèle de jeu récupéré de Redis.
      */
     async getGameInRedis(idGame) {
-        console.log(`getGameModel dans redis : idGame=${idGame}`);
+        console.log(`[GameService] Get game in Redis for ID ${idGame}`);
         const gameModel = await this.redis.hget(GAME_HASH, idGame);
-        console.log(`GameModel récupéré : ${JSON.stringify(gameModel)}`);
 
         return JSON.parse(gameModel);
     }
@@ -70,13 +69,4 @@ export class GameService {
         }
         return null;
     }
-
-
-
-    async updateGameInRedis(idGame, gameModel){
-        console.log(`setGameModel dans redis : idGame=${idGame}, gameModel=${JSON.stringify(gameModel)}`);
-        await this.redis.hset(GAME_HASH,idGame, gameModel);
-    }
-
-
 }

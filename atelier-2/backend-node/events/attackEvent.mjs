@@ -18,24 +18,32 @@ import GameLifecycle from "../game/GameLifecycle.mjs";
  * @param {string} data.cardAttackId - The identifier of the card being used to attack.
  * @returns {Promise<void>} Resolves when the attack logic has been processed successfully.
  */
-
-const attackEvent = async (redis, io, socket, data) => 
-{
+const attackEvent = async (redis, io, socket, data) => {
+    console.log('[AttackEvent] Processing attack:', data);
     const {cardPlayerId, cardOpponentId} = data;
 
     const service = new GameService(redis)
     const game = await service.getGameIdByCardIdInRedis(cardPlayerId, cardOpponentId)
-    const lifecycle = new GameLifecycle(game, cardPlayerId, cardOpponentId, redis)
+    console.log('[AttackEvent] Retrieved game:', game);
 
+    const lifecycle = new GameLifecycle(game, cardPlayerId, cardOpponentId, redis)
     await lifecycle.updateActionPoint()
 
-    if (lifecycle.isFinish()) {
-        const currentPlayer = lifecycle.getCurrentPlayer()
-        notifyRoom(io, game.roomId,NOTIFY_END_FIGHT, {winner: currentPlayer.id, game: lifecycle.getGame()});
-    }
+    const isFinished = await lifecycle.isFinish()
+    console.log('[AttackEvent] Game finished status:', isFinished);
 
-    else {
-        notifyRoom(io, game.roomId, NOTIFY_ATTACK_RESPONSE, lifecycle.getGame());
+    if (isFinished) {
+        const currentPlayer = await lifecycle.getCurrentPlayer()
+        const gameState = await lifecycle.getGame()
+        console.log('[AttackEvent] Game ended, winner:', currentPlayer.id);
+        notifyRoom(io, game.roomId, NOTIFY_END_FIGHT, {
+            winner: currentPlayer.id,
+            game: gameState
+        });
+    } else {
+        const gameState = await lifecycle.getGame()
+        console.log('[AttackEvent] Game continuing, notifying room');
+        notifyRoom(io, game.roomId, NOTIFY_ATTACK_RESPONSE, gameState);
     }
 }
 
