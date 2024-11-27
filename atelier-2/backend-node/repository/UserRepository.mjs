@@ -2,11 +2,13 @@ import axios from "axios";
 
 export class UserRepository {
     constructor() {
-        this.url = 'http://localhost:8080/api/user/';
+        this.url = 'http://localhost:8088/user/';
     }
 
-    async getUserCards(id) {
-        const response = await axios.get(`${this.url}${id}/cards`);
+    async getUserCards(userId) {
+        console.log("userId :"+userId);
+        const response = await axios.get(`${this.url}${userId}/cards`);
+
         return response.data.cardList;
     }
 

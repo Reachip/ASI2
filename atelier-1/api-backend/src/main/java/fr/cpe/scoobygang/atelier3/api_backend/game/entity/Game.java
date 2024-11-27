@@ -28,30 +28,12 @@ public class Game implements Serializable {
     private UserModel user2;
 
     @ManyToOne
-    @JoinColumn(name = "game_master_id")
-    private UserModel gameMaster;
-
-    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
-    private GameDeck deck1;
-
-    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
-    private GameDeck deck2;
-
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<GameHistory> gameHistories = new HashSet<>();
+    @JoinColumn(name = "winner_user_id")
+    private UserModel winner;
 
     private boolean finished;
 
     public void setIsFinished() {
         this.finished = true;
-    }
-
-    public void initializeDecks() {
-        this.deck1 = new GameDeck(this, user1);
-        this.deck2 = new GameDeck(this, user2);
-    }
-
-    public boolean isValidGameMaster() {
-        return gameMaster != null && (gameMaster.equals(user1) || gameMaster.equals(user2));
     }
 }

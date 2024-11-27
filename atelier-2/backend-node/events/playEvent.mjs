@@ -1,78 +1,122 @@
-import axios from "axios";
 import {
     NOTIFY_NOT_ENOUGH_CARD_EVENT,
-    NOTIFY_ROOM_FIGHT_CREATED_EVENT,
-    TYPE_ROOM,
+    NOTIFY_ROOM_FIGHT_CREATED_EVENT, NOTIFY_ROOM_PLAY_CANCEL,
+    TYPE_ROOM, USER_ROOMS_HASH,
     WAITLIST_FIGHT_HASH
 } from "../utils/constants.mjs";
 import {notifyRoom, notifyUser} from "./notifyEvent.mjs";
 import {createRoom} from "../utils/roomUtils.mjs";
 import {UserRepository} from "../repository/UserRepository.mjs";
 import {GameRepository} from "../repository/GameRepository.mjs";
-import { GameModel } from "../RedisModel/GameModel.mjs";
+import {addInRedis, getDetailsUserById, logDetailsRedis} from "../utils/redisUtils.mjs";
+import RetryPlayQueue from "../service/RetryPlayQueue.mjs";
+import {GameService} from "../service/GameService.mjs";
+import {CardService} from "../service/CardService.mjs";
+import {CardGame} from "../dto/CardGame.mjs";
 
 const userRepository = new UserRepository();
 const gameRepository = new GameRepository();
+const cardService = new CardService();
 
-export const playEvent = async (redis, io, id, userSocket) => {
+export const playEvent = async (redis, io, data) => {
     try {
+        const { id, cards } = data;
+
         const listCards = await userRepository.getUserCards(id);
-        console.log(`Liste des cartes de l'utilisateur (${id} récupéré :`, listCards);
+        console.log(`Liste des cartes de l'utilisateur (${id} récupérée :`, listCards);
 
-        const nbCard = listCards.length;
-        if (nbCard >= 5){
-            console.log(`L'utilisateur ${id} possède bien au moins 5 cartes : ${nbCard}`)
-            await redis.rpush(WAITLIST_FIGHT_HASH, id);
-            console.log(`Ajout de l'utilisateur ${id} dans la liste d'attente`);
+        if (cards.length !== 5) {
+            console.error("L'utilisateur doit pouvoir jouer avec cinq cartes");
+            return;
+        }
 
-            const listLength = await redis.llen(WAITLIST_FIGHT_HASH);
-            if (listLength >= 2) {
-                console.log("Il y a au moins deux personnes dans la liste d'attente.");
+        if (!cards.every(userCard => listCards.map(card => card.id).includes(userCard))) {
+            console.error("L'utilisateur ne peut pas jouer avec ces cartes");
+            return;
+        }
 
-                const firstTwo = await redis.lrange(WAITLIST_FIGHT_HASH, 0, 1);
-                await redis.ltrim(WAITLIST_FIGHT_HASH, 2, -1); // Supprime les deux premiers
-                console.log("Les deux premières personnes sont :", firstTwo);
+        const retryPlayQueue = new RetryPlayQueue(redis, id)
+        await retryPlayQueue.init()
 
-                const userSocket1 = await io.sockets.sockets.get(firstTwo[0]);
-                const userSocket2 = await  io.sockets.sockets.get(firstTwo[1]);
+        await redis.rpush(WAITLIST_FIGHT_HASH, JSON.stringify(data));
 
-                const roomId = createRoom(io,TYPE_ROOM.FIGHT,firstTwo[0],firstTwo[1], userSocket1, userSocket2);
+        while (await retryPlayQueue.shouldStopSearchingPlayer() || await redis.llen(WAITLIST_FIGHT_HASH) < 2) {
+            const retryFlag = await retryPlayQueue.get()
 
-                const randomIndex = Math.floor(Math.random() * firstTwo.length);
-                const gameMaster = firstTwo[randomIndex];
-
-                console.log(`Le game master est l'utilisateur : ${gameMaster}`);
-                const userId1 = Math.min(firstTwo[0], firstTwo[1]);
-                const userId2 =  Math.max(firstTwo[0], firstTwo[1]);
-
-                const gameCreationRequest = {
-                    user1Id: userId1,
-                    user2Id: userId2,
-                };
-
-                const resultCreateGame = await gameRepository.createGame(gameCreationRequest)
-                    .then(createdGame => {
-                            console.log("resultCreateGame : "+createdGame);
-                            // Création de la game dans Redis
-                            const game = new GameModel(createdGame);
-                            redis.hset("game", roomId, game.toJson());
-                        }
-                    )
-                    .catch(error => console.error('Error creating game:'+error));
-
-                notifyRoom(io,roomId,NOTIFY_ROOM_FIGHT_CREATED_EVENT,{'gameMaster':gameMaster});
-
-            } else {
-                console.log("Il y a moins de deux personnes dans la liste d'attente.");
+            if (retryFlag !== 'true') {
+                console.log(`Le retryFlag pour l'utilisateur ${id} est passé à false. Arrêt de la boucle.`);
+                return;
             }
 
-        }
-        else {
-            console.log(`L'utilisateur ${id} ne possede pas au moins 5 cartes : ${nbCard}`)
-
-            await notifyUser(io, userSocket, NOTIFY_NOT_ENOUGH_CARD_EVENT, "");
+            console.log("Moins de deux joueurs dans la liste d'attente. Nouvelle tentative dans 500ms...");
+            await new Promise(resolve => setTimeout(resolve, 500)); // Attente de 500ms
         }
 
+        await retryPlayQueue.delete()
+
+        console.log(`L'utilisateur ${id} possède bien au moins 5 cartes : ${cards.length}`);
+        console.log("Il y a au moins deux personnes dans la liste d'attente.");
+
+        const [firstPlayer, secondPlayer] = (await redis.lrange(WAITLIST_FIGHT_HASH, 0, 1)).map(player => JSON.parse(player));
+        await redis.ltrim(WAITLIST_FIGHT_HASH, 2, -1);
+
+        [new RetryPlayQueue(redis, firstPlayer.id), new RetryPlayQueue(redis, secondPlayer.id)].forEach(retryPlayQueue => {
+            retryPlayQueue.delete()
+        })
+
+        console.log("Les deux premières personnes sont :", firstPlayer, secondPlayer);
+
+        const detailsUser1 = await getDetailsUserById(redis, firstPlayer.id);
+        const detailsUser2 = await getDetailsUserById(redis, secondPlayer.id);
+
+        console.log(`detailsUser1 : ${detailsUser1}`);
+        console.log(`detailsUser2 : ${detailsUser2}`);
+
+        firstPlayer.username = detailsUser1.username;
+        secondPlayer.username = detailsUser2.username;
+
+        const userSocket1 = await io.sockets.sockets.get(detailsUser1.socketId);
+        const userSocket2 = await io.sockets.sockets.get(detailsUser2.socketId);
+
+        const roomId = createRoom(io, TYPE_ROOM.FIGHT, firstPlayer.id, secondPlayer.id, userSocket1, userSocket2);
+        await logDetailsRedis(io,redis);
+
+        await addInRedis(redis, USER_ROOMS_HASH, firstPlayer.id, roomId);
+        await addInRedis(redis, USER_ROOMS_HASH, secondPlayer.id, roomId);
+
+        const randomValue = Math.floor(Math.random() * 2) + 1;
+
+        const [userId1, userId2] = [Math.min(firstPlayer.id, secondPlayer.id), Math.max(firstPlayer.id, secondPlayer.id)];
+
+        const gameCreationRequest = {user1Id: userId1, user2Id: userId2};
+
+        await gameRepository.createGame(gameCreationRequest)
+            .then(async (createdGame) => {
+                console.log("Id de la game : " + JSON.stringify(createdGame));
+
+                // Récupère les cartes et crée des instances de CardGame
+                const listCardsFirstPlayer = await cardService.getCardsById(firstPlayer.cards);
+                const listCardsSecondPlayer = await cardService.getCardsById(secondPlayer.cards);
+
+                // Transforme les listes en instances de CardGame
+                const cardGamesFirstPlayer = listCardsFirstPlayer.map((card) => new CardGame(card));
+                const cardGamesSecondPlayer = listCardsSecondPlayer.map((card) => new CardGame(card));
+
+                firstPlayer.cards = cardGamesFirstPlayer;
+                secondPlayer.cards = cardGamesSecondPlayer;
+
+                const gameService = new GameService(redis);
+                await gameService.createGame(createdGame, roomId, firstPlayer, secondPlayer, randomValue == 1 ? firstPlayer.id : secondPlayer.id);
+
+                const payload = {
+                    'gameId': createdGame,
+                    'player1': firstPlayer,
+                    'player2': secondPlayer,
+                    'userTurn': randomValue == 1 ? firstPlayer.id : secondPlayer.id
+                }
+                notifyRoom(io, roomId, NOTIFY_ROOM_FIGHT_CREATED_EVENT, payload);
+            })
+            .catch(error => console.error('Error creating game:' + error));
     } catch (error) {
         console.error("Erreur lors de la récupération des cartes de l'utilisateur :", error.message);
         throw error;

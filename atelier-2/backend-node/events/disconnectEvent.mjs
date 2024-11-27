@@ -2,6 +2,8 @@ import { deleteInRedis, getListFromRedis, logDetailsRedis } from "../utils/redis
 import { updateConnectedUsers } from "./notifyEvent.mjs";
 import { deleteRoom } from "../utils/roomUtils.mjs";
 import { CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH } from "../utils/constants.mjs";
+import RetryPlayQueue from "../service/RetryPlayQueue.mjs";
+import {GameService} from "../service/GameService.mjs";
 
 /**
  * Gère la déconnexion d'un utilisateur et effectue les nettoyages nécessaires.
@@ -17,6 +19,9 @@ import { CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH } from "../ut
  */
 const disconnectEvent = async (redis, io, socketId, id, username) => {
     console.log("User disconnected:", id, username, socketId);
+
+    const retryPlayQueue = new RetryPlayQueue(redis, id)
+    await retryPlayQueue.delete()
 
     try {
         try {
@@ -59,6 +64,27 @@ const disconnectEvent = async (redis, io, socketId, id, username) => {
                             console.error(`Error removing room relationship for room ${room}:`, error.message);
                         }
                     }
+                }
+                else if (room.includes("fight_room")) {
+                    console.log("Contiens une fight room");
+                    const gameService =  new GameService(redis);
+                    await gameService.deleteGameInRedisByUserId(id);
+
+                    const match = room.match(/^fight_room_(\d+)_(\d+)$/);
+                    if (match) {
+                        const id1 = match[1];
+                        const id2 = match[2];
+                        const otherId = id1 === id.toString() ? id2 : id1;
+
+                        try {
+                            await deleteInRedis(redis, USER_ROOMS_HASH, id, room);
+                            await deleteInRedis(redis, USER_ROOMS_HASH, otherId, room);
+                            console.log(`Removed room relationship ${room} between ${id} and ${otherId}.`);
+                        } catch (error) {
+                            console.error(`Error removing room relationship for room ${room}:`, error.message);
+                        }
+                    }
+
                 }
 
                 try {

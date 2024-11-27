@@ -18,8 +18,8 @@ class NodeWebSocketService {
         });
 
         socket.on("connect", () => {
-            console.log("Node Socket.IO connection established");
             this.socket = socket;
+            console.log('Node Socket.IO connection established:', socket);
             webSocketListenerService.notifyListeners('nodeConnect', socket);
         });
 
