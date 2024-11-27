@@ -112,7 +112,7 @@ services:
   api-gateway:
     build:
       context: .
-      dockerfile: ./atelier-1/api-generation-image-microservice/Dockerfile
+      dockerfile: ./atelier-1/api-gateway/Dockerfile
     container_name: api-gateway
     networks:
       - shared-net
