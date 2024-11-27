@@ -1,4 +1,5 @@
 import {CONNECTED_USERS_HASH, NOTIFY_ROOM_FIGHT_CREATED_EVENT} from "../utils/constants.mjs";
+import {json} from "express";
 
 
 /**
@@ -43,13 +44,14 @@ export const notifyConversationHistory = async (io, userSocket, messages) => {
     }
 };
 export const notifyUser = async (io, userSocket , event, message) => {
-
     // Envoi à tous les clients connectés
     userSocket.emit(event, message);
+    console.log(`Notification socket, event: ${event}, message: ${message}`);
 }
 
 export const notifyRoom = (io, roomId, event, message) => {
     io.to(roomId).emit(event,message);
+    console.log(`Notification de la room : ${roomId}, event: ${event}`);
 }
 
 /**

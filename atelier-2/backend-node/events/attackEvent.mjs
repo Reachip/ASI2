@@ -1,5 +1,7 @@
-import { GAME_HASH } from "../utils/constants.mjs";
-import { AttackResponse } from "../dto/attackResponse.mjs";
+import {NOTIFY_ATTACK_RESPONSE, NOTIFY_END_FIGHT} from "../utils/constants.mjs";
+import {notifyRoom} from "./notifyEvent.mjs";
+import {GameService} from "../service/GameService.mjs";
+import GameLifecycle from "../game/GameLifecycle.mjs";
 
 /**
  * Handles the event for a player attacking with a card in a game.
@@ -16,76 +18,35 @@ import { AttackResponse } from "../dto/attackResponse.mjs";
  * @param {string} data.cardAttackId - The identifier of the card being used to attack.
  * @returns {Promise<void>} Resolves when the attack logic has been processed successfully.
  */
-const attackEvent = async (redis, io, socket, data) => 
-{
-    if (data === undefined || data === null)
-    {
-        return console.log("Error: gameId, userIdAttack, cardIdToAttack and cardAttackId are required.");
+const attackEvent = async (redis, io, socket, data) => {
+    console.log('[AttackEvent] Processing attack:', data);
+    const {cardPlayerId, cardOpponentId} = data;
+
+    const service = new GameService(redis)
+    const game = await service.getGameIdByCardIdInRedis(cardPlayerId, cardOpponentId)
+    console.log('[AttackEvent] Retrieved game:', game);
+
+    const lifecycle = new GameLifecycle(game, cardPlayerId, cardOpponentId, redis)
+
+    await lifecycle.updateActionPoint()
+    await lifecycle.attack()
+
+    const isFinished = await lifecycle.isFinish()
+    console.log('[AttackEvent] Game finished status:', isFinished);
+
+    if (isFinished) {
+        const currentPlayer = await lifecycle.getCurrentPlayer()
+        const gameState = await lifecycle.getGame()
+        console.log('[AttackEvent] Game ended, winner:', currentPlayer.id);
+        notifyRoom(io, game.roomId, NOTIFY_END_FIGHT, {
+            winner: currentPlayer.id,
+            game: gameState
+        });
+    } else {
+        const gameState = await lifecycle.getGame()
+        console.log('[AttackEvent] Game continuing, notifying room');
+        notifyRoom(io, game.roomId, NOTIFY_ATTACK_RESPONSE, gameState);
     }
-
-    const gameId = data.gameId;
-    const userIdAttack = data.userIdAttack;
-    const cardIdToAttack = data.cardIdToAttack;
-    const cardAttackId = data.cardAttackId;
-
-    const game = await redis.hget(GAME_HASH, gameId);
-    if (!game)
-    {
-        return console.log("Error: Game not found.");
-    }
-
-    const gameData = JSON.parse(game);
-
-    // Get current player :
-    const currentPlayer = gameData.userGameMaster.userId === userIdAttack ? gameData.userGameMaster : gameData.user2;
-
-    if (!currentPlayer)
-    {
-        return console.log("Error: Current player not found.");
-    }
-
-    if (currentPlayer.actionPoint <= 0)
-    {
-        return console.log("Error: Not enough action point.");
-    }
-
-    // Get opponent player :
-    const opponentPlayer = gameData.userGameMaster.userId === userIdAttack ? gameData.user2 : gameData.userGameMaster;
-
-    if (!opponentPlayer)
-    {
-        return console.log("Error: Opponent player not found.");
-    }
-
-    // Get current card :
-    const cardAttack = currentPlayer.cards.find(card => card.cardId === cardAttackId);
-
-    if (!cardAttack)
-    {
-        return console.log("Error: Card attack not found.");
-    }
-
-    // Get opponent card to attack :
-    const cardToAttack = opponentPlayer.cards.find(card => card.cardId === cardIdToAttack);
-
-    if (!cardToAttack)
-    {
-        return console.log("Error: Card to attack not found.");
-    }
-
-    // Attack : cardHp = cardHp - (cardAttack - cardDefense) (minimum 0)
-    cardToAttack.cardCurrentHp = Math.max(0, cardToAttack.cardCurrentHp - (cardAttack.cardAttack - cardToAttack.cardDefense));
-
-    // Update action point :
-    currentPlayer.actionPoint--;
-
-    // Update game data :
-    await redis.hset(GAME_HASH, gameId, JSON.stringify(gameData));
-
-    // Return AttackResponse :
-    const attackResponse = new AttackResponse(userIdAttack, cardAttackId, cardIdToAttack, cardToAttack.cardCurrentHp, currentPlayer.actionPoint);
-
-    return io.to("fight").emit("attackResponse", attackResponse.toJson());
 }
 
 export default attackEvent;

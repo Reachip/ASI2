@@ -8,6 +8,7 @@ import updateSelectedUserEvent from "./events/updateSelectedUserEvent.mjs";
 import sendMessageEvent from "./events/sendMessageEvent.mjs";
 import disconnectEvent from "./events/disconnectEvent.mjs";
 import {playEvent} from "./events/playEvent.mjs";
+import {playCancelEvent} from "./events/playCancelEvent.mjs";
 import attackEvent from './events/attackEvent.mjs';
 import endTurnEvent from './events/endTurnEvent.mjs';
 import setRewardAmountEvent from './events/setRewardAmountEvent.mjs';
@@ -20,11 +21,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 3002; // React port
 
-app.use(express.static(path.join(__dirname, 'public', 'my-chat-app', 'build')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'my-chat-app', 'build', 'index.html'));
-});
+app.disable('x-powered-by');
 
 const server = app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
@@ -51,8 +48,12 @@ io.on("connection", async (socket) => {
   });
 
   // Ajouter un utilisateur à la liste d'attente
-  socket.on('play', async (id) => {
-    await playEvent(redis, io, id, socket);
+  socket.on('play', async (data) => {
+    await playEvent(redis, io, data, socket);
+  });
+
+  socket.on('playCancel', async (data) => {
+    await playCancelEvent(redis, io, data, socket);
   });
 
   socket.on("disconnecting", async () => {

@@ -58,7 +58,10 @@ public class ApiBackendMonolithicApplication {
                 HashSet<CardModel> cards = new HashSet<>();
 
                 for (int i = 0; i < 10; i++) {
-                    cards.add(randomCardService.generateRandomCard());
+                    CardModel card = randomCardService.generateRandomCard();
+                    card.setUser(user);
+
+                    cards.add(card);
                 }
 
                 user.setCardList(cards);
