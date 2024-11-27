@@ -43,20 +43,36 @@ class GameLifecycle {
     }
 
     async attack() {
+        const attackLabel = {}
         console.log('[GameLifecycle] Initiating attack');
+
         const cardAttack = await this._getCurrentPlayerCard(this.currentCardPlayerId)
         const cardToAttack = await this._getOpponentCard(this.opponentCardPlayerId)
-        console.log('[GameLifecycle] Attack details:', { cardAttack, cardToAttack });
+
+        console.log('[GameLifecycle] Attack details:', { cardAttack, cardToAttack })
+
 
         if (cardAttack.hp === 0){
             console.error('[GameLifecycle] Attack failed: card has 0 HP');
             throw new Error("Error: you can't attack this card");
         }
 
-        const damage = Math.max(0, cardAttack.attack - cardToAttack.defence);
+        attackLabel.pvAvant = cardAttack.hp
+
+        const damage = Math.max(0, cardAttack.attack - cardToAttack.defence)
         cardToAttack.hp = Math.max(0, cardToAttack.hp - damage);
-        console.log('[GameLifecycle] Attack result:', { damage, updatedCard: cardToAttack });
-        await this.game.setCard(cardToAttack.id, cardToAttack)
+
+        attackLabel.pvApres = cardAttack.hp
+
+        attackLabel.cardToAttack = cardToAttack
+        attackLabel.cardAttack = cardAttack
+
+        attackLabel.currentCardPlayerId = this.currentCardPlayerId
+        attackLabel.opponentCardPlayerId = this.opponentCardPlayerId
+
+        console.log('[GameLifecycle] Attack result:', { damage, updatedCard: cardToAttack })
+
+        await this.game.setAttackLabel(attackLabel)
     }
 
     async updateActionPoint(){

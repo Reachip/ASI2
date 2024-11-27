@@ -29,6 +29,11 @@ class GameUpdater {
         await this.service.setGameInRedis(this.game.gameId, this.game);
     }
 
+    async setAttackLabel(attackLabel) {
+        this.game.attackLabel = attackLabel
+        await this.service.setGameInRedis(this.game.gameId, this.game);
+    }
+
     async setTurn(playerId) {
         console.log('[GameUpdater] Setting turn for player:', playerId);
         this.game.userTurn = playerId;

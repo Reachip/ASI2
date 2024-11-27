@@ -37,6 +37,7 @@ const attackEvent = async (redis, io, socket, data) => {
     if (isFinished) {
         const currentPlayer = await lifecycle.getCurrentPlayer()
         const gameState = await lifecycle.getGame()
+
         console.log('[AttackEvent] Game ended, winner:', currentPlayer.id);
         notifyRoom(io, game.roomId, NOTIFY_END_FIGHT, {
             winner: currentPlayer.id,
