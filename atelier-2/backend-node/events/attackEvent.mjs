@@ -1,5 +1,5 @@
-import {GAME_HASH, NOTIFY_ATTACK_RESPONSE, NOTIFY_END_FIGHT} from "../utils/constants.mjs";
-import { AttackResponse } from "../dto/attackResponse.mjs";
+import {NOTIFY_ATTACK_RESPONSE, NOTIFY_END_FIGHT} from "../utils/constants.mjs";
+import {AttackResponse} from "../dto/attackResponse.mjs";
 import {notifyRoom} from "./notifyEvent.mjs";
 import {GameService} from "../service/GameService.mjs";
 
@@ -28,11 +28,10 @@ const attackEvent = async (redis, io, socket, data) =>
         return console.log("Error: gameId, userIdAttack, cardIdToAttack and cardAttackId are required.");
     }
 
-    const userIdAttack = data.userIdAttack;
-    const cardIdToAttack = data.cardIdToAttack;
-    const cardAttackId = data.cardAttackId;
+    const {cardPlayerId, cardOpponentId} = data;
 
-    const gameData = await gameService.getGameIdByUserIdInRedis(userIdAttack);
+    const gameData = await gameService.getGameIdByCardIdInRedis(cardPlayerId, cardOpponentId)
+
     if (!gameData)
     {
         return console.log("Error: Game not found.");
@@ -41,12 +40,13 @@ const attackEvent = async (redis, io, socket, data) =>
     const [currentPlayer, opponentPlayer] = getCurrentAndOpponentPlayer(gameData);
 
     try {
-        validateTurnAndActionPoints(currentPlayer, userIdAttack);
+        const allCards = [currentPlayer.cards, opponentPlayer.cards].concat().flat()
 
-        const cardAttack = findCard(currentPlayer.cards, cardAttackId);
-        const cardToAttack = findCard(opponentPlayer.cards, cardIdToAttack);
+        const cardAttack = allCards.find(card => card.id === cardPlayerId)
+        const cardToAttack = allCards.find(card => card.id === cardOpponentId)
 
         const remainingHp = processAttack(cardAttack, cardToAttack);
+        cardToAttack.hp = remainingHp;
 
         const userTurn = updateActionPoint(currentPlayer, opponentPlayer);
 
@@ -54,12 +54,11 @@ const attackEvent = async (redis, io, socket, data) =>
 
         if (areAllCardsOutOfPv(opponentPlayer.cards)){
             console.log(`Le joueur ${currentPlayer.id} à gagner contre ${opponentPlayer.id}`)
-
             notifyRoom(io, gameData.roomId,NOTIFY_END_FIGHT, {'winner': currentPlayer.id});
         }
+
         else {
             const attackResponse = new AttackResponse(currentPlayer.id, opponentPlayer.id, currentPlayer.actionPoint, cardIdToAttack, remainingHp, userTurn);
-
             notifyRoom(io, gameData.roomId,NOTIFY_ATTACK_RESPONSE, attackResponse.toJson());
         }
 
@@ -108,10 +107,8 @@ function processAttack (cardAttack, cardToAttack){
     if (cardToAttack.hp === 0){
         throw new Error("Error: you can't attack this card");
     }
-    const damage = Math.max(0, cardAttack.attack - cardToAttack.defense);
-    const hp = Math.max(0, cardToAttack.hp - damage);
-    cardToAttack.hp = hp;
-    return hp;
+    const damage = Math.max(0, cardAttack.attack - cardToAttack.defence);
+    return Math.max(0, cardToAttack.hp - damage);
 }
 
 function updateActionPoint(currentPlayer, opponentPlayer){

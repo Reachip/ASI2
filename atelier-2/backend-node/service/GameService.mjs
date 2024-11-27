@@ -1,5 +1,6 @@
 import { GameModel } from "../RedisModel/GameModel.mjs";
 import { GAME_HASH } from "../utils/constants.mjs";
+import {json} from "express";
 
 export class GameService {
 
@@ -33,7 +34,7 @@ export class GameService {
      */
     async setGameInRedis(idGame, gameModel) {
         console.log(`setGameModel dans redis : idGame=${idGame}, gameModel=${JSON.stringify(gameModel)}`);
-        await this.redis.hset(GAME_HASH, idGame, gameModel);
+        await this.redis.hset(GAME_HASH, idGame, JSON.stringify(gameModel));
     }
 
     /**
@@ -61,6 +62,27 @@ export class GameService {
                 (gameData.user2 && gameData.user2.userId === userId)
             ) {
                 return gameData.gameId;
+            }
+        }
+        return null;
+    }
+
+
+    async getGameIdByCardIdInRedis(cardPlayerId, cardOpponentId){
+        const keys = await this.redis.keys(GAME_HASH);
+
+        const getGame = async (key) => {
+            const games = Object.values(await this.redis.hgetall(key))
+            return games.map(game => JSON.parse(game));
+
+        }
+        const games = (await Promise.all(keys.map(getGame)))
+            .concat()
+            .flat()
+
+        for (const game of games) {
+            if (game.user1.cards.some(card => card.id === cardPlayerId) || game.user2.cards.some(card => card.id === cardOpponentId)) {
+                return game;
             }
         }
         return null;
