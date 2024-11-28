@@ -62,6 +62,12 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
     };
 
     useEffect(() => {
+        if (gameNotification.isVisible && gameNotification.onHide) {
+            gameNotification.onHide();
+        }
+    }, [gameNotification]);
+
+    useEffect(() => {
         if (nodeSocket) {
             nodeSocket.on("notifyRoomFightCreated", (msg) => {
                 console.log("notifyRoomFightCreated: " + JSON.stringify(msg));
@@ -74,7 +80,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
             nodeSocket.on("attackResponse", (msg) => {
                 console.log("attackResponse: " + JSON.stringify(msg));
                 const { cardAttack, cardToAttack, initialHp, finalHp } = msg.attackLabel;
-
+            
                 setGameNotification({
                     type: 'attack',
                     isVisible: true,
@@ -84,32 +90,49 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                         initialHp,
                         finalHp,
                     },
-                    duration: 5000,
+                    duration: 3000,
                 });
-
+            
                 setGameNotification(prev => ({
                     ...prev,
                     onHide: () => {
-                        setGameInfo(prevGameInfo => {
-                            const updatedGameInfo = { ...prevGameInfo };
-                            const currentPlayerCards = updatedGameInfo.userTurn === user.id ? updatedGameInfo.player1.cards : updatedGameInfo.player2.cards;
-                            
-                            const card = currentPlayerCards.find(card => card.id === cardToAttack);
-                            if (card) card.hp = finalHp;
-                        
-                            if (updatedGameInfo.userTurn === user.id) {
-                                updatedGameInfo.player1.cards = currentPlayerCards;
-                            } else {
-                                updatedGameInfo.player2.cards = currentPlayerCards;
-                            }
-
-                            updatedGameInfo.userTurn = msg.userTurn;
-
-                            return updatedGameInfo;
-                        });
+                        setTimeout(() => {
+                            setGameInfo(prevGameInfo => {
+                                const updatedGameInfo = { ...prevGameInfo };
+            
+                                let card;
+                                let playerToUpdate;
+            
+                                if (updatedGameInfo.player1.cards.some(c => c.id === cardToAttack.id)) {
+                                    card = updatedGameInfo.player1.cards.find(c => c.id === cardToAttack.id);
+                                    playerToUpdate = 'player1';
+                                } else if (updatedGameInfo.player2.cards.some(c => c.id === cardToAttack.id)) {
+                                    card = updatedGameInfo.player2.cards.find(c => c.id === cardToAttack.id);
+                                    playerToUpdate = 'player2';
+                                }
+            
+                                if (card) {
+                                    card.hp = finalHp;
+                                }
+            
+                                if (playerToUpdate === 'player1') {
+                                    updatedGameInfo.player1.cards = updatedGameInfo.player1.cards.map(c =>
+                                        c.id === cardToAttack.id ? card : c
+                                    );
+                                } else if (playerToUpdate === 'player2') {
+                                    updatedGameInfo.player2.cards = updatedGameInfo.player2.cards.map(c =>
+                                        c.id === cardToAttack.id ? card : c
+                                    );
+                                }
+            
+                                updatedGameInfo.userTurn = msg.userTurn;
+            
+                                return updatedGameInfo;
+                            });
+                        }, 1000);
                     }
                 }));
-            });
+            });            
 
             nodeSocket.on("endFight", (msg) => {
                 console.log("endFight: " + JSON.stringify(msg));
