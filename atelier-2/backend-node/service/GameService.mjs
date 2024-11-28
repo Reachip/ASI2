@@ -61,7 +61,7 @@ export class GameService {
                 (gameData.user1 && gameData.user1.userId === parseInt(userId)) ||
                 (gameData.user2 && gameData.user2.userId === parseInt(userId))
             ) {
-                return key;
+                return gameData;
             }
         }
         return null;
