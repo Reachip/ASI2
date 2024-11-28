@@ -3,8 +3,12 @@ import { Typography, Box } from '@mui/material';
 import PopupDialog from '../layout/PopupDialog';
 import CardPreview from '../cards/CardPreview';
 
-const GameNotification = ({ type, isVisible, onHide, playerName = null, attackerCard, defenderCard, initialHp, finalHp }) => {
-    const [currentHp, setCurrentHp] = useState(initialHp);
+const GameNotification = ({ type, isVisible, onHide, data = {} }) => {
+    const { playerName, attackerCard, defenderCard, initialHp, finalHp } = data;
+    const [currentHp, setCurrentHp] = useState(initialHp || 0);
+    const animationDuration = 5000;
+    const steps = Math.abs(initialHp - finalHp);
+    const stepDuration = animationDuration / steps;
 
     useEffect(() => {
         if (isVisible && type === 'attack') {
@@ -14,15 +18,15 @@ const GameNotification = ({ type, isVisible, onHide, playerName = null, attacker
                         return prevHp - 1;
                     } else {
                         clearInterval(interval);
-                        setTimeout(onHide, 1000);
-                        return prevHp;
+                        setTimeout(onHide, 2000);
+                        return finalHp;
                     }
                 });
-            }, 100);
+            }, stepDuration);
 
             return () => clearInterval(interval);
         }
-    }, [isVisible, type, onHide, finalHp]);
+    }, [isVisible, type, onHide, initialHp, finalHp, stepDuration]);
 
     const getMessage = () => {
         switch (type) {
@@ -36,7 +40,20 @@ const GameNotification = ({ type, isVisible, onHide, playerName = null, attacker
                 return (
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                         <CardPreview card={attackerCard} />
-                        <CardPreview card={{ ...defenderCard, hp: currentHp }} />
+                        <Box>
+                            <CardPreview card={defenderCard} />
+                            <Typography
+                                variant="body1"
+                                align="center"
+                                sx={{
+                                    color: 'red',
+                                    fontWeight: 'bold',
+                                    transition: 'color 0.3s ease-in-out',
+                                }}
+                            >
+                                HP: {currentHp}
+                            </Typography>
+                        </Box>
                     </Box>
                 );
             default:
