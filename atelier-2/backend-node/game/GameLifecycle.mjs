@@ -61,14 +61,13 @@ class GameLifecycle {
             return console.error('[GameLifecycle] Attack failed: card has 0 HP');
         }
 
-        attackLabel.initialHp = cardAttack.hp
+        attackLabel.initialHp = cardToAttack.hp
 
         const randomDefence = cardToAttack.defence + Math.floor(Math.random() * 11) - 5
         const damage = cardAttack.attack - randomDefence;
 
         cardToAttack.hp = damage
-
-        attackLabel.finalHp = cardAttack.hp
+        attackLabel.finalHp = cardToAttack.hp
 
         attackLabel.cardToAttack = cardToAttack
         attackLabel.cardAttack = cardAttack
