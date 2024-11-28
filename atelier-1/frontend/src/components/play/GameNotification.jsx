@@ -3,22 +3,28 @@ import { Typography, Box } from '@mui/material';
 import PopupDialog from '../layout/PopupDialog';
 import CardPreview from '../cards/CardPreview';
 
-const GameNotification = ({ type, isVisible, onHide, data = {} }) => {
+const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 5000 }) => {
     const { playerName, attackerCard, defenderCard, initialHp, finalHp } = data;
     const [currentHp, setCurrentHp] = useState(initialHp || 0);
-    const animationDuration = 5000;
     const steps = Math.abs(initialHp - finalHp);
-    const stepDuration = animationDuration / steps;
+    const stepDuration = duration / steps; 
 
     useEffect(() => {
+        setCurrentHp(initialHp);
+
         if (isVisible && type === 'attack') {
+            let currentStep = 0;
+
             const interval = setInterval(() => {
                 setCurrentHp((prevHp) => {
-                    if (prevHp > finalHp) {
-                        return prevHp - 1;
+                    if (currentStep < steps) {
+                        currentStep++;
+                        return initialHp > finalHp ? prevHp - 1 : prevHp + 1;
                     } else {
                         clearInterval(interval);
-                        setTimeout(onHide, 2000);
+                        setTimeout(() => {
+                            onHide();
+                        }, 3000);
                         return finalHp;
                     }
                 });
@@ -26,7 +32,15 @@ const GameNotification = ({ type, isVisible, onHide, data = {} }) => {
 
             return () => clearInterval(interval);
         }
-    }, [isVisible, type, onHide, initialHp, finalHp, stepDuration]);
+    }, [isVisible, type, initialHp, finalHp, steps, stepDuration, onHide]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            onHide();
+        }, duration);
+
+        return () => clearTimeout(timer);
+    }, [duration, onHide]);
 
     const getMessage = () => {
         switch (type) {
@@ -40,20 +54,7 @@ const GameNotification = ({ type, isVisible, onHide, data = {} }) => {
                 return (
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                         <CardPreview card={attackerCard} />
-                        <Box>
-                            <CardPreview card={defenderCard} />
-                            <Typography
-                                variant="body1"
-                                align="center"
-                                sx={{
-                                    color: 'red',
-                                    fontWeight: 'bold',
-                                    transition: 'color 0.3s ease-in-out',
-                                }}
-                            >
-                                HP: {currentHp}
-                            </Typography>
-                        </Box>
+                        <CardPreview card={{ ...defenderCard, hp: currentHp }} />
                     </Box>
                 );
             default:

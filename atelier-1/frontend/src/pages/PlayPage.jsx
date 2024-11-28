@@ -73,13 +73,6 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
 
             nodeSocket.on("attackResponse", (msg) => {
                 console.log("attackResponse: " + JSON.stringify(msg));
-                setGameInfo((prevGameInfo) => {
-                    const updatedGameInfo = { ...prevGameInfo };
-                    updatedGameInfo.userTurn = msg.userTurn;
-                  
-                    return updatedGameInfo;
-                });
-
                 const { cardAttack, cardToAttack, initialHp, finalHp } = msg.attackLabel;
 
                 setGameNotification({
@@ -91,7 +84,29 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                         initialHp,
                         finalHp,
                     },
+                    duration: 5000,
                 });
+
+                setGameNotification(prev => ({
+                    ...prev,
+                    onHide: () => {
+                        setGameInfo(prevGameInfo => {
+                            const updatedGameInfo = { ...prevGameInfo };
+                            const currentPlayerCards = updatedGameInfo.userTurn === user.id ? updatedGameInfo.player1.cards : updatedGameInfo.player2.cards;
+                            
+                            const card = currentPlayerCards.find(card => card.id === cardToAttack);
+                            if (card) card.hp = finalHp;
+                        
+                            if (updatedGameInfo.userTurn === user.id) {
+                                updatedGameInfo.player1.cards = currentPlayerCards;
+                            } else {
+                                updatedGameInfo.player2.cards = currentPlayerCards;
+                            }
+                        
+                            return updatedGameInfo;
+                        });
+                    }
+                }));
             });
 
             nodeSocket.on("endFight", (msg) => {
