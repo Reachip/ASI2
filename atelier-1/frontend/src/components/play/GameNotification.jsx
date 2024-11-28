@@ -1,17 +1,28 @@
-import React, { useEffect } from 'react';
-import { Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Typography, Box } from '@mui/material';
 import PopupDialog from '../layout/PopupDialog';
+import CardPreview from '../cards/CardPreview';
 
-const GameNotification = ({ type, isVisible, onHide, playerName = null }) => {
+const GameNotification = ({ type, isVisible, onHide, playerName = null, attackerCard, defenderCard, initialHp, finalHp }) => {
+    const [currentHp, setCurrentHp] = useState(initialHp);
+
     useEffect(() => {
-        if (isVisible) {
-            const timer = setTimeout(() => {
-                onHide();
-            }, 2000);
+        if (isVisible && type === 'attack') {
+            const interval = setInterval(() => {
+                setCurrentHp((prevHp) => {
+                    if (prevHp > finalHp) {
+                        return prevHp - 1;
+                    } else {
+                        clearInterval(interval);
+                        setTimeout(onHide, 1000);
+                        return prevHp;
+                    }
+                });
+            }, 100);
 
-            return () => clearTimeout(timer);
+            return () => clearInterval(interval);
         }
-    }, [isVisible, onHide]);
+    }, [isVisible, type, onHide, finalHp]);
 
     const getMessage = () => {
         switch (type) {
@@ -21,6 +32,13 @@ const GameNotification = ({ type, isVisible, onHide, playerName = null }) => {
                 return "You win! 🎉";
             case 'loser':
                 return "You lose! 😢";
+            case 'attack':
+                return (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                        <CardPreview card={attackerCard} />
+                        <CardPreview card={{ ...defenderCard, hp: currentHp }} />
+                    </Box>
+                );
             default:
                 return "Notification";
         }
