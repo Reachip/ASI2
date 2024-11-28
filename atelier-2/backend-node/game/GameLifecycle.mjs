@@ -65,8 +65,8 @@ class GameLifecycle {
 
         attackLabel.initialHp = cardAttack.hp
 
-        const damage = Math.max(0, cardAttack.attack - cardToAttack.defence)
-        cardToAttack.hp = Math.max(0, cardToAttack.hp - damage);
+        const damage = cardAttack.attack - cardToAttack.defence
+        cardToAttack.hp = damage
 
         attackLabel.finalHp = cardAttack.hp
 
