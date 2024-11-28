@@ -2,7 +2,11 @@ import {NOTIFY_ATTACK_RESPONSE, NOTIFY_END_FIGHT} from "../utils/constants.mjs";
 import {notifyRoom} from "./notifyEvent.mjs";
 import {GameService} from "../service/GameService.mjs";
 import GameLifecycle from "../game/GameLifecycle.mjs";
+import SaveGameTransactionActiveMq from "../activemq/SaveGameTransactionActiveMq.mjs";
+import {GameTransactionDTO} from "../dto/GameTransactionDTO.mjs";
 
+
+const saveGameTransactionActiveMq = new SaveGameTransactionActiveMq();
 /**
  * Handles the event for a player attacking with a card in a game.
  *
@@ -36,13 +40,19 @@ const attackEvent = async (redis, io, socket, data) => {
 
     if (isFinished) {
         const currentPlayer = await lifecycle.getCurrentPlayer()
+        const opponentPlayer = await lifecycle.getOpponentPlayer()
         const gameState = await lifecycle.getGame()
 
-        console.log('[AttackEvent] Game ended, winner:', currentPlayer.id);
+        console.log('[AttackEvent] Game ended, winner:', currentPlayer.userId);
         notifyRoom(io, game.roomId, NOTIFY_END_FIGHT, {
             winner: currentPlayer.id,
             game: gameState
         });
+
+        const gameTransactionDTO = new GameTransactionDTO(game.gameId, currentPlayer.userId, opponentPlayer.userId, 100, -100 );
+        console.log('[AttackEvent] gameTransactionDTO:', gameTransactionDTO);
+        await saveGameTransactionActiveMq.sendMessage(gameTransactionDTO);
+
     } else {
         const gameState = await lifecycle.getGame()
         console.log('[AttackEvent] Game continuing, notifying room');

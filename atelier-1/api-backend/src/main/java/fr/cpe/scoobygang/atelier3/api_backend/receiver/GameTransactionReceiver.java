@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class GameTransactionReceiver implements Receiver {
@@ -46,6 +47,13 @@ public class GameTransactionReceiver implements Receiver {
                     .orElseThrow(() -> new IllegalArgumentException("Game not found"));
 
             game.setIsFinished();
+
+            int winnerId = gameTransaction.getMoneyOperation1() < 0 ? gameTransaction.getUser1Id() : gameTransaction.getUser2Id();
+
+            Optional<UserModel> optionalUserModel =  userRepository.findById(winnerId);
+            if (optionalUserModel.isEmpty() ) new IllegalArgumentException("User not found with ID: " + winnerId);
+
+            game.setWinner(optionalUserModel.get());
 
             UserModel user1 = userRepository.findById(gameTransaction.getUser1Id())
                     .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + gameTransaction.getUser1Id()));

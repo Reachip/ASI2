@@ -4,6 +4,10 @@ import { deleteRoom } from "../utils/roomUtils.mjs";
 import { CONNECTED_USERS_HASH, SELECTED_USER_HASH, USER_ROOMS_HASH } from "../utils/constants.mjs";
 import RetryPlayQueue from "../service/RetryPlayQueue.mjs";
 import {GameService} from "../service/GameService.mjs";
+import {GameTransactionDTO} from "../dto/GameTransactionDTO.mjs";
+import SaveGameTransactionActiveMq from "../activemq/SaveGameTransactionActiveMq.mjs";
+
+const saveGameTransactionActiveMq = new SaveGameTransactionActiveMq();
 
 /**
  * Gère la déconnexion d'un utilisateur et effectue les nettoyages nécessaires.
@@ -68,6 +72,7 @@ const disconnectEvent = async (redis, io, socketId, id, username) => {
                 else if (room.includes("fight_room")) {
                     console.log("Contiens une fight room");
                     const gameService =  new GameService(redis);
+                    const gameId = await gameService.getGameIdByUserIdInRedis(id);
                     await gameService.deleteGameInRedisByUserId(id);
 
                     const match = room.match(/^fight_room_(\d+)_(\d+)$/);
@@ -83,6 +88,12 @@ const disconnectEvent = async (redis, io, socketId, id, username) => {
                         } catch (error) {
                             console.error(`Error removing room relationship for room ${room}:`, error.message);
                         }
+
+                        const gameTransactionDTO = new GameTransactionDTO(parseInt(gameId, 10), parseInt(id1, 10), parseInt(otherId, 10), 100, -100 );
+
+                        await saveGameTransactionActiveMq.sendMessage(gameTransactionDTO);
+
+
                     }
 
                 }
