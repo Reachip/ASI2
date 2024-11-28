@@ -11,7 +11,6 @@ class GameLifecycle {
         this.opponentCardPlayerId = cardOpponentId;
     }
 
-
     async _getCardsOf(playerID) {
         console.log('[GameLifecycle] Getting all opponent cards');
 
@@ -54,11 +53,15 @@ class GameLifecycle {
 
         const cardAttack = await this._getCard(this.currentCardPlayerId)
         const cardToAttack = await this._getCard(this.opponentCardPlayerId)
+        
+        if (cardAttack == null || cardToAttack == null)
+            throw new Error('Attack failed: Could not find current card or card to attack');
 
         console.log('[GameLifecycle] Attack details:', { cardAttack, cardToAttack })
 
         if (cardAttack.hp === 0) {
-            return console.error('[GameLifecycle] Attack failed: card has 0 HP');
+            console.error('[GameLifecycle] Attack failed: card has 0 HP');
+            throw new Error('Attack failed: card has 0 HP');
         }
 
         const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min

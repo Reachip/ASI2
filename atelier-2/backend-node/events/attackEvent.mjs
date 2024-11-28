@@ -1,4 +1,4 @@
-import {NOTIFY_ATTACK_RESPONSE, NOTIFY_END_FIGHT} from "../utils/constants.mjs";
+import {NOTIFY_ATTACK_RESPONSE, NOTIFY_END_FIGHT, NOTIFY_ERROR_RESPONSE} from "../utils/constants.mjs";
 import {notifyRoom} from "./notifyEvent.mjs";
 import {GameService} from "../service/GameService.mjs";
 import GameLifecycle from "../game/GameLifecycle.mjs";
@@ -24,39 +24,44 @@ const saveGameTransactionActiveMq = new SaveGameTransactionActiveMq();
  */
 const attackEvent = async (redis, io, socket, data) => {
     console.log('[AttackEvent] Processing attack:', data);
-    const {cardPlayerId, cardOpponentId} = data;
 
+    const { cardPlayerId, cardOpponentId } = data;
     const service = new GameService(redis)
     const game = await service.getGameIdByCardIdInRedis(cardPlayerId, cardOpponentId)
-    console.log('[AttackEvent] Retrieved game:', game);
 
-    const lifecycle = new GameLifecycle(game, cardPlayerId, cardOpponentId, redis)
+    try {
+        console.log('[AttackEvent] Retrieved game:', game);
 
-    await lifecycle.updateActionPoint()
-    await lifecycle.attack()
+        const lifecycle = new GameLifecycle(game, cardPlayerId, cardOpponentId, redis)
 
-    const isFinished = await lifecycle.isFinish()
-    console.log('[AttackEvent] Game finished status:', isFinished);
+        await lifecycle.updateActionPoint()
+        await lifecycle.attack()
 
-    if (isFinished) {
-        const currentPlayer = await lifecycle.getCurrentPlayer()
-        const opponentPlayer = await lifecycle.getOpponentPlayer()
-        const gameState = await lifecycle.getGame()
+        const isFinished = await lifecycle.isFinish()
+        console.log('[AttackEvent] Game finished status:', isFinished);
 
-        console.log('[AttackEvent] Game ended, winner:', currentPlayer.userId);
-        notifyRoom(io, game.roomId, NOTIFY_END_FIGHT, {
-            winner: currentPlayer.id,
-            game: gameState
-        });
+        if (isFinished) {
+            const currentPlayer = await lifecycle.getCurrentPlayer()
+            const opponentPlayer = await lifecycle.getOpponentPlayer()
+            const gameState = await lifecycle.getGame()
 
-        const gameTransactionDTO = new GameTransactionDTO(game.gameId, currentPlayer.userId, opponentPlayer.userId, 100, -100 );
-        console.log('[AttackEvent] gameTransactionDTO:', gameTransactionDTO);
-        await saveGameTransactionActiveMq.sendMessage(gameTransactionDTO);
+            console.log('[AttackEvent] Game ended, winner:', currentPlayer.userId);
+            notifyRoom(io, game.roomId, NOTIFY_END_FIGHT, {
+                winner: currentPlayer.id,
+                game: gameState
+            });
 
-    } else {
-        const gameState = await lifecycle.getGame()
-        console.log('[AttackEvent] Game continuing, notifying room');
-        notifyRoom(io, game.roomId, NOTIFY_ATTACK_RESPONSE, gameState);
+            const gameTransactionDTO = new GameTransactionDTO(game.gameId, currentPlayer.userId, opponentPlayer.userId, 100, -100 );
+            console.log('[AttackEvent] gameTransactionDTO:', gameTransactionDTO);
+            await saveGameTransactionActiveMq.sendMessage(gameTransactionDTO);
+
+        } else {
+            const gameState = await lifecycle.getGame()
+            console.log('[AttackEvent] Game continuing, notifying room');
+            notifyRoom(io, game.roomId, NOTIFY_ATTACK_RESPONSE, gameState);
+        }
+    } catch (error) {
+        notifyRoom(io, game.roomId, NOTIFY_ERROR_RESPONSE, {error});
     }
 }
 
