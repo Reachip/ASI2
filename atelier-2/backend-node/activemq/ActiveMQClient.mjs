@@ -33,13 +33,13 @@ class ActiveMQClient
             });
         });
     }
-    async send(destination, message) {
+    async send(destination, message, objectType) {
         await this._ensureConnected();
         return new Promise((resolve, reject) => {
             const sendHeaders = {
                 destination: destination,
                 'content-type': 'application/json',
-                'ObjectType': 'fr.cpe.scoobygang.common.activemq.model.MessageActiveMQ'
+                'ObjectType': objectType
             };
             const frame = this.client.send(sendHeaders);
             frame.write(JSON.stringify(message));
@@ -49,5 +49,3 @@ class ActiveMQClient
     }
 }
 export default ActiveMQClient;
-
-//'ObjectType': 'fr.cpe.scoobygang.atelier3.api_backend.receiver.MessageActiveMQ'

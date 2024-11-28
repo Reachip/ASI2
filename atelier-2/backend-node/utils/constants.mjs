@@ -29,3 +29,6 @@ export const TYPE_ROOM = {
 // Hash pour stocker les games en cours
 export const GAME_HASH = "game";
 
+export const OBJECT_TYPE_MESSAGE_ACTIVEMQ = "fr.cpe.scoobygang.common.activemq.model.MessageActiveMQ";
+
+export const OBJECT_TYPE_GAME_TRANSACTION_ACTIVEMQ= "fr.cpe.scoobygang.atelier3.api_backend.game.dto.GameTransactionDTO";

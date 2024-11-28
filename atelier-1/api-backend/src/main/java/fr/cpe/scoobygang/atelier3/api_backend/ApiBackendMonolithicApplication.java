@@ -3,6 +3,7 @@ package fr.cpe.scoobygang.atelier3.api_backend;
 import fr.cpe.scoobygang.atelier3.api_backend.card.Controller.CardModelRepository;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_backend.card.service.RandomCardService;
+import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserModel;
 import fr.cpe.scoobygang.atelier3.api_backend.user.service.RandomUserService;
 import fr.cpe.scoobygang.atelier3.api_backend.user.controller.UserRepository;
 import jakarta.transaction.Transactional;
@@ -18,6 +19,8 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @EnableJms
 @SpringBootApplication
@@ -52,19 +55,27 @@ public class ApiBackendMonolithicApplication {
             userRepository.deleteAll();
             cardRepository.deleteAll();
 
-            userRepository.saveAll(randomUserService.getAllUsers());
+            List<UserModel> users = randomUserService.getAllUsers();
+            userRepository.saveAll(users);
+
+            Set<String> usedCardNames = new HashSet<>();
 
             userRepository.findAll().forEach(user -> {
-                HashSet<CardModel> cards = new HashSet<>();
+                HashSet<CardModel> uniqueCards = new HashSet<>();
 
                 for (int i = 0; i < 10; i++) {
-                    CardModel card = randomCardService.generateRandomCard();
-                    card.setUser(user);
+                    CardModel card;
 
-                    cards.add(card);
+                    do {
+                        card = randomCardService.generateRandomCard();
+                    } while (usedCardNames.contains(card.getName()));
+
+                    card.setUser(user);
+                    uniqueCards.add(card);
+                    usedCardNames.add(card.getName());
                 }
 
-                user.setCardList(cards);
+                user.setCardList(uniqueCards);
                 userRepository.save(user);
             });
         };

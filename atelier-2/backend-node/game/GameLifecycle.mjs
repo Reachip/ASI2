@@ -57,16 +57,16 @@ class GameLifecycle {
 
         console.log('[GameLifecycle] Attack details:', { cardAttack, cardToAttack })
 
-
-        if (cardAttack.hp === 0){
-            console.error('[GameLifecycle] Attack failed: card has 0 HP');
-            throw new Error("Error: you can't attack this card");
+        if (cardAttack.hp === 0) {
+            return console.error('[GameLifecycle] Attack failed: card has 0 HP');
         }
 
         attackLabel.initialHp = cardAttack.hp
 
-        const damage = Math.max(0, cardAttack.attack - cardToAttack.defence)
-        cardToAttack.hp = Math.max(0, cardToAttack.hp - damage);
+        const randomDefence = cardToAttack.defence + Math.floor(Math.random() * 11) - 5
+        const damage = cardAttack.attack - randomDefence;
+
+        cardToAttack.hp = damage
 
         attackLabel.finalHp = cardAttack.hp
 
