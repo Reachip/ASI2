@@ -73,26 +73,25 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
 
             nodeSocket.on("attackResponse", (msg) => {
                 console.log("attackResponse: " + JSON.stringify(msg));
-                // Mettre à jour l'état du jeu en fonction de la réponse de l'attaque
                 setGameInfo((prevGameInfo) => {
                     const updatedGameInfo = { ...prevGameInfo };
                     updatedGameInfo.userTurn = msg.userTurn;
-                    updatedGameInfo.player1.actionPoints = msg.userIdAttack === updatedGameInfo.player1.id ? msg.actionPoints : updatedGameInfo.player1.actionPoints;
-                    updatedGameInfo.player2.actionPoints = msg.userIdAttack === updatedGameInfo.player2.id ? msg.actionPoints : updatedGameInfo.player2.actionPoints;
-
-                    // Mettre à jour les HP des cartes
-                    const opponentCards = msg.userIdAttack === updatedGameInfo.player1.id ? updatedGameInfo.player2.cards : updatedGameInfo.player1.cards;
-                    const updatedOpponentCards = opponentCards.map(card =>
-                        card.id === msg.cardIdToAttack ? { ...card, hp: msg.remainingHp } : card
-                    );
-
-                    if (msg.userIdAttack === updatedGameInfo.player1.id) {
-                        updatedGameInfo.player2.cards = updatedOpponentCards;
-                    } else {
-                        updatedGameInfo.player1.cards = updatedOpponentCards;
-                    }
-
+                  
                     return updatedGameInfo;
+                });
+
+                const cardAttack = msg.attackLabel.cardAttack;
+                const cardToAttack = msg.attackLabel.cardToAttack;
+                const initialHp = msg.attackLabel.initialHp;
+                const finalHp = msg.attackLabel.finalHp;
+
+                setGameNotification({
+                    type: 'attack',
+                    isVisible: true,
+                    cardAttack,
+                    cardToAttack,
+                    initialHp,
+                    finalHp
                 });
             });
 
@@ -254,6 +253,10 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                     isVisible={gameNotification.isVisible}
                     onHide={() => setGameNotification({ ...gameNotification, isVisible: false })}
                     playerName={gameInfo.userTurn === user.id ? null : (user.id === gameInfo.player1.id ? gameInfo.player2.username : gameInfo.player1.username)}
+                    attackerCard={gameNotification.attackerCard}
+                    defenderCard={gameNotification.defenderCard}
+                    initialHp={gameNotification.initialHp}
+                    finalHp={gameNotification.finalHp}
                 />
             )}
         </Box>
