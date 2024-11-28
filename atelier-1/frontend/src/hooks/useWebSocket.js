@@ -9,6 +9,7 @@ export const useWebSocket = (user) => {
     const [chatMessages, setChatMessages] = useState([]);
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [generatedCard, setGeneratedCard] = useState(null);
+    const [errorNodeMessage, setErrorNode] = useState(null);
 
     const handleSpringMessage = useCallback((data) => {
         switch (data.type) {
@@ -38,6 +39,11 @@ export const useWebSocket = (user) => {
             message: message.content,
             timestamp: message.time
         }]);
+    }, []);
+
+    const handleNodeErrorMesssage = useCallback(error => {
+        console.log("erreur : ", error)
+        setErrorNode(error.message);
     }, []);
 
     const handleUserList = useCallback((users) => {
@@ -72,6 +78,7 @@ export const useWebSocket = (user) => {
             ['springMessage', handleSpringMessage],
             ['nodeConnect', setNodeSocket],
             ['newMessage', handleNodeMessage],
+            ['errorResponse', handleNodeErrorMesssage],
             ['updateConnectedUsers', setConnectedUsers],
             ['conversationHistory', handleConversationHistory]
         ];
@@ -105,6 +112,7 @@ export const useWebSocket = (user) => {
         chatMessages,
         connectedUsers,
         generatedCard,
-        sendChatMessage
+        sendChatMessage,
+        errorNodeMessage
     };
 };

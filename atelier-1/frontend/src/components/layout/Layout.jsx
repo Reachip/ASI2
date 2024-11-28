@@ -17,7 +17,8 @@ const Layout = ({ children, subtitle }) => {
     chatMessages,
     connectedUsers,
     generatedCard,
-    sendChatMessage
+    sendChatMessage,
+    errorNodeMessage,
   } = useWebSocket(isAuthenticated ? user : null);
 
   const handleClose = (event, reason) => {
@@ -51,7 +52,8 @@ const Layout = ({ children, subtitle }) => {
   return (
     <Box>
       <Navbar subtitle={subtitle} />
-      <Notification open={open} currentMessage={currentMessage} onClose={handleClose} />
+      <Notification open={open} currentMessage={errorNodeMessage} onClose={handleClose} />
+      <Notification severity="success" variant="filled" open={open} currentMessage={currentMessage} onClose={handleClose} />
       <Container component="main" sx={{ flexGrow: 1, py: 1 }} maxWidth={false}>
         {childrenWithProps}
       </Container>
