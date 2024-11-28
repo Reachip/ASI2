@@ -73,6 +73,9 @@ class GameLifecycle {
         console.log('[GameLifecycle] Attack result:', { damage, updatedCard: cardToAttack })
 
         await this.game.setAttackLabel(attackLabel)
+
+        console.log('[GameLifecycle] Attack result:', attackLabel);
+        await this.game.setCard(cardToAttack.id, cardToAttack)
     }
 
     async updateActionPoint(){
