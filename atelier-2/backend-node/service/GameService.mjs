@@ -80,10 +80,14 @@ export class GameService {
             .flat()
 
         for (const game of games) {
-            if (game.user1.cards.some(card => card.id === cardPlayerId) || game.user2.cards.some(card => card.id === cardOpponentId)) {
+            const currentPlayer = game.userTurn === game.user1.userId ? game.user1 : game.user2;
+            const opponentPlayer = game.userTurn === game.user1.userId ? game.user2 : game.user1;
+
+            if (currentPlayer.cards.some(card => card.id === cardPlayerId) || opponentPlayer.cards.some(card => card.id === cardOpponentId)) {
                 return game;
             }
         }
+
         return null;
     }
 
