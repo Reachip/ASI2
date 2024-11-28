@@ -102,7 +102,9 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                             } else {
                                 updatedGameInfo.player2.cards = currentPlayerCards;
                             }
-                        
+
+                            updatedGameInfo.userTurn = msg.userTurn;
+
                             return updatedGameInfo;
                         });
                     }
