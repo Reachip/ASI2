@@ -30,7 +30,7 @@ class GameLifecycle {
         return cards;
     }
 
-    async _getCurrentPlayerCard(cardPlayerId) {
+    async _getCard(cardPlayerId) {
         console.log('[GameLifecycle] Getting current player card:', cardPlayerId);
 
         const game = await this.game.get()
@@ -56,8 +56,8 @@ class GameLifecycle {
 
         console.log('[GameLifecycle] Initiating attack');
 
-        const cardAttack = await this._getCurrentPlayerCard(this.currentCardPlayerId)
-        const cardToAttack = await this._getOpponentCard(this.opponentCardPlayerId)
+        const cardAttack = await this._getCard(this.currentCardPlayerId)
+        const cardToAttack = await this._getCard(this.opponentCardPlayerId)
 
         console.log('[GameLifecycle] Attack details:', { cardAttack, cardToAttack })
 
