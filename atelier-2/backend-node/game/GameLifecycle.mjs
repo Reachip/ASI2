@@ -40,7 +40,7 @@ class GameLifecycle {
         console.log('[GameLifecycle] Getting current and opponent players');
 
         const game = await this.game.get()
-        const players = game.user1.id == game.userTurn ? {current: game.user1, opponent: game.user2} : {current: game.user2, opponent: game.user1};
+        const players = game.user1.userId == game.userTurn ? {current: game.user1, opponent: game.user2} : {current: game.user2, opponent: game.user1};
 
         console.log('[GameLifecycle] Players:', players);
 
