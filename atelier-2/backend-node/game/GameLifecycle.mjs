@@ -64,8 +64,10 @@ class GameLifecycle {
         }
 
         attackLabel.initialHp = cardAttack.hp
+        
+        const randomDefence = cardToAttack.defence + Math.floor(Math.random() * 11) - 5
+        const damage = cardAttack.attack - randomDefence;
 
-        const damage = cardAttack.attack - cardToAttack.defence
         cardToAttack.hp = damage
 
         attackLabel.finalHp = cardAttack.hp
