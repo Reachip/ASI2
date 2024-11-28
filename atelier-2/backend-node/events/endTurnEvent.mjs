@@ -1,5 +1,7 @@
-import { GAME_HASH } from "../utils/constants.mjs";
-import { EndTurnResponse } from "../dto/endTurnResponse.mjs";
+import {GameService} from "../service/GameService.mjs";
+import GameUpdater from "../game/GameUpdater.mjs";
+import {notifyRoom} from "./notifyEvent.mjs";
+import {NOTIFY_ATTACK_RESPONSE, NOTIFY_END_TURN} from "../utils/constants.mjs";
 
 /**
  * Handles the event to end a player's turn in a game.
@@ -15,40 +17,22 @@ import { EndTurnResponse } from "../dto/endTurnResponse.mjs";
  * @returns {Promise<void>} Resolves when the turn-ending logic has been processed successfully.
  */
 const endTurnEvent = async (redis, io, socket, data) => {
-    // End turn event logic : no attack, no card played, just end the turn and add one action point to player
+    const service = new GameService(redis)
+    const game = await service.getGameIdByUserIdInRedis(data.userId)
 
-    if (data === undefined || data === null)
-    {
-        return console.log("Error: gameId and userId are required.");
-    }
+    console.log('[AttackEvent] Retrieved game:', game);
 
-    const gameId = data.gameId;
-    const userId = data.userId;
+    const currentUser = game.user1 === data.userId ? game.user1 : game.user2
+    const opponent = game.user1 === data.userId ? game.user2 : game.user1
 
-    const game = await redis.hget(GAME_HASH, gameId);
+    const gameUpdater = new GameUpdater(redis, game)
 
-    if (!game)
-    {
-        return console.log("Error: Game not found.");
-    }
+    await gameUpdater.setActionPoint(data.userId, currentUser.actionPoint + 1)
+    await gameUpdater.setActionPoint(opponent.userId, opponent.actionPoint + 1)
 
-    const gameData = JSON.parse(game);
+    await gameUpdater.setTurn(opponent.userId)
 
-    // Get current player :
-    const currentPlayer = gameData.userGameMaster.userId === userId ? gameData.userGameMaster : gameData.user2;
-
-    if (!currentPlayer)
-    {
-        return console.log("Error: Current player not found.");
-    }
-
-    currentPlayer.actionPoint += 1;
-
-    await redis.hset(GAME_HASH, gameId, JSON.stringify(gameData));
-
-    const response = new EndTurnResponse(gameId, userId);
-
-    return io.to("fight").emit("endTurnResponse", response.toJson());
+    notifyRoom(io, game.roomId, NOTIFY_END_TURN, gameUpdater.get());
 }
 
 export default endTurnEvent;
