@@ -13,7 +13,7 @@ class GameLifecycle {
     async _getOpponentCard(cardOpponentId) {
         console.log('[GameLifecycle] Getting opponent card:', cardOpponentId);
         const game = await this.game.get()
-        const card = game.user1.userId == game.userTurn ? game.user2.cards.find(card => card.id === cardOpponentId) : game.user1.cards.find(card => card.id === cardOpponentId);
+        const card = [game.user1.cards, game.user2.cards].flat().find(card => card.id === cardOpponentId)
         console.log('[GameLifecycle] Found opponent card:', card);
         return card;
     }
@@ -29,7 +29,7 @@ class GameLifecycle {
     async _getCurrentPlayerCard(cardPlayerId) {
         console.log('[GameLifecycle] Getting current player card:', cardPlayerId);
         const game = await this.game.get()
-        const card = game.user1.userId == game.userTurn ? game.user1.cards.find(card => card.id === cardPlayerId) : game.user2.cards.find(card => card.id === cardPlayerId);
+        const card = [game.user1.cards, game.user2.cards].flat().find(card => card.id === cardPlayerId)
         console.log('[GameLifecycle] Found current player card:', card);
         return card;
     }
@@ -37,7 +37,7 @@ class GameLifecycle {
     async _getCurrentAndOpponentPlayer() {
         console.log('[GameLifecycle] Getting current and opponent players');
         const game = await this.game.get()
-        const players = game.user1.id == game.userTurn ? {current: game.user1, opponent: game.user2} : {current: game.user2, opponent: game.user1};
+        const players = game.user1.id === game.userTurn ? {current: game.user1, opponent: game.user2} : {current: game.user2, opponent: game.user1};
         console.log('[GameLifecycle] Players:', players);
         return players;
     }

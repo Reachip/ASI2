@@ -22,7 +22,7 @@ export class GameService {
         const gameModel = new GameModel(idGame, roomId, 100, firstPlayer, secondPlayer, userTurn);
         console.log("gameModel crée : " + JSON.stringify(gameModel));
 
-        await this.setGameInRedis(idGame, gameModel);
+        return await this.setGameInRedis(idGame, gameModel);
     }
 
     /**
@@ -33,7 +33,10 @@ export class GameService {
      */
     async setGameInRedis(idGame, gameModel) {
         console.log("[GameService] Set or update game in Redis");
-        await this.redis.hset(GAME_HASH, idGame, JSON.stringify(gameModel));
+        const game =  JSON.stringify(gameModel)
+        await this.redis.hset(GAME_HASH, idGame, game);
+
+        return game
     }
 
     /**
