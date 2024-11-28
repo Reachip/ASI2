@@ -1,8 +1,11 @@
 import React from 'react';
 import { Card as MuiCard, CardMedia, Typography, Box } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const Card = ({ card, isSelected, onClick }) => {
+  const isZeroHP = card.hp === 0;
+
   return (
     <MuiCard
       onClick={onClick}
@@ -12,11 +15,24 @@ const Card = ({ card, isSelected, onClick }) => {
         transition: 'transform 0.2s',
         height: '150px',
         width: '120px',
-        position: 'relative'
+        position: 'relative',
       }}
     >
       <Box sx={{ position: 'relative', height: '100%' }}>
-        {isSelected && (
+        {isZeroHP && (
+          <CancelIcon
+            sx={{
+              position: 'absolute',
+              top: 8,
+              left: 8,
+              color: 'error.main',
+              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              borderRadius: '50%',
+              zIndex: 1,
+            }}
+          />
+        )}
+        {isSelected && !isZeroHP && (
           <CheckCircleIcon
             sx={{
               position: 'absolute',
@@ -33,7 +49,10 @@ const Card = ({ card, isSelected, onClick }) => {
           component="img"
           image={card.imgUrl}
           alt={card.name}
-          sx={{ height: '100%' }}
+          sx={{
+            height: '100%',
+            filter: isZeroHP ? 'grayscale(100%)' : 'none',
+          }}
         />
         <Typography
           variant="subtitle2"

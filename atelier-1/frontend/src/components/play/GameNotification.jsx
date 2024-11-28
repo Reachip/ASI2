@@ -3,7 +3,7 @@ import { Typography, Box } from '@mui/material';
 import PopupDialog from '../layout/PopupDialog';
 import CardPreview from '../cards/CardPreview';
 
-const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 5000 }) => {
+const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 3000 }) => {
     const { playerName, attackerCard, defenderCard, initialHp, finalHp } = data;
     const [currentHp, setCurrentHp] = useState(initialHp || 0);
     const steps = Math.abs(initialHp - finalHp);
@@ -19,7 +19,7 @@ const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 5000 
                 setCurrentHp((prevHp) => {
                     if (currentStep < steps) {
                         currentStep++;
-                        return initialHp > finalHp ? prevHp - 1 : prevHp + 1;
+                        return prevHp - 1;
                     } else {
                         clearInterval(interval);
                         setTimeout(() => {
@@ -52,7 +52,7 @@ const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 5000 
                 return "You lose! 😢";
             case 'attack':
                 return (
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
                         <CardPreview card={attackerCard} />
                         <CardPreview card={{ ...defenderCard, hp: currentHp }} />
                     </Box>

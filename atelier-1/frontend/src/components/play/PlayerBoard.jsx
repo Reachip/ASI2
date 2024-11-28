@@ -13,7 +13,7 @@ const PlayerBoard = ({ player, cards, onCardSelect, selectedCard, isOpponent }) 
             </Box>
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', alignItems: 'center', flex: 1, padding: '20px', overflow: 'auto' }}>
                 {cards.map((card) => (
-                    <Card key={card.id} card={card} isSelected={selectedCard?.id === card.id} onClick={() => onCardSelect(card)} />
+                    <Card key={card.id} card={card} isSelected={selectedCard?.id === card.id} onClick={() => { if (card.hp > 0) { onCardSelect(card) } }} />
                 ))}
             </Box>
         </Box>
