@@ -8,7 +8,7 @@ import GameBoard from '../components/play/GameBoard';
 import PopupDialog from '../components/layout/PopupDialog';
 import CardsGrid from '../components/cards/CardsGrid';
 import SearchingOpponent from '../components/play/SearchingOpponent';
-import GameNotification from '../components/play/GameNotification'; // Import the GameNotification component
+import GameNotification from '../components/play/GameNotification';
 
 const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) => {
     const { user } = useSelector(selectAuth);
@@ -80,18 +80,17 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                     return updatedGameInfo;
                 });
 
-                const cardAttack = msg.attackLabel.cardAttack;
-                const cardToAttack = msg.attackLabel.cardToAttack;
-                const initialHp = msg.attackLabel.initialHp;
-                const finalHp = msg.attackLabel.finalHp;
+                const { cardAttack, cardToAttack, initialHp, finalHp } = msg.attackLabel;
 
                 setGameNotification({
                     type: 'attack',
                     isVisible: true,
-                    cardAttack,
-                    cardToAttack,
-                    initialHp,
-                    finalHp
+                    data: {
+                        attackerCard: cardAttack,
+                        defenderCard: cardToAttack,
+                        initialHp,
+                        finalHp,
+                    },
                 });
             });
 
@@ -106,11 +105,10 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                 setGameStarted(false); // Revenir à l'écran de sélection des cartes
 
                 // Afficher la notification de fin de combat
-                if (msg.winner === user.id) {
-                    setGameNotification({ type: 'winner', isVisible: true });
-                } else {
-                    setGameNotification({ type: 'loser', isVisible: true });
-                }
+                setGameNotification({
+                    type: msg.winner === user.id ? 'winner' : 'loser',
+                    isVisible: true,
+                });
             });
         }
 
@@ -161,6 +159,17 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         nodeSocket.emit('attack', {
             cardPlayerId: selectedPlayerCard.id,
             cardOpponentId: selectedOpponentCard.id
+        });
+
+        setSelectedPlayerCard(null);
+        setSelectedOpponentCard(null);
+    };
+
+    const handleEndTurn = () => {
+        if (!selectedPlayerCard || !selectedOpponentCard || !gameInfo || gameInfo.userTurn !== user.id) return;
+
+        nodeSocket.emit('endTurn', {
+            userId: user.id,
         });
 
         setSelectedPlayerCard(null);
@@ -224,6 +233,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                     onPlayerCardSelect={handlePlayerCardSelect}
                     onOpponentCardSelect={handleOpponentCardSelect}
                     onAttack={handleAttack}
+                    onEndTurn={handleEndTurn}
                     isPlayerTurn={gameInfo && gameInfo.userTurn === user.id}
                     currentPlayerName={gameInfo?.userTurn === user.id ? null : (user.id === gameInfo.player1.id ? gameInfo.player2.username : gameInfo.player1.username)}
                 />
@@ -247,18 +257,12 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                 )}
             </PopupDialog>
 
-            {gameStarted && gameInfo && (
-                <GameNotification
-                    type={gameNotification.type}
-                    isVisible={gameNotification.isVisible}
-                    onHide={() => setGameNotification({ ...gameNotification, isVisible: false })}
-                    playerName={gameInfo.userTurn === user.id ? null : (user.id === gameInfo.player1.id ? gameInfo.player2.username : gameInfo.player1.username)}
-                    attackerCard={gameNotification.attackerCard}
-                    defenderCard={gameNotification.defenderCard}
-                    initialHp={gameNotification.initialHp}
-                    finalHp={gameNotification.finalHp}
-                />
-            )}
+            <GameNotification
+                type={gameNotification.type}
+                isVisible={gameNotification.isVisible}
+                onHide={() => setGameNotification({ ...gameNotification, isVisible: false })}
+                data={gameNotification.data}
+            />
         </Box>
     );
 };
