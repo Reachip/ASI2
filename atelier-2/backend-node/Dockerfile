@@ -2,11 +2,11 @@ FROM node:20-slim
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY atelier-2/backend-node/package.json ./
 
 RUN npm i
 
-COPY . .
+COPY atelier-2/backend-node/. .
 
 EXPOSE 3002
 
