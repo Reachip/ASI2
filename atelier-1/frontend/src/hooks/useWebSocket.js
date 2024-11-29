@@ -9,7 +9,7 @@ export const useWebSocket = (user) => {
     const [chatMessages, setChatMessages] = useState([]);
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [generatedCard, setGeneratedCard] = useState(null);
-    const [errorNodeMessage, setErrorNode] = useState(null);
+    const [errorNode, setErrorNode] = useState(null);
 
     const handleUserList = useCallback((users) => {
         setConnectedUsers(prev => {
@@ -109,6 +109,6 @@ export const useWebSocket = (user) => {
         connectedUsers,
         generatedCard,
         sendChatMessage,
-        errorNodeMessage
+        errorNode
     };
 };
