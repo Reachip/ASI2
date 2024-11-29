@@ -43,7 +43,6 @@ const attackEvent = async (redis, io, socket, data) => {
         if (isFinished) {
             const currentPlayer = await lifecycle.getCurrentPlayer()
             const opponentPlayer = await lifecycle.getOpponentPlayer()
-            const gameState = await lifecycle.getGame()
 
             console.log('[AttackEvent] Game ended, winner:', currentPlayer.userId);
 
