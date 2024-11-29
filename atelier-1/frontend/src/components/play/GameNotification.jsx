@@ -14,7 +14,7 @@ const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 3000 
             let currentStep = 0;
 
             const interval = setInterval(() => {
-                if(currentStep == 0) {
+                if(currentStep === 0) {
                     setCurrentHp(initialHp);
                 }
 
