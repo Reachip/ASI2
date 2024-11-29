@@ -38,7 +38,11 @@ export const playEvent = async (redis, io, data) => {
         const retryPlayQueue = new RetryPlayQueue(redis, id)
         await retryPlayQueue.init()
 
-        await redis.rpush(WAITLIST_FIGHT_HASH, JSON.stringify(data));
+        const existingQueue = (await redis.lrange(WAITLIST_FIGHT_HASH, 0, -1)).map(player => JSON.parse(player));
+
+        if (!existingQueue.some(player => player.id === id)) {
+            await redis.rpush(WAITLIST_FIGHT_HASH, JSON.stringify(data));
+        }
 
         while (await retryPlayQueue.shouldStopSearchingPlayer() || await redis.llen(WAITLIST_FIGHT_HASH) < 2) {
             const retryFlag = await retryPlayQueue.get()
