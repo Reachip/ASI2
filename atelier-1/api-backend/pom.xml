@@ -108,7 +108,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.mozen.jardocker.App</mainClass>
+							<mainClass>fr.cpe.scoobygang.atelier3.api_backend.ApiBackendMonolithicApplication</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
