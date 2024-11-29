@@ -129,7 +129,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
             
                                 return updatedGameInfo;
                             });
-                        }, 1000);
+                        }, 3000);
                     }
                 }));
             });            
@@ -211,7 +211,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         nodeSocket.emit('endTurn', {
             userId: user.id,
         });
-
+        
         setSelectedPlayerCard(null);
         setSelectedOpponentCard(null);
     };
@@ -221,10 +221,13 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         if (currentTurn !== undefined && currentTurn !== lastTurn) {
             setLastTurn(currentTurn);
     
+            setSelectedPlayerCard(null);
+            setSelectedOpponentCard(null);
+
             setGameNotification({
                 type: 'turn',
                 isVisible: true,
-                data: { playerName: currentTurn === user.id ? null : (gameInfo?.userTurn === gameInfo?.player1.id ? gameInfo?.player2.username : gameInfo?.player1.username) },
+                data: { playerName: currentTurn === user.id ? null : ( gameInfo?.player1.id === user.id ? gameInfo?.player2.username : gameInfo?.player1.username) },
                 duration: 3000,
             });
         }

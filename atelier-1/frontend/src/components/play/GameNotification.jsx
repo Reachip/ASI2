@@ -58,8 +58,8 @@ const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 3000 
                         <Typography variant="h6" align="center">
                             {playerName ? `${playerName} attacks!` : 'Attack!'}
                         </Typography>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '80%' }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: 800 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300, width: 'auto' }}>
                                 <CardPreview card={attackerCard} sx={{ height: 300, width: 'auto' }} />
                             </Box>
                             <Box
@@ -68,7 +68,7 @@ const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 3000 
                                 alt="Fight GIF"
                                 sx={{ width: 170, height: 170, objectFit: 'contain' }}
                             />
-                            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300, width: 'auto' }}>
                                 <CardPreview card={{ ...defenderCard, hp: currentHp }} sx={{ height: 300, width: 'auto' }} />
                             </Box>
                         </Box>
