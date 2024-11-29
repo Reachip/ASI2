@@ -3,6 +3,7 @@ package fr.cpe.scoobygang.atelier3.api_backend;
 import fr.cpe.scoobygang.atelier3.api_backend.card.Controller.CardModelRepository;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_backend.card.service.RandomCardService;
+import fr.cpe.scoobygang.atelier3.api_backend.game.repository.GameRepository;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserModel;
 import fr.cpe.scoobygang.atelier3.api_backend.user.service.RandomUserService;
 import fr.cpe.scoobygang.atelier3.api_backend.user.controller.UserRepository;
@@ -36,8 +37,10 @@ public class ApiBackendMonolithicApplication {
     private final CardModelRepository cardRepository;
     private final RandomCardService randomCardService;
     private final RandomUserService randomUserService;
+    private final GameRepository gameRepository;
 
-    public ApiBackendMonolithicApplication(UserRepository userRepository, CardModelRepository cardRepository, RandomCardService randomCardService, RandomUserService randomUserService) {
+    public ApiBackendMonolithicApplication(GameRepository gameRepository, UserRepository userRepository, CardModelRepository cardRepository, RandomCardService randomCardService, RandomUserService randomUserService) {
+        this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.cardRepository = cardRepository;
         this.randomCardService = randomCardService;
@@ -52,6 +55,7 @@ public class ApiBackendMonolithicApplication {
     @Transactional
     public CommandLineRunner run() {
         return args -> {
+            gameRepository.deleteAll();
             userRepository.deleteAll();
             cardRepository.deleteAll();
 
