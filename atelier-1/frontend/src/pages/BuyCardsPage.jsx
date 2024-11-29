@@ -15,7 +15,7 @@ const BuyCardsPage = () => {
   const [cards] = useState([
     {
       id: 1,
-      img_src: "http://www.superherobroadband.com/app/themes/superhero/assets/img/superhero.gif",
+      imgUrl: "http://www.superherobroadband.com/app/themes/superhero/assets/img/superhero.gif",
       name: "SUPERMAN",
       description: "The origin story of Superman...",
       hp: 500,
@@ -26,7 +26,7 @@ const BuyCardsPage = () => {
     },
     {
       id: 2,
-      img_src: "https://static.fnac-static.com/multimedia/Images/8F/8F/7D/66/6716815-1505-1540-1/tsp20171122191008/Lego-lgtob12b-lego-batman-movie-lampe-torche-batman.jpg",
+      imgUrl: "https://static.fnac-static.com/multimedia/Images/8F/8F/7D/66/6716815-1505-1540-1/tsp20171122191008/Lego-lgtob12b-lego-batman-movie-lampe-torche-batman.jpg",
       name: "BATMAN",
       description: "Bruce Wayne, alias Batman...",
       hp: 50,
@@ -37,7 +37,7 @@ const BuyCardsPage = () => {
     },
     {
       id: 3,
-      img_src: "https://static.hitek.fr/img/actualite/2017/06/27/i_deadpool-2.jpg",
+      imgUrl: "https://static.hitek.fr/img/actualite/2017/06/27/i_deadpool-2.jpg",
       name: "DEADPOOL",
       description: "Le convoi d'Ajax est attaqué...",
       hp: 999,
@@ -113,8 +113,25 @@ const BuyCardsPage = () => {
         <Box flex={1} pr={2}>
           <CardsTable cards={cards} selectedCard={selectedCard} onSelectCard={setSelectedCard} />
         </Box>
-        <Box width="360px" pl={2}>
-          <CardPreview card={selectedCard} onAction={handleBuy} label={`Buy for ${selectedCard ? selectedCard.price : ''}$`} color="primary" />
+        <Box 
+          width="360px" 
+          pl={2} 
+          sx={{
+            height: '420px',
+            padding: '3px',
+            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+          }}
+        >
+          <CardPreview 
+            card={selectedCard} 
+            onAction={handleBuy} 
+            label={`Buy for ${selectedCard ? selectedCard.price : ''}$`} 
+            color="primary" 
+          />
         </Box>
       </Box>
     </div>

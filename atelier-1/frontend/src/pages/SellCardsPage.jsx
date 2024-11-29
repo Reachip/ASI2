@@ -79,8 +79,25 @@ const SellCardsPage = () => {
         <Box flex={1} pr={2}>
           <CardsTable cards={userCards} selectedCard={selectedCard} onSelectCard={setSelectedCard} action="sell" />
         </Box>
-        <Box width="360px" pl={2}>
-          <CardPreview card={selectedCard} onAction={handleSell} label={`Sell`} color="primary" />
+        <Box 
+          width="360px" 
+          pl={2} 
+          sx={{
+            height: '420px',
+            padding: '3px',
+            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+          }}
+        >
+          <CardPreview 
+            card={selectedCard} 
+            onAction={handleSell} 
+            label={`Sell`} 
+            color="primary" 
+          />
         </Box>
       </Box>
     </div>

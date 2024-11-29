@@ -53,6 +53,9 @@ const CardPreview = ({ card, label, color = 'primary', onAction }) => {
                             height: '100%',
                             objectFit: 'cover',
                             filter: card.hp === 0 ? 'grayscale(100%)' : 'none',
+                            objectFit: 'cover',
+                            minWidth: '100%',
+                            minHeight: '100%',
                         }}
                     />
                 </Box>
