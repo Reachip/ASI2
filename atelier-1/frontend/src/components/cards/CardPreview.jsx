@@ -8,8 +8,6 @@ import WhatshotIcon from '@mui/icons-material/Whatshot';
 const CardPreview = ({ card, label, color = 'primary', onAction }) => {
     if (!card) return null;
 
-    const isZeroHP = card.hp === 0;
-
     return (
         <Paper
             sx={{
@@ -19,7 +17,8 @@ const CardPreview = ({ card, label, color = 'primary', onAction }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
-                filter: isZeroHP ? 'grayscale(100%)' : 'none', // Apply grayscale if HP is 0
+                filter: card.hp === 0 ? 'grayscale(100%)' : 'none',
+                boxSizing: 'border-box',
             }}
         >
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
@@ -53,7 +52,7 @@ const CardPreview = ({ card, label, color = 'primary', onAction }) => {
                             width: '100%',
                             height: '100%',
                             objectFit: 'cover',
-                            filter: isZeroHP ? 'grayscale(100%)' : 'none', // Apply grayscale to the image if HP is 0
+                            filter: card.hp === 0 ? 'grayscale(100%)' : 'none',
                         }}
                     />
                 </Box>
@@ -96,5 +95,6 @@ const CardPreview = ({ card, label, color = 'primary', onAction }) => {
         </Paper>
     );
 };
+
 
 export default CardPreview;
