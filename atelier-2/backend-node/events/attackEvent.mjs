@@ -34,6 +34,9 @@ const attackEvent = async (redis, io, socket, data) => {
 
         const lifecycle = new GameLifecycle(game, cardPlayerId, cardOpponentId, redis)
 
+        const currentPlayer = await lifecycle.getCurrentPlayer()
+        const opponentPlayer = await lifecycle.getOpponentPlayer()
+
         await lifecycle.updateActionPoint()
         await lifecycle.attack()
 
@@ -41,9 +44,6 @@ const attackEvent = async (redis, io, socket, data) => {
         console.log('[AttackEvent] Game finished status:', isFinished);
 
         if (isFinished) {
-            const currentPlayer = await lifecycle.getCurrentPlayer()
-            const opponentPlayer = await lifecycle.getOpponentPlayer()
-
             console.log('[AttackEvent] Game ended, winner:', currentPlayer.userId);
 
             const gameTransactionDTO = new GameTransactionDTO(game.gameId, currentPlayer.userId, opponentPlayer.userId, 100, -100 );
