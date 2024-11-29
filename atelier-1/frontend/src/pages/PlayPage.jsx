@@ -129,7 +129,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
             
                                 return updatedGameInfo;
                             });
-                        }, 1000);
+                        }, 3000);
                     }
                 }));
             });            
@@ -224,7 +224,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
             setGameNotification({
                 type: 'turn',
                 isVisible: true,
-                data: { playerName: currentTurn === user.id ? null : (gameInfo?.userTurn === gameInfo?.player1.id ? gameInfo?.player2.username : gameInfo?.player1.username) },
+                data: { playerName: currentTurn === user.id ? null : ( gameInfo?.player1.id === user.id ? gameInfo?.player2.username : gameInfo?.player1.username) },
                 duration: 3000,
             });
         }
