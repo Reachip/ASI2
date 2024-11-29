@@ -52,8 +52,8 @@ export const playEvent = async (redis, io, data) => {
                 return;
             }
 
-            console.log("Moins de deux joueurs dans la liste d'attente. Nouvelle tentative dans 500ms...");
-            await new Promise(resolve => setTimeout(resolve, 500)); // Attente de 500ms
+            console.log("Moins de deux joueurs dans la liste d'attente. Nouvelle tentative dans 2000ms...");
+            await new Promise(resolve => setTimeout(resolve, 2000)); // Attente de deux secondes avant nouvel essai
         }
 
         await retryPlayQueue.delete()
