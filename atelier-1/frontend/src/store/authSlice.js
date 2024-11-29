@@ -84,6 +84,9 @@ const authSlice = createSlice({
             state.status = 'idle';
             state.error = null;
         },
+        setWallet: (state, action) => {
+            state.user.wallet = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
