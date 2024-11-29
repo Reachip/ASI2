@@ -61,7 +61,7 @@ const attackEvent = async (redis, io, socket, data) => {
             notifyRoom(io, game.roomId, NOTIFY_ATTACK_RESPONSE, gameState);
         }
     } catch (error) {
-        notifyRoom(io, game.roomId, NOTIFY_ERROR_RESPONSE, {error});
+        notifyRoom(io, game.roomId, NOTIFY_ERROR_RESPONSE, {message: error.message});
     }
 }
 
