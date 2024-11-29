@@ -28,8 +28,6 @@ const endTurnEvent = async (redis, io, socket, data) => {
     const gameUpdater = new GameUpdater(redis, game)
 
     await gameUpdater.setActionPoint(data.userId, currentUser.actionPoint + 1)
-    await gameUpdater.setActionPoint(opponent.userId, opponent.actionPoint + 1)
-
     await gameUpdater.setTurn(opponent.userId)
 
     notifyRoom(io, game.roomId, NOTIFY_END_TURN, gameUpdater.get());
