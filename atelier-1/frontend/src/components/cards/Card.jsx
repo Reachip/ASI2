@@ -4,13 +4,11 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 const Card = ({ card, isSelected, onClick }) => {
-  const isZeroHP = card.hp === 0;
-
   return (
     <MuiCard
       onClick={onClick}
       sx={{
-        cursor: 'pointer',
+        cursor: card.hp === 0 ? 'not-allowed' : 'pointer',
         transform: isSelected ? 'translateY(-8px)' : 'none',
         transition: 'transform 0.2s',
         height: '150px',
@@ -19,7 +17,7 @@ const Card = ({ card, isSelected, onClick }) => {
       }}
     >
       <Box sx={{ position: 'relative', height: '100%' }}>
-        {isZeroHP && (
+        {card.hp === 0 && (
           <CancelIcon
             sx={{
               position: 'absolute',
@@ -32,7 +30,7 @@ const Card = ({ card, isSelected, onClick }) => {
             }}
           />
         )}
-        {isSelected && !isZeroHP && (
+        {isSelected && card.hp > 0 && (
           <CheckCircleIcon
             sx={{
               position: 'absolute',
@@ -51,7 +49,7 @@ const Card = ({ card, isSelected, onClick }) => {
           alt={card.name}
           sx={{
             height: '100%',
-            filter: isZeroHP ? 'grayscale(100%)' : 'none',
+            filter: card.hp === 0 ? 'grayscale(100%)' : 'none',
           }}
         />
         <Typography
