@@ -185,6 +185,20 @@ services:
       - shared-net
     restart: always
 
+  backend-node:
+    build:
+      context: .
+      dockerfile: ./atelier-2/backend-node/Dockerfile
+    container_name: backend-node
+    ports:
+      - "3002:3002"
+    depends_on:
+      - redis
+      - api-backend
+    networks:
+      - shared-net
+    restart: always
+
 volumes:
   ollama:
   postgres_data:
