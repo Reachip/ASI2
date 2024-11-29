@@ -46,12 +46,14 @@ const attackEvent = async (redis, io, socket, data) => {
             const gameState = await lifecycle.getGame()
 
             console.log('[AttackEvent] Game ended, winner:', currentPlayer.userId);
-            notifyRoom(io, game.roomId, NOTIFY_END_FIGHT, {
-                winner: currentPlayer.id,
-                game: gameState
-            });
 
             const gameTransactionDTO = new GameTransactionDTO(game.gameId, currentPlayer.userId, opponentPlayer.userId, 100, -100 );
+
+            notifyRoom(io, game.roomId, NOTIFY_END_FIGHT, {
+                winner: currentPlayer.userId,
+                transaction: gameTransactionDTO,
+            });
+
             console.log('[AttackEvent] gameTransactionDTO:', gameTransactionDTO);
             await saveGameTransactionActiveMq.sendMessage(gameTransactionDTO);
 
