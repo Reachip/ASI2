@@ -8,10 +8,4 @@ export class GameTransactionDTO  {
         this.moneyOperation1 = moneyOperation1;
         this.moneyOperation2 = moneyOperation2;
     }
-
-    toJson()
-    {
-        return JSON.stringify(this);
-    }
-
 }
