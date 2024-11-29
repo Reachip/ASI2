@@ -27,7 +27,7 @@ const GameBoard = ({
         />
         <ControlPanel 
             onAttack={onAttack}
-            canAttack={!!(selectedPlayerCard && selectedOpponentCard && isPlayerTurn)}
+            canAttack={(selectedPlayerCard && selectedOpponentCard && isPlayerTurn)}
             onEndTurn={onEndTurn}
             currentPlayerName={currentPlayerName}
             isPlayerTurn={isPlayerTurn}

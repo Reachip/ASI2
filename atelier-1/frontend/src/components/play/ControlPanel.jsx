@@ -28,7 +28,7 @@ const ControlPanel = ({ onAttack, canAttack, onEndTurn, currentPlayerName, isPla
                 variant="contained"
                 color="primary"
                 onClick={onEndTurn}
-                disabled={!canAttack}
+                disabled={!isPlayerTurn}
             >
                 End turn
             </Button>
