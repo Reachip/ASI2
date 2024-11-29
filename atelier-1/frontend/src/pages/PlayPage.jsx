@@ -220,9 +220,16 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         const currentTurn = gameInfo?.userTurn;
         if (currentTurn !== undefined && currentTurn !== lastTurn) {
             setLastTurn(currentTurn);
+    
+            setGameNotification({
+                type: 'turn',
+                isVisible: true,
+                data: { playerName: currentTurn === user.id ? null : (gameInfo?.userTurn === gameInfo?.player1.id ? gameInfo?.player2.username : gameInfo?.player1.username) },
+                duration: 3000,
+            });
         }
-    }, [gameInfo?.userTurn, lastTurn]);
-
+    }, [gameInfo?.userTurn, lastTurn, user.id, gameInfo?.player1, gameInfo?.player2]);
+    
     return (
         <Box sx={{ display: 'flex', height: 'calc(100vh - 80px)', gap: 2, padding: 0 }}>
             <ChatPanel
