@@ -65,7 +65,7 @@ class GameLifecycle {
         }
 
         const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
-        const damage = cardAttack.attack - getRandomInt(cardToAttack.defence - 3, cardToAttack.defence + 3)
+        const damage = Math.max(0, cardAttack.attack - getRandomInt(cardToAttack.defence - 3, cardToAttack.defence + 3));
 
         attackLabel.initialHp = cardToAttack.hp
         cardToAttack.hp = Math.max(0, cardToAttack.hp - damage)

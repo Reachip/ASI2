@@ -46,6 +46,10 @@ const attackEvent = async (redis, io, socket, data) => {
         if (isFinished) {
             console.log('[AttackEvent] Game ended, winner:', currentPlayer.userId);
 
+            const gameState = await lifecycle.getGame()
+            console.log('[AttackEvent] Game continuing, notifying room');
+            notifyRoom(io, game.roomId, NOTIFY_ATTACK_RESPONSE, gameState);
+
             const gameTransactionDTO = new GameTransactionDTO(game.gameId, currentPlayer.userId, opponentPlayer.userId, 100, -100 );
 
             notifyRoom(io, game.roomId, NOTIFY_END_FIGHT, {
@@ -62,7 +66,7 @@ const attackEvent = async (redis, io, socket, data) => {
             notifyRoom(io, game.roomId, NOTIFY_ATTACK_RESPONSE, gameState);
         }
     } catch (error) {
-        notifyRoom(io, game.roomId, NOTIFY_ERROR_RESPONSE, {message: error.message});
+        console.error(error);
     }
 }
 
