@@ -80,7 +80,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
             nodeSocket.on("attackResponse", (msg) => {
                 console.log("attackResponse: " + JSON.stringify(msg));
                 const { cardAttack, cardToAttack, initialHp, finalHp } = msg.attackLabel;
-            
+
                 setGameNotification({
                     type: 'attack',
                     isVisible: true,
@@ -92,17 +92,17 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                     },
                     duration: 3000,
                 });
-            
+
                 setGameNotification(prev => ({
                     ...prev,
                     onHide: () => {
                         setTimeout(() => {
                             setGameInfo(prevGameInfo => {
                                 const updatedGameInfo = { ...prevGameInfo };
-            
+
                                 let card;
                                 let playerToUpdate;
-            
+
                                 if (updatedGameInfo.player1.cards.some(c => c.id === cardToAttack.id)) {
                                     card = updatedGameInfo.player1.cards.find(c => c.id === cardToAttack.id);
                                     playerToUpdate = 'player1';
@@ -110,11 +110,11 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                                     card = updatedGameInfo.player2.cards.find(c => c.id === cardToAttack.id);
                                     playerToUpdate = 'player2';
                                 }
-            
+
                                 if (card) {
                                     card.hp = finalHp;
                                 }
-            
+
                                 if (playerToUpdate === 'player1') {
                                     updatedGameInfo.player1.cards = updatedGameInfo.player1.cards.map(c =>
                                         c.id === cardToAttack.id ? card : c
@@ -124,31 +124,38 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                                         c.id === cardToAttack.id ? card : c
                                     );
                                 }
-            
+
                                 updatedGameInfo.userTurn = msg.userTurn;
-            
+
                                 return updatedGameInfo;
                             });
                         }, 3000);
                     }
                 }));
-            });            
+            });
 
             nodeSocket.on("endFight", (msg) => {
                 console.log("endFight: " + JSON.stringify(msg));
-                // Mettre à jour l'état du jeu pour indiquer la fin du combat
-                setGameInfo((prevGameInfo) => {
-                    const updatedGameInfo = { ...prevGameInfo };
-                    updatedGameInfo.winner = msg.winner;
-                    return updatedGameInfo;
-                });
-                setGameStarted(false); // Revenir à l'écran de sélection des cartes
 
-                // Afficher la notification de fin de combat
-                setGameNotification({
-                    type: msg.winner === user.id ? 'winner' : 'loser',
-                    isVisible: true,
-                });
+                setTimeout(() => {
+                    // Mettre à jour l'état du jeu pour indiquer la fin du combat
+                    setGameInfo((prevGameInfo) => {
+                        const updatedGameInfo = { ...prevGameInfo };
+                        updatedGameInfo.winner = msg.winner;
+                        return updatedGameInfo;
+                    });
+
+                    const endDuration = 7000;
+                    setGameNotification({
+                        type: msg.winner === user.id ? 'winner' : 'loser',
+                        isVisible: true,
+                        duration: endDuration,
+                    });
+
+                    setTimeout(() => {
+                        setGameStarted(false);
+                    }, endDuration);
+                }, 5000);
             });
         }
 
@@ -211,7 +218,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         nodeSocket.emit('endTurn', {
             userId: user.id,
         });
-        
+
         setSelectedPlayerCard(null);
         setSelectedOpponentCard(null);
     };
@@ -220,19 +227,19 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         const currentTurn = gameInfo?.userTurn;
         if (currentTurn !== undefined && currentTurn !== lastTurn) {
             setLastTurn(currentTurn);
-    
+
             setSelectedPlayerCard(null);
             setSelectedOpponentCard(null);
 
             setGameNotification({
                 type: 'turn',
                 isVisible: true,
-                data: { playerName: currentTurn === user.id ? null : ( gameInfo?.player1.id === user.id ? gameInfo?.player2.username : gameInfo?.player1.username) },
+                data: { playerName: currentTurn === user.id ? null : (gameInfo?.player1.id === user.id ? gameInfo?.player2.username : gameInfo?.player1.username) },
                 duration: 3000,
             });
         }
     }, [gameInfo?.userTurn, lastTurn, user.id, gameInfo?.player1, gameInfo?.player2]);
-    
+
     return (
         <Box sx={{ display: 'flex', height: 'calc(100vh - 80px)', gap: 2, padding: 0 }}>
             <ChatPanel

@@ -71,7 +71,7 @@ const CardPreview = ({ card, label, color = 'primary', onAction }) => {
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <SecurityIcon sx={{ fontSize: 16 }} />
-                            <Typography variant="caption">{card.defence} defense</Typography>
+                            <Typography variant="caption">{card.defence} (±3) defense</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <FlashOnIcon sx={{ fontSize: 16 }} />
