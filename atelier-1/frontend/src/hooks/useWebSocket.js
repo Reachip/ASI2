@@ -11,6 +11,12 @@ export const useWebSocket = (user) => {
     const [generatedCard, setGeneratedCard] = useState(null);
     const [errorNodeMessage, setErrorNode] = useState(null);
 
+    const handleUserList = useCallback((users) => {
+        setConnectedUsers(prev => {
+            return [...prev, ...users.map(user => ({ ...user, source: 'spring' }))];
+        });
+    }, []);
+
     const handleSpringMessage = useCallback((data) => {
         switch (data.type) {
             case 'cardGenerated':
@@ -30,7 +36,7 @@ export const useWebSocket = (user) => {
             default:
                 console.log('Unhandled message type:', data);
         }
-    }, []);
+    }, [handleUserList]);
 
     const handleNodeMessage = useCallback((message) => {
         setChatMessages(prev => [...prev, {
@@ -42,18 +48,11 @@ export const useWebSocket = (user) => {
     }, []);
 
     const handleNodeErrorMesssage = useCallback(error => {
-        console.log("erreur : ", error)
+        console.log("Error: ", error)
         setErrorNode(error.message);
     }, []);
 
-    const handleUserList = useCallback((users) => {
-        setConnectedUsers(prev => {
-            return [...prev, ...users.map(user => ({ ...user, source: 'spring' }))];
-        });
-    }, []);
-
     const handleConversationHistory = useCallback((history) => {
-        console.log("history", history);
         const formattedHistory = history.map(message => ({
             id: Date.now(),
             sender: { id: message.from.id, username: message.from.username },
@@ -68,11 +67,9 @@ export const useWebSocket = (user) => {
 
         let cleanupFunctions = [];
 
-        // Initialize sockets
         const cleanupSpring = springWebSocketService.initialize(user);
         const cleanupNode = nodeWebSocketService.initialize(user);
 
-        // Add listeners
         const listeners = [
             ['springConnect', setSpringSocket],
             ['springMessage', handleSpringMessage],
@@ -83,13 +80,11 @@ export const useWebSocket = (user) => {
             ['conversationHistory', handleConversationHistory]
         ];
 
-        // Register all listeners and store their cleanup functions
         listeners.forEach(([event, handler]) => {
             const cleanup = webSocketListenerService.addListener(event, handler);
             cleanupFunctions.push(cleanup);
         });
 
-        // Cleanup function
         return () => {
             cleanupSpring?.();
             cleanupNode?.();
@@ -99,7 +94,8 @@ export const useWebSocket = (user) => {
         user,
         handleSpringMessage,
         handleNodeMessage,
-        handleConversationHistory
+        handleConversationHistory,
+        handleNodeErrorMesssage
     ]);
 
     const sendChatMessage = useCallback((message) => {

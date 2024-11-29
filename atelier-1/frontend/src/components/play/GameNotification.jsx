@@ -7,15 +7,17 @@ const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 3000 
     const { playerName, attackerCard, defenderCard, initialHp, finalHp } = data;
     const [currentHp, setCurrentHp] = useState(initialHp || 0);
     const steps = Math.abs(initialHp - finalHp);
-    const stepDuration = duration / steps; 
+    const stepDuration = duration / steps;
 
     useEffect(() => {
-        setCurrentHp(initialHp);
-
         if (isVisible && type === 'attack') {
             let currentStep = 0;
 
             const interval = setInterval(() => {
+                if(currentStep === 0) {
+                    setCurrentHp(initialHp);
+                }
+
                 setCurrentHp((prevHp) => {
                     if (currentStep < steps) {
                         currentStep++;
@@ -52,9 +54,24 @@ const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 3000 
                 return "You lose! 😢";
             case 'attack':
                 return (
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
-                        <CardPreview card={attackerCard} />
-                        <CardPreview card={{ ...defenderCard, hp: currentHp }} />
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                        <Typography variant="h6" align="center">
+                            {playerName ? `${playerName} attacks!` : 'Attack!'}
+                        </Typography>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '80%' }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <CardPreview card={attackerCard} sx={{ height: 300, width: 'auto' }} />
+                            </Box>
+                            <Box
+                                component="img"
+                                src="../../fight.gif"
+                                alt="Fight GIF"
+                                sx={{ width: 170, height: 170, objectFit: 'contain' }}
+                            />
+                            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <CardPreview card={{ ...defenderCard, hp: currentHp }} sx={{ height: 300, width: 'auto' }} />
+                            </Box>
+                        </Box>
                     </Box>
                 );
             default:
@@ -66,7 +83,9 @@ const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 3000 
         <PopupDialog
             open={isVisible}
             onClose={onHide}
-            maxWidth="xs"
+            maxWidth="lg"
+            fullWidth
+            sx={{ padding: 3 }}
         >
             <Typography variant="h6" align="center" sx={{ py: 2 }}>
                 {getMessage()}
