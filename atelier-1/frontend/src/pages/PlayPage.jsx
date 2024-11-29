@@ -211,7 +211,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         nodeSocket.emit('endTurn', {
             userId: user.id,
         });
-
+        
         setSelectedPlayerCard(null);
         setSelectedOpponentCard(null);
     };
@@ -221,6 +221,9 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         if (currentTurn !== undefined && currentTurn !== lastTurn) {
             setLastTurn(currentTurn);
     
+            setSelectedPlayerCard(null);
+            setSelectedOpponentCard(null);
+
             setGameNotification({
                 type: 'turn',
                 isVisible: true,
