@@ -28,10 +28,10 @@ const SearchingOpponent = ({ selectedCards }) => {
             </Box>
 
             <Typography variant="h5" component="h2" textAlign="center">
-                Recherche d'un adversaire...
+                Searching for an opponent...
             </Typography>
             <Typography variant="body1" color="text.secondary" textAlign="center">
-                Veuillez patienter pendant que nous trouvons le challenger idéal
+                Please wait while we find the ideal challenger
             </Typography>
 
             <Grid container spacing={2} justifyContent="center">
