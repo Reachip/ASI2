@@ -52,6 +52,8 @@ const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 3000 
                 return "You win! 🎉";
             case 'loser':
                 return "You lose! 😢";
+            case 'endTurn':
+                    return playerName ? `${playerName} chooses to end turn!` : "You choose to end turn!";
             case 'attack':
                 return (
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>

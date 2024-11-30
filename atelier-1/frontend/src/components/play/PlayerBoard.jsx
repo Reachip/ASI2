@@ -4,7 +4,7 @@ import ActionPoints from './ActionPoints';
 import Card from '../cards/Card';
 import CardPreview from '../cards/CardPreview';
 
-const PlayerBoard = ({ player, cards, onCardSelect, selectedCard, isOpponent }) => (
+const PlayerBoard = ({ player, cards, onCardSelect, selectedCard, isOpponent }) => (*
     <Box sx={{ display: 'flex', flexDirection: 'row', borderColor: 'divider', flex: 1 }}>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', borderRight: '1px solid', borderColor: 'divider' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>

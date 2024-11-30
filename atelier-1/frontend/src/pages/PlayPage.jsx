@@ -23,7 +23,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
     const [lastTurn, setLastTurn] = useState(null);
     const [gameNotification, setGameNotification] = useState({ type: null, isVisible: false });
 
-    const currentPlayer = { id: user.id, username: user.username, actionPoints: 3, isCurrentPlayer: true };
+    const currentPlayer = { id: user.id, username: user.username, actionPoints: user.actionPoints, isCurrentPlayer: true };
 
     const fetchPlayerCards = useCallback(async () => {
         try {
@@ -134,6 +134,36 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                 }));
             });
 
+            nodeSocket.on("endTurnResponse", (msg) => {
+                console.log("endTurnResponse: " + JSON.stringify(msg));
+                const { user1, user2 } = msg;
+                const currentTurn = gameInfo?.userTurn;
+
+                setGameNotification({
+                    type: 'endTurn',
+                    isVisible: true,
+                    data: {
+                        playerName: currentTurn === user.id ? null : (gameInfo?.player1.id === user.id ? gameInfo?.player2.username : gameInfo?.player1.username)
+                    },
+                    duration: 3000,
+                });
+
+                setGameNotification(prev => ({
+                    ...prev,
+                    onHide: () => {
+                        setTimeout(() => {
+                            setGameInfo(prevGameInfo => {
+                                const updatedGameInfo = { ...prevGameInfo };
+         
+                                updatedGameInfo.userTurn = msg.userTurn;
+
+                                return updatedGameInfo;
+                            });
+                        }, 3000);
+                    }
+                }));
+            });
+
             nodeSocket.on("endFight", (msg) => {
                 console.log("endFight: " + JSON.stringify(msg));
 
@@ -166,7 +196,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                 nodeSocket.off("endFight");
             }
         };
-    }, [nodeSocket, user.id]);
+    }, [nodeSocket, user.id, gameInfo?.userTurn]);
 
     const dialogActions = isSearching ? (
         <Button
@@ -213,14 +243,11 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
     };
 
     const handleEndTurn = () => {
-        if (!selectedPlayerCard || !selectedOpponentCard || !gameInfo || gameInfo.userTurn !== user.id) return;
+        if (!gameInfo || gameInfo.userTurn !== user.id) return;
 
         nodeSocket.emit('endTurn', {
             userId: user.id,
         });
-
-        setSelectedPlayerCard(null);
-        setSelectedOpponentCard(null);
     };
 
     useEffect(() => {
