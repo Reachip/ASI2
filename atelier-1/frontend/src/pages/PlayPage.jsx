@@ -73,10 +73,10 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         if (nodeSocket) {
             nodeSocket.on("notifyRoomFightCreated", (msg) => {
                 console.log("notifyRoomFightCreated: " + JSON.stringify(msg));
-                setGameInfo(msg); // Stocke les infos du jeu dans l'état
-                setGameStarted(true); // Passe à l'écran de jeu
-                setDialogOpen(false); // Ferme la popup
-                setIsSearching(false); // Arrête la recherche
+                setGameInfo(msg);
+                setGameStarted(true);
+                setDialogOpen(false);
+                setIsSearching(false);
             });
 
             nodeSocket.on("attackResponse", (msg) => {
@@ -196,7 +196,16 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                 nodeSocket.off("endFight");
             }
         };
-    }, [nodeSocket, user.id, gameInfo?.userTurn]);
+    }, [
+        nodeSocket,
+        user.id,
+        gameInfo?.userTurn,
+        dispatch,
+        gameInfo?.user1.userId,
+        gameInfo?.user1.username,
+        gameInfo?.user2.username,
+        currentPlayer.id
+    ]);
 
     const dialogActions = isSearching ? (
         <Button
