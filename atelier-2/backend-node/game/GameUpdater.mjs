@@ -22,9 +22,9 @@ class GameUpdater {
     async setActionPoint(playerId, actionPoint) {
         console.log('[GameUpdater] Setting action point:', { playerId, actionPoint });
         if (this.game.user1.userId === playerId) {
-            this.game.user1.actionPoint = actionPoint;
+            this.game.user1.actionPoints = actionPoint;
         } else if (this.game.user2.userId === playerId) {
-            this.game.user2.actionPoint = actionPoint;
+            this.game.user2.actionPoints = actionPoint;
         }
         await this.service.setGameInRedis(this.game.gameId, this.game);
     }

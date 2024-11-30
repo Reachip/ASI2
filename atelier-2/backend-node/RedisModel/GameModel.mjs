@@ -1,6 +1,6 @@
 export class GameModel
 {
-    constructor(gameId, roomId, rewardAmount, player1, player2, userTurn, actionPoints=1)
+    constructor(gameId, roomId, rewardAmount, player1, player2, userTurn, actionPoints= 1)
     {
         this.gameId = gameId;
         this.rewardAmount = rewardAmount;
@@ -9,13 +9,13 @@ export class GameModel
             userId: player1.id,
             username: player1.username,
             cards: player1.cards,
-            actionPoints
+            actionPoints: actionPoints
         };
         this.user2 = {
             userId: player2.id,
             cards: player2.cards,
             username: player2.username,
-            actionPoints
+            actionPoints: actionPoints
         };
         this.userTurn = userTurn;
     }

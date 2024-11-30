@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import axios from 'axios';
-import { Box, Button, Typography } from '@mui/material';
-import { useSelector } from 'react-redux';
-import { selectAuth } from '../store/authSlice';
+import {Box, Button, Typography} from '@mui/material';
+import {useSelector} from 'react-redux';
+import {selectAuth} from '../store/authSlice';
 import ChatPanel from '../components/chat/ChatPanel';
 import GameBoard from '../components/play/GameBoard';
 import PopupDialog from '../components/layout/PopupDialog';
@@ -97,8 +97,8 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                     ...prev,
                     onHide: () => {
                         setTimeout(() => {
-                            setGameInfo(prevGameInfo => {
-                                const updatedGameInfo = { ...prevGameInfo };
+                            setGameInfo(_ => {
+                                const updatedGameInfo = msg;
 
                                 let card;
                                 let playerToUpdate;
@@ -152,11 +152,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                     onHide: () => {
                         setTimeout(() => {
                             setGameInfo(prevGameInfo => {
-                                const updatedGameInfo = { ...prevGameInfo };
-
-                                updatedGameInfo.userTurn = currentTurn === gameInfo?.user1.userId ? gameInfo?.user2.userId : gameInfo?.user1.userId;
-
-                                return updatedGameInfo;
+                                return msg;
                             });
                         }, 3000);
                     }
