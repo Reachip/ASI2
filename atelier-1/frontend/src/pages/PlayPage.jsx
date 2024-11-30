@@ -199,12 +199,12 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
             color="error"
             variant="contained"
         >
-            Annuler la recherche
+             Cancel search
         </Button>
     ) : (
         <>
             <Button onClick={handleCloseDialog} color="inherit">
-                Annuler
+                Cancel
             </Button>
             <Button
                 onClick={startSearchingForOpponent}
