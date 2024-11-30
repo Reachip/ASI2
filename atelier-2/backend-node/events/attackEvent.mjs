@@ -1,9 +1,10 @@
-import {NOTIFY_ATTACK_RESPONSE, NOTIFY_END_FIGHT, NOTIFY_ERROR_RESPONSE} from "../utils/constants.mjs";
+import {NOTIFY_ATTACK_RESPONSE, NOTIFY_END_FIGHT, NOTIFY_ERROR_RESPONSE, USER_ROOMS_HASH} from "../utils/constants.mjs";
 import {notifyRoom} from "./notifyEvent.mjs";
 import {GameService} from "../service/GameService.mjs";
 import GameLifecycle from "../game/GameLifecycle.mjs";
 import SaveGameTransactionActiveMq from "../activemq/SaveGameTransactionActiveMq.mjs";
 import {GameTransactionDTO} from "../dto/GameTransactionDTO.mjs";
+import {deleteInRedis} from "../utils/redisUtils.mjs";
 
 
 const saveGameTransactionActiveMq = new SaveGameTransactionActiveMq();
@@ -64,6 +65,9 @@ const attackEvent = async (redis, io, socket, data) => {
 
             console.log('[AttackEvent] gameTransactionDTO:', gameTransactionDTO);
             await saveGameTransactionActiveMq.sendMessage(gameTransactionDTO);
+
+            await deleteInRedis(redis, USER_ROOMS_HASH, currentPlayer.userId, game.roomId);
+            await deleteInRedis(redis, USER_ROOMS_HASH, opponentPlayer.userId, game.roomId);
 
         } else {
             const gameState = await lifecycle.getGame()

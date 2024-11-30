@@ -110,8 +110,10 @@ class GameLifecycle {
     }
 
     async isFinish() {
-        const opponentCards = await this._getCardsOf(this.opponentCardPlayerId)
-        const isFinished = opponentCards.every(card => card.hp <= 0);
+        const game = await this.game.get();
+        const opponentCards = await this._getCardsOf(game.user1.userId);
+        const currentCards = await this._getCardsOf(game.user2.userId);
+        const isFinished = opponentCards.every(card => card.hp <= 0) || currentCards.every(card => card.hp <= 0);
 
         console.log('[GameLifecycle] Checking game finish status:', isFinished);
         return isFinished;

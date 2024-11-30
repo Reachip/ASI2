@@ -43,12 +43,15 @@ public class GameTransactionReceiver implements Receiver {
 
             logger.info("Received game transaction: {}", gameTransaction);
 
+            logger.info(" game transaction: "+gameTransaction.toString());
             Game game = gameRepository.findById(gameTransaction.getGameId())
                     .orElseThrow(() -> new IllegalArgumentException("Game not found"));
 
             game.setIsFinished();
 
-            int winnerId = gameTransaction.getMoneyOperation1() < 0 ? gameTransaction.getUser1Id() : gameTransaction.getUser2Id();
+            int winnerId = gameTransaction.getMoneyOperation1() > 0 ? gameTransaction.getUser1Id() : gameTransaction.getUser2Id();
+            logger.info("winnerId: "+winnerId);
+
 
             Optional<UserModel> optionalUserModel =  userRepository.findById(winnerId);
             if (optionalUserModel.isEmpty() ) new IllegalArgumentException("User not found with ID: " + winnerId);

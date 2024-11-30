@@ -17,4 +17,16 @@ public class GameTransactionDTO implements Serializable {
     private int user2Id;
     private int moneyOperation1;
     private int moneyOperation2;
+
+    @Override
+    public String toString() {
+        return "GameTransactionDTO{" +
+                "gameId='" + gameId + '\'' +
+                ", user1Id='" + user1Id + '\'' +
+                ", user2Id='" + user2Id + '\'' +
+                ", moneyOperation1='" + moneyOperation1 + '\'' +
+                ", moneyOperation2='" + moneyOperation2 + '\'' +
+                '}';
+    }
+
 }

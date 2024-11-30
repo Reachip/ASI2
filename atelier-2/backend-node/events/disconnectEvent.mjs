@@ -72,15 +72,17 @@ const disconnectEvent = async (redis, io, socketId, id, username) => {
                 else if (room.includes("fight_room")) {
                     console.log("Contiens une fight room");
                     const gameService =  new GameService(redis);
-                    const gameId = await gameService.getGameIdByUserIdInRedis(id);
+                    const game = await gameService.getGameByUserIdInRedis(id);
                     await gameService.deleteGameInRedisByUserId(id);
 
                     const match = room.match(/^fight_room_(\d+)_(\d+)$/);
+                    console.log("match : "+match)
+
                     if (match) {
                         const id1 = match[1];
                         const id2 = match[2];
                         const otherId = id1 === id.toString() ? id2 : id1;
-
+                        console.log(`id: ${id}, ${typeof id},otherId: ${otherId}, ${typeof otherId} `);
                         try {
                             await deleteInRedis(redis, USER_ROOMS_HASH, id, room);
                             await deleteInRedis(redis, USER_ROOMS_HASH, otherId, room);
@@ -89,7 +91,7 @@ const disconnectEvent = async (redis, io, socketId, id, username) => {
                             console.error(`Error removing room relationship for room ${room}:`, error.message);
                         }
 
-                        const gameTransactionDTO = new GameTransactionDTO(parseInt(gameId, 10), parseInt(id1, 10), parseInt(otherId, 10), 100, -100 );
+                        const gameTransactionDTO = new GameTransactionDTO(parseInt(game.gameId, 10), parseInt(id, 10), parseInt(otherId, 10), 100, -100 );
 
                         await saveGameTransactionActiveMq.sendMessage(gameTransactionDTO);
 

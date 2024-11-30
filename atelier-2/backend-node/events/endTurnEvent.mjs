@@ -18,7 +18,7 @@ import {NOTIFY_ATTACK_RESPONSE, NOTIFY_END_TURN} from "../utils/constants.mjs";
  */
 const endTurnEvent = async (redis, io, socket, data) => {
     const service = new GameService(redis)
-    const game = await service.getGameIdByUserIdInRedis(data.userId)
+    const game = await service.getGameByUserIdInRedis(data.userId)
 
     console.log('[AttackEvent] Retrieved game:', game);
 

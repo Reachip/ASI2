@@ -51,7 +51,7 @@ export class GameService {
         return JSON.parse(gameModel);
     }
 
-    async getGameIdByUserIdInRedis(userId) {
+    async getGameByUserIdInRedis(userId) {
         console.log(`getGameIdByUserIdInRedis dans redis : userId=${userId}`);
 
         const keys = await this.redis.hgetall(GAME_HASH);
@@ -95,13 +95,11 @@ export class GameService {
 
 
     async deleteGameInRedisByUserId(userId){
-        const gameId = await this.getGameIdByUserIdInRedis(userId);
-        console.log(`Id de la game ${gameId} à supprimer de Redis`);
+        const game = await this.getGameByUserIdInRedis(userId);
+        console.log(`Id de la game ${game.gameId} à supprimer de Redis`);
 
-        await this.redis.hdel(GAME_HASH,gameId);
-        console.log(`Game ${gameId} supprimé de Redis`);
-        const test = await this.redis.hgetall(GAME_HASH);
-        console.log("test : "+JSON.stringify(test));
+        await this.redis.hdel(GAME_HASH,game.gameId);
+        console.log(`Game ${game.gameId} supprimé de Redis`);
     }
 
 }
