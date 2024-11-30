@@ -84,8 +84,8 @@ const authSlice = createSlice({
             state.status = 'idle';
             state.error = null;
         },
-        setWallet: (state, action) => {
-            state.user.wallet = action.payload;
+        addToWallet: (state, action) => {
+            state.user.wallet += action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -121,6 +121,6 @@ const authSlice = createSlice({
     },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, addToWallet } = authSlice.actions;
 export const selectAuth = (state) => state.auth;
 export default authSlice.reducer;
