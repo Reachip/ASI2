@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import fr.cpe.scoobygang.atelier3.api_backend.card.dto.CardDemandDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_backend.common.dto.HttpBasicResponse;
@@ -72,10 +73,10 @@ public class CardRestController {
 
 	// Send a card demand
 	@PostMapping("/generateCard")
-	public ResponseEntity<HttpBasicResponse<String>> cardDemand(String promptImage, String promptText, String username)
+	public ResponseEntity<HttpBasicResponse<String>> cardDemand(@RequestBody CardDemandDTO cardDemandDTO)
 	{
 		// Check user account > 100
-		Optional<UserModel> optionalUserModel = userService.getUserByUsername(username);
+		Optional<UserModel> optionalUserModel = userService.getUserByUsername(cardDemandDTO.getUsername());
 
 		if (optionalUserModel.isEmpty()) {
 			return ResponseEntity
@@ -92,7 +93,7 @@ public class CardRestController {
 					.body(new HttpBasicResponse<>(HttpStatus.FORBIDDEN.value(), "Not enough money"));
 		}
 
-		cardGenerationDemandService.sendGenerationCardDemand(promptImage, promptText, String.valueOf(userModel.getId()));
+		cardGenerationDemandService.sendGenerationCardDemand(cardDemandDTO.getPromptImage(), cardDemandDTO.getPromptText(), String.valueOf(userModel.getId()));
 		return ResponseEntity.status(HttpStatus.CREATED).body(new HttpBasicResponse<>(HttpStatus.CREATED.value(), "Successfully send card genetation demand"));
 	}
 }
