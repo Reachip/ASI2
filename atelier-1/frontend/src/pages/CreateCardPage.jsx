@@ -23,7 +23,7 @@ const CreateCardPage = ({ generatedCard }) => {
 
     setLoading(true);
 
-    fetch('http://localhost:8088/generateCard', {
+    fetch('${process.env.REACT_APP_API_BACKEND_URL}/generateCard', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

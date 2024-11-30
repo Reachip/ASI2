@@ -55,7 +55,7 @@ const BuyCardsPage = () => {
   }, [cards]);
 
   const buyCard = async (card) => {
-    const response = await fetch('http://localhost:8088/store/buy', {
+    const response = await fetch(`${process.env.REACT_APP_API_BACKEND_URL}/store/buy`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

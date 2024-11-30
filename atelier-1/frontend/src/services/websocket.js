@@ -10,7 +10,7 @@ class WebSocketService {
   initializeSpringSockets(user) {
     if (!user) return;
 
-    const ws = new WebSocket('ws://127.0.0.1:8088/ws');
+    const ws = new WebSocket(`${process.env.REACT_APP_API_BACKEND_WS_URL}/ws`);
 
     ws.addEventListener('open', () => {
       console.log('Spring WebSocket connection established');
@@ -42,7 +42,7 @@ class WebSocketService {
   initializeNodeSockets(user) {
     if (!user) return;
 
-    const socket = io("http://localhost:3002", {
+    const socket = io(`${process.env.REACT_APP_NODE_URL}`, {
       query: {
         id: user.id,
         username: user.username

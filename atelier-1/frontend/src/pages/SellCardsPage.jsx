@@ -18,7 +18,7 @@ const SellCardsPage = () => {
   const [currentMessage, setCurrentMessage] = useState('');
 
   async function loadCards() {
-    const userCardResponse = await fetch(`http://localhost:8088/user/${user.id}/cards`)
+    const userCardResponse = await fetch(`${process.env.REACT_APP_API_BACKEND_URL}/user/${user.id}/cards`)
     const data = await userCardResponse.json()
     setUserCards(data.cardList)
   }
@@ -28,7 +28,7 @@ const SellCardsPage = () => {
   }, [user]);
 
   const sellCard = async (card) => {
-    const response = await fetch('http://localhost:8088/store/sell', {
+    const response = await fetch('${process.env.REACT_APP_API_BACKEND_URL}/store/sell', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
