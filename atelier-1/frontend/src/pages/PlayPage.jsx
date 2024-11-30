@@ -153,7 +153,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                         setTimeout(() => {
                             setGameInfo(prevGameInfo => {
                                 const updatedGameInfo = { ...prevGameInfo };
-                                
+
                                 updatedGameInfo.userTurn = currentTurn === gameInfo?.user1.userId ? gameInfo?.user2.userId : gameInfo?.user1.userId;
 
                                 return updatedGameInfo;
@@ -294,10 +294,10 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                     }}
                 >
                     <Typography variant="h4" component="h1" textAlign="center">
-                        Prêt pour le combat ?
+                        Ready to fight?
                     </Typography>
                     <Typography variant="body1" textAlign="center" color="text.secondary">
-                        Choisissez vos meilleures cartes et affrontez votre adversaire dans un duel épique !
+                        Choose your best cards and face your opponent in an epic duel!
                     </Typography>
                     <Button
                         variant="contained"
@@ -305,7 +305,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                         onClick={handleStartGame}
                         sx={{ minWidth: 200 }}
                     >
-                        Jouer
+                        Play
                     </Button>
                 </Box>
             ) : (
@@ -328,7 +328,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
             <PopupDialog
                 open={dialogOpen}
                 onClose={handleCloseDialog}
-                title={isSearching ? "Recherche d'adversaire" : "Sélectionnez vos cartes"}
+                title={isSearching ? "Opponent search" : "Select your cards"}
                 actions={dialogActions}
             >
                 {isSearching ? (

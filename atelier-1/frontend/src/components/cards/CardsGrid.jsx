@@ -14,7 +14,7 @@ const CardsGrid = ({ cards, selectedCards, onCardSelect, maxSelectable = 5 }) =>
     return (
         <div>
             <Typography variant="subtitle1" sx={{ mb: 2 }}>
-                Sélectionnez {maxSelectable} cartes ({selectedCards.length} sélectionnée{selectedCards.length !== 1 ? 's' : ''})
+                Select {maxSelectable} cards ({selectedCards.length} selected)
             </Typography>
             <Grid container spacing={2}>
                 {cards.map((card) => (
