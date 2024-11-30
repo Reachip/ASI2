@@ -23,6 +23,8 @@ export class GameService {
         console.log("gameModel crée : " + JSON.stringify(gameModel));
 
         await this.setGameInRedis(idGame, gameModel);
+
+        return gameModel
     }
 
     /**

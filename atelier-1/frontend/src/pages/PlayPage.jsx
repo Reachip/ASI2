@@ -103,24 +103,24 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                                 let card;
                                 let playerToUpdate;
 
-                                if (updatedGameInfo.player1.cards.some(c => c.id === cardToAttack.id)) {
-                                    card = updatedGameInfo.player1.cards.find(c => c.id === cardToAttack.id);
-                                    playerToUpdate = 'player1';
-                                } else if (updatedGameInfo.player2.cards.some(c => c.id === cardToAttack.id)) {
-                                    card = updatedGameInfo.player2.cards.find(c => c.id === cardToAttack.id);
-                                    playerToUpdate = 'player2';
+                                if (updatedGameInfo.user1.cards.some(c => c.id === cardToAttack.id)) {
+                                    card = updatedGameInfo.user1.cards.find(c => c.id === cardToAttack.id);
+                                    playerToUpdate = 'user1';
+                                } else if (updatedGameInfo.user2.cards.some(c => c.id === cardToAttack.id)) {
+                                    card = updatedGameInfo.user2.cards.find(c => c.id === cardToAttack.id);
+                                    playerToUpdate = 'user2';
                                 }
 
                                 if (card) {
                                     card.hp = finalHp;
                                 }
 
-                                if (playerToUpdate === 'player1') {
-                                    updatedGameInfo.player1.cards = updatedGameInfo.player1.cards.map(c =>
+                                if (playerToUpdate === 'user1') {
+                                    updatedGameInfo.user1.cards = updatedGameInfo.user1.cards.map(c =>
                                         c.id === cardToAttack.id ? card : c
                                     );
-                                } else if (playerToUpdate === 'player2') {
-                                    updatedGameInfo.player2.cards = updatedGameInfo.player2.cards.map(c =>
+                                } else if (playerToUpdate === 'user2') {
+                                    updatedGameInfo.user2.cards = updatedGameInfo.user2.cards.map(c =>
                                         c.id === cardToAttack.id ? card : c
                                     );
                                 }
@@ -143,7 +143,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                     type: 'endTurn',
                     isVisible: true,
                     data: {
-                        playerName: currentTurn === user.id ? null : (gameInfo?.player1.id === user.id ? gameInfo?.player2.username : gameInfo?.player1.username)
+                        playerName: currentTurn === user.id ? null : (gameInfo?.user1.userId === user.id ? gameInfo?.user2.username : gameInfo?.user1.username)
                     },
                     duration: 3000,
                 });
@@ -261,11 +261,11 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
             setGameNotification({
                 type: 'turn',
                 isVisible: true,
-                data: { playerName: currentTurn === user.id ? null : (gameInfo?.player1.id === user.id ? gameInfo?.player2.username : gameInfo?.player1.username) },
+                data: { playerName: currentTurn === user.id ? null : (gameInfo?.user1.userId === user.id ? gameInfo?.user2.username : gameInfo?.user1.username) },
                 duration: 3000,
             });
         }
-    }, [gameInfo?.userTurn, lastTurn, user.id, gameInfo?.player1, gameInfo?.player2]);
+    }, [gameInfo?.userTurn, lastTurn, user.id, gameInfo?.user1, gameInfo?.user2]);
 
     return (
         <Box sx={{ display: 'flex', height: 'calc(100vh - 80px)', gap: 2, padding: 0 }}>
@@ -307,12 +307,11 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                     </Button>
                 </Box>
             ) : (
-                console.log("gameInfo: " + JSON.stringify(gameInfo)),
                 <GameBoard
-                    opponent={gameInfo && (user.id === gameInfo.player1.id ? gameInfo.player2 : gameInfo.player1)}
-                    currentPlayer={gameInfo && (user.id === gameInfo.player1.id ? gameInfo.player1 : gameInfo.player2)}
-                    opponentCards={gameInfo && (user.id === gameInfo.player1.id ? gameInfo.player2.cards : gameInfo.player1.cards)}
-                    playerCards={gameInfo && (user.id === gameInfo.player1.id ? gameInfo.player1.cards : gameInfo.player2.cards)}
+                    opponent={gameInfo && (user.id === gameInfo.user1.userId ? gameInfo.user2 : gameInfo.user1)}
+                    currentPlayer={gameInfo && (user.id === gameInfo.user1.userId ? gameInfo.user1 : gameInfo.user2)}
+                    opponentCards={gameInfo && (user.id === gameInfo.user1.userId ? gameInfo.user2.cards : gameInfo.user1.cards)}
+                    playerCards={gameInfo && (user.id === gameInfo.user1.userId ? gameInfo.user1.cards : gameInfo.user2.cards)}
                     selectedPlayerCard={selectedPlayerCard}
                     selectedOpponentCard={selectedOpponentCard}
                     onPlayerCardSelect={handlePlayerCardSelect}
@@ -320,7 +319,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                     onAttack={handleAttack}
                     onEndTurn={handleEndTurn}
                     isPlayerTurn={gameInfo && gameInfo.userTurn === user.id}
-                    currentPlayerName={gameInfo?.userTurn === user.id ? null : (user.id === gameInfo.player1.id ? gameInfo.player2.username : gameInfo.player1.username)}
+                    currentPlayerName={gameInfo?.userTurn === user.id ? null : (user.id === gameInfo.user1.userId ? gameInfo.user2.username : gameInfo.user1.username)}
                 />
             )}
 
