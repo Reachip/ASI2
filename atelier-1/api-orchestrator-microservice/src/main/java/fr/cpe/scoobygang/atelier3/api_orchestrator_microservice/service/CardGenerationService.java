@@ -32,7 +32,8 @@ public class CardGenerationService {
         ImageDemandActiveMQ imageDemandActiveMQ = new ImageDemandActiveMQ( activeMQTransaction.getUuid(), promptImage);
         orchestratorPublisher.sendToImageMS(imageDemandActiveMQ);
 
-        TextDemandActiveMQ textDemandActiveMQ = new TextDemandActiveMQ(activeMQTransaction.getUuid(), promptText);
+        String finalPromptText = "Your reply should be a description only, with no other content or message. Generate an English description for a game card from the following text: " + promptText;
+        TextDemandActiveMQ textDemandActiveMQ = new TextDemandActiveMQ(activeMQTransaction.getUuid(), finalPromptText);
         orchestratorPublisher.sendToTextMS(textDemandActiveMQ);
 
         logger.info("[Service] Card creation requests published for uuid: {}",  activeMQTransaction.getUuid());
