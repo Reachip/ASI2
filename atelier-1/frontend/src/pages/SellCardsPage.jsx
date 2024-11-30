@@ -57,7 +57,7 @@ const SellCardsPage = () => {
       setSelectedCard(null);
       loadCards();
 
-      setCurrentMessage(`You have successfully sent the card ${card.name}.`);
+      setCurrentMessage(`You have successfully sold the card ${card.name}.`);
       setOpen(true);
     }
   };

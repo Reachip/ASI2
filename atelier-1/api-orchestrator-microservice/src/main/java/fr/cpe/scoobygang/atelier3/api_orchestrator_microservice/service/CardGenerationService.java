@@ -27,9 +27,7 @@ public class CardGenerationService {
 
         activeMQTransactionRepository.save(activeMQTransaction);
 
-        logger.info("Creating card with UUID : {}", activeMQTransaction.getUuid());
-
-        logger.info("Creating card with uuid: {}, promptImage: {}, promptText: {}", activeMQTransaction.getUuid(), promptImage, promptText);
+        logger.info("[Service] Creating card with uuid: {}, promptImage: {}, promptText: {}", activeMQTransaction.getUuid(), promptImage, promptText);
 
         ImageDemandActiveMQ imageDemandActiveMQ = new ImageDemandActiveMQ( activeMQTransaction.getUuid(), promptImage);
         orchestratorPublisher.sendToImageMS(imageDemandActiveMQ);
@@ -37,7 +35,7 @@ public class CardGenerationService {
         TextDemandActiveMQ textDemandActiveMQ = new TextDemandActiveMQ(activeMQTransaction.getUuid(), promptText);
         orchestratorPublisher.sendToTextMS(textDemandActiveMQ);
 
-        logger.info("Card creation requests published for uuid: {}",  activeMQTransaction.getUuid());
+        logger.info("[Service] Card creation requests published for uuid: {}",  activeMQTransaction.getUuid());
 
         return activeMQTransaction;
     }
@@ -52,7 +50,7 @@ public class CardGenerationService {
 
     public void postText(GenerationMessage<ContentText> message) {
         String uuid = message.getUuid();
-        logger.info("Posting text for uuid: {}", uuid);
+        logger.info("[Service] Posting text for uuid: {}", uuid);
 
         ContentText contentText = message.getContent();
 
@@ -71,20 +69,20 @@ public class CardGenerationService {
 
         // Mise à jour de la transaction en base
         activeMQTransactionRepository.save(activeMQTransaction);
-        logger.info("Text prompt updated for uuid: {}", uuid);
+        logger.info("[Service] Text prompt updated for uuid: {}", uuid);
 
         // Check si l'image n'est pas vide
         if (activeMQTransaction.getImageURL() != null) {
             // Si l'image n'est pas vide -> Générer les properties
             PropertyDemandActiveMQ propertyDemandActiveMQ = new PropertyDemandActiveMQ(uuid, activeMQTransaction.getImageURL());
             orchestratorPublisher.sendToPropertyMS(propertyDemandActiveMQ);
-            logger.info("Property demand published for uuid: {}", uuid);
+            logger.info("[Service] Property demand published for uuid: {}", uuid);
         }
     }
 
     public void postImage(GenerationMessage<ContentImage> message) {
         String uuid = message.getUuid();
-        logger.info("Posting image for uuid: {}", uuid);
+        logger.info("[Service] Posting image for uuid: {}", uuid);
 
         Optional<ActiveMQTransaction> activeMQTransactionOptional = activeMQTransactionRepository.findByUuid(uuid);
 
@@ -102,7 +100,16 @@ public class CardGenerationService {
 
         // Mise à jour de la transaction en base
         activeMQTransactionRepository.save(activeMQTransaction);
-        logger.info("Image URL updated for uuid: {}", uuid);
+        logger.info("[Service]  Image URL updated for uuid: {}", uuid);
+
+        // Check si l'image n'est pas vide
+        if (activeMQTransaction.getPrompt() != null) {
+            // Si l'image n'est pas vide -> Générer les properties
+            PropertyDemandActiveMQ propertyDemandActiveMQ = new PropertyDemandActiveMQ(uuid, activeMQTransaction.getImageURL());
+            orchestratorPublisher.sendToPropertyMS(propertyDemandActiveMQ);
+            logger.info("[Service] Property demand published for uuid: {}", uuid);
+        }
+
     }
 
     public void postProperty(GenerationMessage<CardProperties> message) {
