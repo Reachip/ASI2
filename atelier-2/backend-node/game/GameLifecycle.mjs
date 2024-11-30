@@ -90,7 +90,7 @@ class GameLifecycle {
         console.log('[GameLifecycle] Updating action points');
 
         const currentPlayer = await this.getCurrentPlayer()
-        const remainingPoint = currentPlayer.actionPoint--;
+        const remainingPoint = currentPlayer.actionPoints-1;
 
         console.log('[GameLifecycle] Remaining action points:', remainingPoint);
 
@@ -98,7 +98,7 @@ class GameLifecycle {
 
         console.log('[GameLifecycle] Updated game state:', await this.game.get())
 
-        if (currentPlayer.actionPoint <= 0) {
+        if (currentPlayer.actionPoints <= 0) {
             console.log('[GameLifecycle] No action points left, switching turn to opponent');
             await this.game.setTurn((await this.getOpponentPlayer()).userId)
 

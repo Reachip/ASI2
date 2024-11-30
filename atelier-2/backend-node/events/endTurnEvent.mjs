@@ -22,15 +22,17 @@ const endTurnEvent = async (redis, io, socket, data) => {
 
     console.log('[AttackEvent] Retrieved game:', game);
 
-    const currentUser = game.user1 === data.userId ? game.user1 : game.user2
-    const opponent = game.user1 === data.userId ? game.user2 : game.user1
+    const userToUpdateActionPoints = game.user1.userId === data.userId ? game.user1: game.user2
+    const userToHandTurn = game.user1.userId === data.userId ? game.user2 : game.user1
 
     const gameUpdater = new GameUpdater(redis, game)
 
-    await gameUpdater.setActionPoint(data.userId, currentUser.actionPoint + 1)
-    await gameUpdater.setTurn(opponent.userId)
+    // userToUpdateActionPoints.actionPoints == null ? 1 :
 
-    notifyRoom(io, game.roomId, NOTIFY_END_TURN, gameUpdater.get());
+    await gameUpdater.setActionPoint(data.userId,userToUpdateActionPoints.actionPoints + 1)
+    await gameUpdater.setTurn(userToHandTurn.userId)
+
+    notifyRoom(io, game.roomId, NOTIFY_END_TURN, await gameUpdater.get());
 }
 
 export default endTurnEvent;

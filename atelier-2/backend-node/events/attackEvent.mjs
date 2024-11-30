@@ -35,6 +35,11 @@ const attackEvent = async (redis, io, socket, data) => {
         const lifecycle = new GameLifecycle(game, cardPlayerId, cardOpponentId, redis)
 
         const currentPlayer = await lifecycle.getCurrentPlayer()
+
+        if (currentPlayer.actionPoints <= 0) {
+            throw new Error('Could not attack: no action points');
+        }
+
         const opponentPlayer = await lifecycle.getOpponentPlayer()
 
         await lifecycle.updateActionPoint()
