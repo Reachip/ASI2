@@ -307,6 +307,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                     </Button>
                 </Box>
             ) : (
+                console.log("gameInfo: " + JSON.stringify(gameInfo)),
                 <GameBoard
                     opponent={gameInfo && (user.id === gameInfo.player1.id ? gameInfo.player2 : gameInfo.player1)}
                     currentPlayer={gameInfo && (user.id === gameInfo.player1.id ? gameInfo.player1 : gameInfo.player2)}
