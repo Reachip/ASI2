@@ -136,7 +136,6 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
 
             nodeSocket.on("endTurnResponse", (msg) => {
                 console.log("endTurnResponse: " + JSON.stringify(msg));
-                const { user1, user2 } = msg;
                 const currentTurn = gameInfo?.userTurn;
 
                 setGameNotification({
@@ -154,8 +153,8 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                         setTimeout(() => {
                             setGameInfo(prevGameInfo => {
                                 const updatedGameInfo = { ...prevGameInfo };
-         
-                                updatedGameInfo.userTurn = msg.userTurn;
+                                
+                                updatedGameInfo.userTurn = currentTurn === gameInfo?.user1.userId ? gameInfo?.user2.userId : gameInfo?.user1.userId;
 
                                 return updatedGameInfo;
                             });
@@ -248,6 +247,9 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         nodeSocket.emit('endTurn', {
             userId: user.id,
         });
+
+        setSelectedPlayerCard(null);
+        setSelectedOpponentCard(null);
     };
 
     useEffect(() => {
