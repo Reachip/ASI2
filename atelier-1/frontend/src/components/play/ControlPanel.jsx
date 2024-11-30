@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Button, Typography } from '@mui/material';
 
-const ControlPanel = ({ onAttack, canAttack, onEndTurn, currentPlayerName, isPlayerTurn }) => (
+const ControlPanel = ({ onAttack, canAttack, canEndTurn, onEndTurn, currentPlayerName, isPlayerTurn }) => (
     <Box
         sx={{
             display: 'flex',
@@ -28,7 +28,7 @@ const ControlPanel = ({ onAttack, canAttack, onEndTurn, currentPlayerName, isPla
                 variant="contained"
                 color="primary"
                 onClick={onEndTurn}
-                disabled={!isPlayerTurn}
+                disabled={!isPlayerTurn || !canEndTurn}
             >
                 End turn
             </Button>
