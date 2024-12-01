@@ -13,22 +13,21 @@ const BuyCardsPage = () => {
   const { user } = useSelector(selectAuth);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
-  const [wallet, setWallet] = useState(user.wallet);
-
-  async function loadCards() {
-    const user_id = user.id;
-    const response = await fetch('http://localhost:8088/store/cards_to_buy/'+user_id);
-    const data = await response.json();
-    setCards(data);
-    // Sélectionne la première carte si disponible
-    if (data.length > 0) {
-      setSelectedCard(data[0]);
-    }
-  }
 
   useEffect(() => {
-    loadCards();
-  }, []);
+    const fetchCards = async () => {
+      const userId = user.id;
+      const response = await fetch(`http://localhost:8088/store/cards_to_buy/${userId}`);
+      const data = await response.json();
+      setCards(data);
+
+      if (data.length > 0) {
+        setSelectedCard(data[0]);
+      }
+    };
+
+    fetchCards();
+  }, [user.id]);
 
   const buyCard = async (card) => {
     const response = await fetch('http://localhost:8088/store/buy', {
@@ -42,9 +41,8 @@ const BuyCardsPage = () => {
       }),
     });
 
-    if (response.ok)
-    {
-      const data = await response.json();
+    if (response.ok) {
+      await response.json();
       dispatch({
         type: 'auth/loginUser/fulfilled',
         payload: { ...user, wallet: user.wallet - card.price },
@@ -60,20 +58,17 @@ const BuyCardsPage = () => {
   }
 
   const handleBuy = async (card) => {
-    if (user.wallet >= card.price)
-    {
+    if (user.wallet >= card.price) {
       let result = await buyCard(card);
       console.log(result);
-      if (result)
-      {
+      if (result) {
         setCurrentMessage(`You have successfully bought the card ${card.name}.`);
         setOpen(true);
       }
     }
-    else
-    {
-        setCurrentMessage(`You don't have enough money to buy the card ${card.name}.`);
-        setOpen(true);
+    else {
+      setCurrentMessage(`You don't have enough money to buy the card ${card.name}.`);
+      setOpen(true);
     }
   };
 
