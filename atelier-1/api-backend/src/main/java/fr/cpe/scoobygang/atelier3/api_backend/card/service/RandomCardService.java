@@ -40,15 +40,15 @@ public class RandomCardService {
         return new CardModel(
                 (String) selectedCard.get("name"),
                 (String) selectedCard.get("description"),
-                "Unknown", // You might want to add family logic
-                "Unknown", // You might want to add affinity logic
+                "Unknown",
+                "Unknown",
                 ((Number) selectedCard.get("energy")).floatValue(),
                 ((Number) selectedCard.get("hp")).floatValue(),
                 ((Number) selectedCard.get("defense")).floatValue(),
                 ((Number) selectedCard.get("attack")).floatValue(),
                 (String) selectedCard.get("img_src"),
-                null, // Small image could be derived from img_src
-                0f // Price will be computed by the CardModel's computePrice method
+                null,
+                0f
         );
     }
 
