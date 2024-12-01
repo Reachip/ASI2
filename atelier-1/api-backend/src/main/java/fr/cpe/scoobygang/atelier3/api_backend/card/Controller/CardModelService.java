@@ -51,4 +51,16 @@ public class CardModelService {
 	public List<CardModel> getAllCardToSell() {
 		return this.cardRepository.findByUser(null);
 	}
+
+	public List<CardModel> getAllCardToBuy(int userId) {
+		var cards = this.cardRepository.findAll();
+		// Remove the cards that the user already has
+		for (int i = 0; i < cards.size(); i++) {
+			if (cards.get(i).getUser() != null && cards.get(i).getUser().getId() == userId) {
+				cards.remove(i);
+				i--;
+			}
+		}
+		return cards;
+	}
 }

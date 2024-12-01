@@ -52,4 +52,10 @@ public class StoreRestController {
 		return storeService.listCardToSellBtob();
 	}
 
+	@RequestMapping(method=RequestMethod.GET, value="/cards_to_buy/{user_id}")
+	private List<CardDTO> getCardsToBuy(@PathVariable int user_id) {
+		var cards = storeService.listCardToBuy(user_id);
+		return cards;
+	}
+
 }
