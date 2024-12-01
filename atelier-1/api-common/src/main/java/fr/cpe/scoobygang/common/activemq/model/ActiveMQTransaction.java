@@ -30,13 +30,13 @@ public class ActiveMQTransaction implements Serializable {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private float defence;
+    private float defence = 0;
 
-    private float energy;
+    private float energy = 0;
 
-    private float hp;
+    private float hp = 0;
 
-    private float attack;
+    private float attack = 0;
 
     public ActiveMQTransaction(String uuid) {
         this.uuid = uuid;

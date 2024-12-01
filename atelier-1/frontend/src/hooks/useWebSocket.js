@@ -17,19 +17,14 @@ export const useWebSocket = (user) => {
         });
     }, []);
 
-    const handleSpringMessage = useCallback((data) => {
-        console.log(`Data : {}`,data);
-        switch (data.type) {
+    const handleSpringMessage = useCallback((message) => {
+        const {data, type} = message;
+
+        console.log(`Message : {}`, message);
+
+        switch (type) {
             case 'cardGenerated':
-                setGeneratedCard({
-                    id: data.id,
-                    img_src: data.imgUrl,
-                    prompt: data.prompt,
-                    defense: data.defense,
-                    energy: data.energy,
-                    hp: data.hp,
-                    attack: data.attack,
-                });
+                setGeneratedCard(message.data);
                 break;
             case 'userList':
                 handleUserList(data.users);

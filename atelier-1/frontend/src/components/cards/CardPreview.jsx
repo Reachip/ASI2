@@ -53,14 +53,17 @@ const CardPreview = ({ card, label, color = 'primary', onAction }) => {
                             height: '100%',
                             objectFit: 'cover',
                             filter: card.hp === 0 ? 'grayscale(100%)' : 'none',
-                            objectFit: 'cover',
                             minWidth: '100%',
                             minHeight: '100%',
                         }}
                     />
                 </Box>
                 <Box sx={{ px: 1, py: 0.5 }}>
-                    <Typography variant="caption">{card.description}</Typography>
+                        <Typography variant="caption">
+                            {card.description.length > 100
+                            ? `${card.description.slice(0, card.description.lastIndexOf('.', 250) + 1)}`
+                            : card.description}
+                        </Typography>
                 </Box>
                 <CardContent sx={{ mt: 'auto', p: 1, '&:last-child': { pb: 1 } }}>
                     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>

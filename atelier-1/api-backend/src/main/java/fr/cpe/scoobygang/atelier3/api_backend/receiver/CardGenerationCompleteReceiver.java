@@ -1,8 +1,10 @@
 package fr.cpe.scoobygang.atelier3.api_backend.receiver;
 
 import fr.cpe.scoobygang.atelier3.api_backend.card.Controller.CardModelService;
+import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardDTO;
 import fr.cpe.scoobygang.atelier3.api_backend.card.model.CardModel;
 import fr.cpe.scoobygang.atelier3.api_backend.handler.WebSocketHandler;
+import fr.cpe.scoobygang.atelier3.api_backend.handler.model.Message;
 import fr.cpe.scoobygang.atelier3.api_backend.mapper.CardModelMapper;
 import fr.cpe.scoobygang.atelier3.api_backend.user.controller.UserService;
 import fr.cpe.scoobygang.atelier3.api_backend.user.model.UserModel;
@@ -61,6 +63,7 @@ public class CardGenerationCompleteReceiver implements Receiver {
 
         logger.info("Card creation process terminate");
 
-        webSocketHandler.broadcastMessage(cardModel);
+        final Message<CardDTO> cardModelMessage = new Message<>("cardGenerated", new CardDTO(cardModel));
+        webSocketHandler.broadcastMessage(cardModelMessage);
     }
 }
