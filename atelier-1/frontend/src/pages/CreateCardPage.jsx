@@ -7,6 +7,7 @@ import Notification from '../components/layout/Notification';
 import CardPreview from '../components/cards/CardPreview';
 
 const CreateCardPage = ({ generatedCard }) => {
+  const [cardName, setCardName] = useState('');
   const [imagePrompt, setImagePrompt] = useState('');
   const [descriptionPrompt, setDescriptionPrompt] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
@@ -29,6 +30,7 @@ const CreateCardPage = ({ generatedCard }) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        cardName: cardName,
         promptImage: imagePrompt,
         promptText: descriptionPrompt,
         username: username
@@ -56,6 +58,13 @@ const CreateCardPage = ({ generatedCard }) => {
       <Typography variant="h4" gutterBottom>
         Generate a card
       </Typography>
+      <TextField
+            fullWidth
+            label="Nom"
+            value={cardName}
+            onChange={(e) => setCardName(e.target.value)}
+            margin="normal"
+      />
       <TextField
         fullWidth
         label="Image Prompt"

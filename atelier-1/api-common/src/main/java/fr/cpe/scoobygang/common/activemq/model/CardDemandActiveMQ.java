@@ -13,6 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class CardDemandActiveMQ implements Serializable{
     private String userId;
+    private String cardName;
     private String promptImage;
     private String promptText;
 
@@ -20,6 +21,7 @@ public class CardDemandActiveMQ implements Serializable{
     public String toString() {
         return "CardDemandActiveMQ{" +
                 ", userId='" + userId + '\'' +
+                ", userId='" + cardName + '\'' +
                 ", promptImage='" + promptImage + '\'' +
                 ", promptText='" + promptText + '\'' +
                 '}';

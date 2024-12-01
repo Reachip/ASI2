@@ -21,9 +21,10 @@ public class CardGenerationService {
     @Autowired
     private OrchestratorPublisher orchestratorPublisher;
 
-    private ActiveMQTransaction createCard(String promptImage, String promptText, String userId) {
+    private ActiveMQTransaction createCard(String promptImage, String promptText, String userId,  String name) {
         ActiveMQTransaction activeMQTransaction = activeMQTransactionRepository.save(ActiveMQTransaction.build());
         activeMQTransaction.setUserId(userId);
+        activeMQTransaction.setName(name);
 
         activeMQTransactionRepository.save(activeMQTransaction);
 
@@ -41,12 +42,8 @@ public class CardGenerationService {
         return activeMQTransaction;
     }
 
-//    public ActiveMQTransaction createCard(CardDemandRequest cardDemand) {
-//        return createCard(cardDemand.getPromptImage(), cardDemand.getPromptText());
-//    }
-
     public ActiveMQTransaction createCard(CardDemandActiveMQ cardDemandActiveMQ) {
-        return createCard(cardDemandActiveMQ.getPromptImage(), cardDemandActiveMQ.getPromptText(), cardDemandActiveMQ.getUserId());
+        return createCard(cardDemandActiveMQ.getPromptImage(), cardDemandActiveMQ.getPromptText(), cardDemandActiveMQ.getUserId(), cardDemandActiveMQ.getCardName());
     }
 
     public void postText(GenerationMessage<ContentText> message) {
@@ -66,16 +63,16 @@ public class CardGenerationService {
         ActiveMQTransaction activeMQTransaction = activeMQTransactionOptional.get();
 
         // Ajout du texte à la transaction
-        activeMQTransaction.setPrompt(contentText.getPrompt());
+        activeMQTransaction.setDescription(contentText.getPrompt());
 
         // Mise à jour de la transaction en base
         activeMQTransactionRepository.save(activeMQTransaction);
         logger.info("[Service] Text prompt updated for uuid: {}", uuid);
 
         // Check si l'image n'est pas vide
-        if (activeMQTransaction.getImageURL() != null) {
+        if (activeMQTransaction.getImgUrl() != null) {
             // Si l'image n'est pas vide -> Générer les properties
-            PropertyDemandActiveMQ propertyDemandActiveMQ = new PropertyDemandActiveMQ(uuid, activeMQTransaction.getImageURL());
+            PropertyDemandActiveMQ propertyDemandActiveMQ = new PropertyDemandActiveMQ(uuid, activeMQTransaction.getImgUrl());
             orchestratorPublisher.sendToPropertyMS(propertyDemandActiveMQ);
             logger.info("[Service] Property demand published for uuid: {}", uuid);
         }
@@ -97,16 +94,16 @@ public class CardGenerationService {
 
         // Ajout de l'image à la transaction
         String urlImage = message.getContent().getUrl();
-        activeMQTransaction.setImageURL(urlImage);
+        activeMQTransaction.setImgUrl(urlImage);
 
         // Mise à jour de la transaction en base
         activeMQTransactionRepository.save(activeMQTransaction);
         logger.info("[Service]  Image URL updated for uuid: {}", uuid);
 
         // Check si l'image n'est pas vide
-        if (activeMQTransaction.getPrompt() != null) {
+        if (activeMQTransaction.getDescription() != null) {
             // Si l'image n'est pas vide -> Générer les properties
-            PropertyDemandActiveMQ propertyDemandActiveMQ = new PropertyDemandActiveMQ(uuid, activeMQTransaction.getImageURL());
+            PropertyDemandActiveMQ propertyDemandActiveMQ = new PropertyDemandActiveMQ(uuid, activeMQTransaction.getImgUrl());
             orchestratorPublisher.sendToPropertyMS(propertyDemandActiveMQ);
             logger.info("[Service] Property demand published for uuid: {}", uuid);
         }
@@ -130,7 +127,7 @@ public class CardGenerationService {
 
         activeMQTransaction.setHp(cardProperties.getHp());
         activeMQTransaction.setAttack(cardProperties.getAttack());
-        activeMQTransaction.setDefense(cardProperties.getDefense());
+        activeMQTransaction.setDefence(cardProperties.getDefense());
         activeMQTransaction.setEnergy(cardProperties.getEnergy());
 
         activeMQTransactionRepository.save(activeMQTransaction);
