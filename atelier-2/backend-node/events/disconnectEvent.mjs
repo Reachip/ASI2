@@ -91,7 +91,7 @@ const disconnectEvent = async (redis, io, socketId, id, username) => {
                             console.error(`Error removing room relationship for room ${room}:`, error.message);
                         }
 
-                        const gameTransactionDTO = new GameTransactionDTO(parseInt(game.gameId, 10), parseInt(id, 10), parseInt(otherId, 10), 100, -100 );
+                        const gameTransactionDTO = new GameTransactionDTO(parseInt(game.gameId, 10), parseInt(id, 10), parseInt(otherId, 10), -100, 100 );
 
                         await saveGameTransactionActiveMq.sendMessage(gameTransactionDTO);
 
