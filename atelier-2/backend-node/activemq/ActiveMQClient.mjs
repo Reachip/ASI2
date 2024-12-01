@@ -1,6 +1,5 @@
 import stompit from 'stompit';
-class ActiveMQClient
-{
+class ActiveMQClient {
     constructor() {
         this.host = "localhost";
         this.port = 61613;
@@ -9,6 +8,7 @@ class ActiveMQClient
         this.client = null;
         this.isConnected = false;
     }
+
     async _ensureConnected(retries = 3) {
         if (this.isConnected) return;
         let attempts = 0;
@@ -30,8 +30,19 @@ class ActiveMQClient
                         if (error) {
                             reject(error);
                         } else {
+                            console.log("Connected successfully!");
                             this.client = client;
                             this.isConnected = true;
+
+                            // Gérer les erreurs
+                            this.client.on('error', (err) => {
+                                console.error('Connection error:', err.message);
+                                this.isConnected = false;
+                                this._ensureConnected().catch((err) =>
+                                    console.error('Reconnection failed:', err.message)
+                                );
+                            });
+
                             resolve();
                         }
                     });
@@ -42,7 +53,7 @@ class ActiveMQClient
                     throw new Error(`Failed to connect after ${retries} retries: ${error.message}`);
                 }
                 console.warn(`Connection attempt ${attempts} failed. Retrying...`);
-                await new Promise((res) => setTimeout(res, 2000)); // Pause avant nouvel essai
+                await new Promise((res) => setTimeout(res, 2000));
             }
         }
     }
@@ -53,13 +64,22 @@ class ActiveMQClient
             const sendHeaders = {
                 destination: destination,
                 'content-type': 'application/json',
-                'ObjectType': objectType
+                'ObjectType': objectType,
             };
             const frame = this.client.send(sendHeaders);
             frame.write(JSON.stringify(message));
             frame.end();
             resolve();
         });
+    }
+
+    disconnect() {
+        if (this.client) {
+            this.client.disconnect(() => {
+                console.log("Disconnected from ActiveMQ");
+                this.isConnected = false;
+            });
+        }
     }
 }
 export default ActiveMQClient;
