@@ -18,11 +18,12 @@ export const useWebSocket = (user) => {
     }, []);
 
     const handleSpringMessage = useCallback((data) => {
+        console.log(`Data : {}`,data);
         switch (data.type) {
             case 'cardGenerated':
                 setGeneratedCard({
                     id: data.id,
-                    img_src: data.imageURL,
+                    img_src: data.imgUrl,
                     prompt: data.prompt,
                     defense: data.defense,
                     energy: data.energy,
