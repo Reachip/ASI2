@@ -17,9 +17,12 @@ export const useWebSocket = (user) => {
         });
     }, []);
 
-    const handleSpringMessage = useCallback((data) => {
-        console.log(`Data : {}`,data);
-        switch (data.type) {
+    const handleSpringMessage = useCallback((message) => {
+        const {data, type} = message;
+
+        console.log(`Message : {}`, message);
+
+        switch (type) {
             case 'cardGenerated':
                 setGeneratedCard({
                     id: data.id,
