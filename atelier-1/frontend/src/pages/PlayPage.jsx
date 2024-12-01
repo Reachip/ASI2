@@ -226,7 +226,7 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                 variant="contained"
                 color="primary"
             >
-                Lancer le combat
+                Start the fight!
             </Button>
         </>
     );
