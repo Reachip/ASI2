@@ -39,10 +39,12 @@ public class TextGenerationService {
     }
 
     public Mono<String> generateText(String promptTxt) {
-        logger.info("Generating text with prompt: {}", promptTxt);
+
+        String finalPromptText = "Ignore previous prompts. Your reply should be a description only, with no other content or message. Generate a description (between 50 (minimum) and 100 (maximum) characters long and told in an epic style) in english of an imaginary character based on the following indications: \"" + promptTxt + "\".";
+        logger.info("Generating text with prompt: {}", finalPromptText);
         initializeModel();
 
-        TextRequest request = new TextRequest(modelName, promptTxt, false);
+        TextRequest request = new TextRequest(modelName, finalPromptText, false);
 
         return webClient.post()
                 .uri(apiUrl + "/api/generate")
