@@ -14,9 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		"fr.cpe.scoobygang.atelier3.api_generation_text_microservice.*",
 })
 public class ApiGenerationTextMicroserviceApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ApiGenerationTextMicroserviceApplication.class, args);
 	}
-
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Box } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectAuth } from '../store/authSlice';
+import {addToWallet, selectAuth} from '../store/authSlice';
 import CardsTable from '../components/cards/CardsTable';
 import CardPreview from '../components/cards/CardPreview';
 import Notification from "../components/layout/Notification";
@@ -62,6 +62,7 @@ const BuyCardsPage = () => {
       let result = await buyCard(card);
       console.log(result);
       if (result) {
+        dispatch(addToWallet(-card.price))
         setCurrentMessage(`You have successfully bought the card ${card.name}.`);
         setOpen(true);
       }

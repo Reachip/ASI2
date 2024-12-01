@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Typography, Box } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectAuth } from '../store/authSlice';
+import {addToWallet, selectAuth} from '../store/authSlice';
 
 import CardsTable from '../components/cards/CardsTable';
 import CardPreview from '../components/cards/CardPreview';
@@ -40,10 +40,7 @@ const SellCardsPage = () => {
     });
 
     if (response.ok) {
-      dispatch({
-        type: 'auth/loginUser/fulfilled',
-        payload: { ...user, wallet: user.wallet + card.price },
-      });
+      dispatch(addToWallet(card.price))
       return true;
     }
     return false;
