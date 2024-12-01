@@ -90,6 +90,15 @@ public class StoreService {
 		return list;
 	}
 
+	public List<CardDTO> listCardToBuy(int user_id) {
+		List<CardDTO> list=new ArrayList<>();
+		for( CardModel c : cardService.getAllCardToBuy(user_id)){
+			CardDTO cLight=new CardDTO(c);
+			list.add(cLight);
+		}
+		return list;
+	}
+
 	public List<CardDTO> listCardToSellBtob() {
 		//TODO add Store Discovery and list card of other services
 		return  listCardToSell();

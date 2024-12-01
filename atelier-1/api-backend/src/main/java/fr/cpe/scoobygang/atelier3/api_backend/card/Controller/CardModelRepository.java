@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface CardModelRepository extends CrudRepository<CardModel, Integer> {
     List<CardModel> findByUser(UserModel u);
+
+    List<CardModel> findAll();
 }
