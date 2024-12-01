@@ -21,14 +21,16 @@ public class ActiveMQTransaction implements Serializable {
 
     private String uuid;
 
+    private String name;
+
     private String userId;
 
-    private String imageURL;
+    private String imgUrl;
 
     @Column(columnDefinition = "TEXT")
-    private String prompt;
+    private String description;
 
-    private float defense;
+    private float defence;
 
     private float energy;
 
@@ -50,9 +52,10 @@ public class ActiveMQTransaction implements Serializable {
                 "id=" + id +
                 ", uuid='" + uuid + '\'' +
                 ", userId='" + userId + '\'' +
-                ", imageURL='" + imageURL + '\'' +
-                ", prompt='" + prompt + '\'' +
-                ", defense=" + defense +
+                ", name='" + name + '\'' +
+                ", imageURL='" + imgUrl + '\'' +
+                ", prompt='" + description + '\'' +
+                ", defense=" + defence +
                 ", energy=" + energy +
                 ", hp=" + hp +
                 ", attack=" + attack +

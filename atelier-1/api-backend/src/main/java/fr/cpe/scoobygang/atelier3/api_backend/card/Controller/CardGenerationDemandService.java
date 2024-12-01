@@ -11,9 +11,9 @@ public class CardGenerationDemandService
     @Autowired
     private BackendPublisher backendPublisher;
 
-    public void sendGenerationCardDemand(String promptImage, String promptText, String userId)
+    public void sendGenerationCardDemand(String promptImage, String promptText, String userId, String cardName)
     {
-        CardDemandActiveMQ cardDemandActiveMQ = new CardDemandActiveMQ(userId, promptImage, promptText);
+        CardDemandActiveMQ cardDemandActiveMQ = new CardDemandActiveMQ(userId, cardName, promptImage, promptText);
         backendPublisher.sendToOrchestrator(cardDemandActiveMQ);
     }
 }

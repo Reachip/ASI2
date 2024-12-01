@@ -45,6 +45,8 @@ public class CardGenerationCompleteReceiver implements Receiver {
         logger.info("Parsed activeMQTransaction demand: {}", activeMQTransaction);
 
         final CardModel cardModel = CardModelMapper.INSTANCE.activeMQTransactionToCard(activeMQTransaction);
+
+        cardModel.setPrice(100);
         cardModel.setUser(userService.getUser(activeMQTransaction.getUserId()).get());
 
         cardModelService.addCard(cardModel);

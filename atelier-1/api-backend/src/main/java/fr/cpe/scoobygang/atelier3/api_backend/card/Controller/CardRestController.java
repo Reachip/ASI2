@@ -93,7 +93,7 @@ public class CardRestController {
 					.body(new HttpBasicResponse<>(HttpStatus.FORBIDDEN.value(), "Not enough money"));
 		}
 
-		cardGenerationDemandService.sendGenerationCardDemand(cardDemandDTO.getPromptImage(), cardDemandDTO.getPromptText(), String.valueOf(userModel.getId()));
+		cardGenerationDemandService.sendGenerationCardDemand(cardDemandDTO.getPromptImage(), cardDemandDTO.getPromptText(), String.valueOf(userModel.getId()), cardDemandDTO.getCardName());
 		return ResponseEntity.status(HttpStatus.CREATED).body(new HttpBasicResponse<>(HttpStatus.CREATED.value(), "Successfully send card genetation demand"));
 	}
 }

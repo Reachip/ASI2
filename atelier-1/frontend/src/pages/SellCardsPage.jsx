@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Typography, Box } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectAuth } from '../store/authSlice';
@@ -17,15 +17,15 @@ const SellCardsPage = () => {
   const [open, setOpen] = useState(false);
   const [currentMessage, setCurrentMessage] = useState('');
 
-  async function loadCards() {
-    const userCardResponse = await fetch(`http://localhost:8088/user/${user.id}/cards`)
-    const data = await userCardResponse.json()
-    setUserCards(data.cardList)
-  }
+  const loadCards = useCallback(async () => {
+    const userCardResponse = await fetch(`http://localhost:8088/user/${user.id}/cards`);
+    const data = await userCardResponse.json();
+    setUserCards(data.cardList);
+  }, [user.id]);
 
-  useEffect( () => {
+  useEffect(() => {
     loadCards();
-  }, [user]);
+  }, [loadCards]);
 
   const sellCard = async (card) => {
     const response = await fetch('http://localhost:8088/store/sell', {
@@ -40,24 +40,22 @@ const SellCardsPage = () => {
     });
 
     if (response.ok) {
-      const data = await response.json();
       dispatch({
         type: 'auth/loginUser/fulfilled',
         payload: { ...user, wallet: user.wallet + card.price },
       });
-        return true;
+      return true;
     }
     return false;
   };
 
   const handleSell = async (card) => {
     let result = await sellCard(card);
-    if (result)
-    {
+    if (result) {
       setSelectedCard(null);
       loadCards();
 
-      setCurrentMessage(`You have successfully sent the card ${card.name}.`);
+      setCurrentMessage(`You have successfully sold the card ${card.name}.`);
       setOpen(true);
     }
   };
@@ -79,9 +77,9 @@ const SellCardsPage = () => {
         <Box flex={1} pr={2}>
           <CardsTable cards={userCards} selectedCard={selectedCard} onSelectCard={setSelectedCard} action="sell" />
         </Box>
-        <Box 
-          width="360px" 
-          pl={2} 
+        <Box
+          width="360px"
+          pl={2}
           sx={{
             height: '420px',
             padding: '3px',
@@ -92,11 +90,11 @@ const SellCardsPage = () => {
             justifyContent: 'flex-start',
           }}
         >
-          <CardPreview 
-            card={selectedCard} 
-            onAction={handleSell} 
-            label={`Sell`} 
-            color="primary" 
+          <CardPreview
+            card={selectedCard}
+            onAction={handleSell}
+            label={`Sell`}
+            color="primary"
           />
         </Box>
       </Box>

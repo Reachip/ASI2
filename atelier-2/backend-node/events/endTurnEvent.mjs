@@ -1,7 +1,7 @@
 import {GameService} from "../service/GameService.mjs";
 import GameUpdater from "../game/GameUpdater.mjs";
 import {notifyRoom} from "./notifyEvent.mjs";
-import {NOTIFY_ATTACK_RESPONSE, NOTIFY_END_TURN} from "../utils/constants.mjs";
+import {NOTIFY_ATTACK_RESPONSE, NOTIFY_END_TURN, NOTIFY_ERROR_RESPONSE} from "../utils/constants.mjs";
 
 /**
  * Handles the event to end a player's turn in a game.
@@ -28,6 +28,11 @@ const endTurnEvent = async (redis, io, socket, data) => {
     const gameUpdater = new GameUpdater(redis, game)
 
     // userToUpdateActionPoints.actionPoints == null ? 1 :
+
+    if (userToUpdateActionPoints.actionPoints >= 3) {
+        notifyRoom(io, game.roomId, NOTIFY_ERROR_RESPONSE, {message: "Unable to put more than 3 action points"});
+        return
+    }
 
     await gameUpdater.setActionPoint(data.userId,userToUpdateActionPoints.actionPoints + 1)
     await gameUpdater.setTurn(userToHandTurn.userId)

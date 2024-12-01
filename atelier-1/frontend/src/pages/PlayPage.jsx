@@ -1,8 +1,8 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import axios from 'axios';
 import {Box, Button, Typography} from '@mui/material';
-import {useSelector} from 'react-redux';
-import {selectAuth} from '../store/authSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {addToWallet, selectAuth} from '../store/authSlice';
 import ChatPanel from '../components/chat/ChatPanel';
 import GameBoard from '../components/play/GameBoard';
 import PopupDialog from '../components/layout/PopupDialog';
@@ -24,6 +24,8 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
     const [gameNotification, setGameNotification] = useState({ type: null, isVisible: false });
 
     const currentPlayer = { id: user.id, username: user.username, actionPoints: user.actionPoints, isCurrentPlayer: true };
+
+    const dispatch = useDispatch();
 
     const fetchPlayerCards = useCallback(async () => {
         try {
@@ -71,10 +73,10 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
         if (nodeSocket) {
             nodeSocket.on("notifyRoomFightCreated", (msg) => {
                 console.log("notifyRoomFightCreated: " + JSON.stringify(msg));
-                setGameInfo(msg); // Stocke les infos du jeu dans l'état
-                setGameStarted(true); // Passe à l'écran de jeu
-                setDialogOpen(false); // Ferme la popup
-                setIsSearching(false); // Arrête la recherche
+                setGameInfo(msg);
+                setGameStarted(true);
+                setDialogOpen(false);
+                setIsSearching(false);
             });
 
             nodeSocket.on("attackResponse", (msg) => {
@@ -162,6 +164,9 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
             nodeSocket.on("endFight", (msg) => {
                 console.log("endFight: " + JSON.stringify(msg));
 
+                const moneyOperation = currentPlayer.id === msg.transaction.user1Id ? msg.transaction.moneyOperation1 : msg.transaction.moneyOperation2
+                dispatch(addToWallet(moneyOperation))
+
                 setTimeout(() => {
                     // Mettre à jour l'état du jeu pour indiquer la fin du combat
                     setGameInfo((prevGameInfo) => {
@@ -191,7 +196,16 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
                 nodeSocket.off("endFight");
             }
         };
-    }, [nodeSocket, user.id, gameInfo?.userTurn]);
+    }, [
+        nodeSocket,
+        user.id,
+        gameInfo?.userTurn,
+        dispatch,
+        gameInfo?.user1.userId,
+        gameInfo?.user1.username,
+        gameInfo?.user2.username,
+        currentPlayer.id
+    ]);
 
     const dialogActions = isSearching ? (
         <Button
@@ -199,12 +213,12 @@ const PlayPage = ({ chatMessages, connectedUsers, onSendMessage, nodeSocket }) =
             color="error"
             variant="contained"
         >
-            Annuler la recherche
+             Cancel search
         </Button>
     ) : (
         <>
             <Button onClick={handleCloseDialog} color="inherit">
-                Annuler
+                Cancel
             </Button>
             <Button
                 onClick={startSearchingForOpponent}

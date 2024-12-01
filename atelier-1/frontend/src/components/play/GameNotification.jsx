@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Typography, Box } from '@mui/material';
 import PopupDialog from '../layout/PopupDialog';
 import CardPreview from '../cards/CardPreview';
@@ -6,43 +6,49 @@ import CardPreview from '../cards/CardPreview';
 const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 3000 }) => {
     const { playerName, attackerCard, defenderCard, initialHp, finalHp } = data;
     const [currentHp, setCurrentHp] = useState(initialHp || 0);
-    const steps = Math.abs(initialHp - finalHp);
-    const stepDuration = duration / steps;
+    const animationRef = useRef(null);
+    const hideTimeoutRef = useRef(null);
 
     useEffect(() => {
-        if (isVisible && type === 'attack') {
+        if (isVisible && type === 'attack' && initialHp !== undefined && finalHp !== undefined) {
+            const steps = Math.abs(initialHp - finalHp);
+            const stepDuration = duration / steps;
             let currentStep = 0;
+            setCurrentHp(initialHp);
 
-            const interval = setInterval(() => {
-                if(currentStep === 0) {
-                    setCurrentHp(initialHp);
-                }
+            if (animationRef.current) clearInterval(animationRef.current);
 
+            animationRef.current = setInterval(() => {
                 setCurrentHp((prevHp) => {
                     if (currentStep < steps) {
                         currentStep++;
-                        return prevHp - 1;
+                        return prevHp > finalHp ? prevHp - 1 : prevHp + 1;
                     } else {
-                        clearInterval(interval);
-                        setTimeout(() => {
-                            onHide();
-                        }, 3000);
+                        clearInterval(animationRef.current);
+                        animationRef.current = null;
                         return finalHp;
                     }
                 });
             }, stepDuration);
-
-            return () => clearInterval(interval);
         }
-    }, [isVisible, type, initialHp, finalHp, steps, stepDuration, onHide]);
+
+        return () => {
+            if (animationRef.current) clearInterval(animationRef.current);
+        };
+    }, [isVisible, type, initialHp, finalHp, duration]);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            onHide();
-        }, duration);
+        if (isVisible) {
+            if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+            hideTimeoutRef.current = setTimeout(() => {
+                onHide();
+            }, duration);
 
-        return () => clearTimeout(timer);
-    }, [duration, onHide]);
+            return () => {
+                if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+            };
+        }
+    }, [isVisible, duration, onHide]);
 
     const getMessage = () => {
         switch (type) {
@@ -53,7 +59,7 @@ const GameNotification = ({ type, isVisible, onHide, data = {}, duration = 3000 
             case 'loser':
                 return "You lose! 😢";
             case 'endTurn':
-                    return playerName ? `${playerName} chooses to end turn!` : "You choose to end turn!";
+                return playerName ? `${playerName} chooses to end turn!` : "You choose to end turn!";
             case 'attack':
                 return (
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>

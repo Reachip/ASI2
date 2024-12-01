@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CardDemandDTO {
+    String cardName;
     String username;
     String promptImage;
     String promptText;
