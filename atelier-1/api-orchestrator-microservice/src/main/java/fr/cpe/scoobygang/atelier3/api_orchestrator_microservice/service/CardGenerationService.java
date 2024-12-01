@@ -33,12 +33,11 @@ public class CardGenerationService {
         ImageDemandActiveMQ imageDemandActiveMQ = new ImageDemandActiveMQ( activeMQTransaction.getUuid(), promptImage);
         orchestratorPublisher.sendToImageMS(imageDemandActiveMQ);
 
-        String finalPromptText = "Your reply should be a description only, with no other content or message. Generate an English description of an imaginary character based on the following indications provided by a user. The description should be between 50 (minimum) and 250 (maximum) characters long, and told in an epic style. Indictations given by the user: " + promptText;
+        String finalPromptText = "Your reply should be a description only, with no other content or message. Generate a description (between 50 (minimum) and 250 (maximum) characters long and told in an epic style) in english of an imaginary character based on the following indications: \"" + promptText + "\".";
         TextDemandActiveMQ textDemandActiveMQ = new TextDemandActiveMQ(activeMQTransaction.getUuid(), finalPromptText);
         orchestratorPublisher.sendToTextMS(textDemandActiveMQ);
 
         logger.info("[Service] Card creation requests published for uuid: {}",  activeMQTransaction.getUuid());
-
         return activeMQTransaction;
     }
 
