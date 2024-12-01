@@ -60,7 +60,7 @@ const CreateCardPage = ({ generatedCard }) => {
       </Typography>
       <TextField
             fullWidth
-            label="Nom"
+            label="Name"
             value={cardName}
             onChange={(e) => setCardName(e.target.value)}
             margin="normal"

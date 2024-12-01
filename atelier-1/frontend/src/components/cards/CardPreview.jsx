@@ -60,7 +60,7 @@ const CardPreview = ({ card, label, color = 'primary', onAction }) => {
                 </Box>
                 <Box sx={{ px: 1, py: 0.5 }}>
                         <Typography variant="caption">
-                            {card.description.length > 100
+                            {card && card.description && card.description.length > 100
                             ? `${card.description.slice(0, card.description.lastIndexOf('.', 250) + 1)}`
                             : card.description}
                         </Typography>
