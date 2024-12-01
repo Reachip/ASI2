@@ -17,10 +17,10 @@ public class CardProperties extends Content {
 
     public static CardProperties from(Map<String, Float> colorToProperties) {
         return CardProperties.builder()
-                .attack(colorToProperties.get("ATTACK"))
-                .defense(colorToProperties.get("DEFENSE"))
-                .energy(colorToProperties.get("ENERGY"))
-                .hp(colorToProperties.get("HP"))
+                .attack(Math.round(colorToProperties.get("ATTACK")))
+                .defense(Math.round(colorToProperties.get("DEFENSE")))
+                .energy(Math.round(colorToProperties.get("ENERGY")))
+                .hp(Math.round(colorToProperties.get("HP")))
                 .build();
     }
 
